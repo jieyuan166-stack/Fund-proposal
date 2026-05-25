@@ -210,6 +210,11 @@ async function handleApi(req, res, url) {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+    if (url.pathname === '/healthz') {
+      sendJson(res, 200, { ok: true });
+      return;
+    }
+
     if (url.pathname.startsWith('/api/')) {
       if (!(await handleApi(req, res, url))) {
         sendJson(res, 404, { ok: false, error: 'NOT_FOUND' });

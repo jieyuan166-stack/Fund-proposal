@@ -30,4 +30,5 @@ Then start on the NAS:
 docker compose up -d
 ```
 
-The `proposal` and `cloudflared` containers both use `restart: unless-stopped`.
+The `proposal`, `cloudflared`, and `cloudflared-backup` containers use `restart: always`.
+The two Cloudflared containers register two independent connectors for the same tunnel, so one tunnel container can restart while the other continues serving traffic.

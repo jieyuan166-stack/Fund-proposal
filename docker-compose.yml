@@ -2,7 +2,7 @@ services:
   proposal:
     image: node:22-alpine
     container_name: triton-fund-proposal
-    restart: unless-stopped
+    restart: always
     working_dir: /app
     environment:
       TRITON_HOST: 0.0.0.0
@@ -10,14 +10,37 @@ services:
     volumes:
       - ./:/app
     command: node server.js
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "require('http').get('http://127.0.0.1:8790/healthz', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
   cloudflared:
     image: cloudflare/cloudflared:2026.5.0
     container_name: triton-fund-proposal-tunnel
     user: "0:0"
-    restart: unless-stopped
+    restart: always
     depends_on:
-      - proposal
+      proposal:
+        condition: service_healthy
+    volumes:
+      - ./deploy/cloudflared:/etc/cloudflared:ro
+    command: tunnel --config /etc/cloudflared/config.yml run TRITON-PROPOSAL
+
+  cloudflared-backup:
+    image: cloudflare/cloudflared:2026.5.0
+    container_name: triton-fund-proposal-tunnel-backup
+    user: "0:0"
+    restart: always
+    depends_on:
+      proposal:
+        condition: service_healthy
     volumes:
       - ./deploy/cloudflared:/etc/cloudflared:ro
     command: tunnel --config /etc/cloudflared/config.yml run TRITON-PROPOSAL
