@@ -7,6 +7,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="auth.v2.js" defer></script>
+  <script>
+    (function () {
+      const isMobileViewport = window.matchMedia('(max-width: 980px)').matches;
+      const isTopLevel = window.top === window.self;
+      if (!isMobileViewport || !isTopLevel) return;
+
+      const target = location.hash === '#tclass'
+        ? 'fidelity_tclass_strategy.html'
+        : 'triton_portfolio_presentation.html';
+      window.location.replace(target);
+    })();
+  </script>
   <style>
     :root {
       --navy: #0A1628;
@@ -213,6 +225,7 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity .18s ease;
+      -webkit-overflow-scrolling: touch;
     }
 
     .frame.active {
@@ -308,11 +321,13 @@
         id="frame-portfolio"
         class="frame active"
         title="分隔基金投资组合"
+        scrolling="yes"
         src="triton_portfolio_presentation.html?embedded=1"></iframe>
       <iframe
         id="frame-tclass"
         class="frame"
         title="Fidelity T-Class 现金流策略"
+        scrolling="yes"
         src="fidelity_tclass_strategy.html?embedded=1"></iframe>
     </main>
   </div>
