@@ -141,7 +141,7 @@ function loginShell(res) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>登录 Proposal | Triton Wealth</title>
-  <script src="/auth.js" defer></script>
+  <script src="/auth.v2.js" defer></script>
 </head>
 <body></body>
 </html>`, {
@@ -222,7 +222,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    if (url.pathname === '/auth.js' || url.pathname === '/triton-logo.png') {
+    if (/^\/auth\.[a-z0-9-]+\.js$/i.test(url.pathname) || url.pathname === '/triton-logo.png') {
       serveFile(req, res);
       return;
     }

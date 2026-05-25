@@ -203,7 +203,8 @@
         password.select();
         return;
       }
-      window.location.reload();
+      const nextPath = window.location.pathname === '/' ? '/triton_wealth_combined_presentation.html' : window.location.href;
+      window.location.replace(nextPath);
     }
 
     async function submitChange() {
