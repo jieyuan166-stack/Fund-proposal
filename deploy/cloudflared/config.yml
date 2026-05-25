@@ -1,0 +1,7 @@
+tunnel: e764ed59-3700-40d6-b48d-5cf7f9352331
+credentials-file: /etc/cloudflared/e764ed59-3700-40d6-b48d-5cf7f9352331.json
+
+ingress:
+  - hostname: proposal.tritonwealth.ca
+    service: http://proposal:8790
+  - service: http_status:404

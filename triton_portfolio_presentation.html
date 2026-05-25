@@ -1,0 +1,2512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>富瑞财富 · 机构级投资组合提案 | Triton Wealth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <script src="auth.js" defer></script>
+  <script>
+    tailwind.config = { theme:{ extend:{ colors:{ navy:'#0A1628', navy2:'#0F1E33', navy3:'#1A2D4D', gold:'#C9A84C', goldL:'#E8D5A3', goldD:'#9A7B2E' } } } };
+  </script>
+
+  <style>
+    :root {
+      --navy:    #0A1628;
+      --navy-2:  #0F1E33;
+      --navy-3:  #1A2D4D;
+      --gold:    #C9A84C;
+      --gold-l:  #E8D5A3;
+      --gold-d:  #9A7B2E;
+      --pos:     #10B981;
+      --neg:     #EF4444;
+    }
+
+    body {
+      font-family: 'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+      background: #F7F8FA;
+      color: #1A2D4D;
+    }
+    .num, .en { font-family: 'Inter', 'Helvetica Neue', sans-serif; }
+    .serif    { font-family: 'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif; }
+
+    /* hero gradient */
+    .hero-bg {
+      background:
+        radial-gradient(ellipse at top left, rgba(201,168,76,0.15), transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(201,168,76,0.08), transparent 50%),
+        linear-gradient(135deg, #0A1628 0%, #0F1E33 50%, #142B4D 100%);
+    }
+    .hero-bg::before {
+      content:''; position:absolute; inset:0; opacity:.04;
+      background-image:
+        linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events:none;
+    }
+
+    .gold-stripe { background: linear-gradient(90deg, transparent, #C9A84C, transparent); height:1px; }
+
+    /* Card with hover glow */
+    .lux-card {
+      background:#fff; border-radius:10px;
+      box-shadow:0 4px 24px rgba(10,22,40,.06), 0 1px 2px rgba(10,22,40,.04);
+      transition: transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1);
+    }
+    .lux-card:hover {
+      transform: translateY(-3px);
+      box-shadow:0 12px 40px rgba(10,22,40,.12), 0 0 0 1px rgba(201,168,76,.2);
+    }
+    .lux-card-dark {
+      background: linear-gradient(135deg, var(--navy-2) 0%, var(--navy-3) 100%);
+      color:#fff; border-radius:10px;
+      box-shadow: 0 8px 32px rgba(10,22,40,.4);
+      transition: all .3s ease;
+    }
+    .lux-card-dark:hover {
+      box-shadow: 0 16px 48px rgba(10,22,40,.5), 0 0 0 1px rgba(201,168,76,.4);
+      transform: translateY(-2px);
+    }
+
+    /* Tab buttons */
+    .tab-btn {
+      transition: all .25s ease; cursor:pointer; position:relative;
+      border:2px solid transparent;
+    }
+    .tab-btn:hover { transform:translateY(-2px); }
+    .tab-btn.active::after {
+      content:''; position:absolute; bottom:-2px; left:50%; transform:translateX(-50%);
+      width:32px; height:3px; background: var(--gold); border-radius:2px;
+    }
+
+    /* Loading screen */
+    #loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background: linear-gradient(135deg, #0A1628 0%, #0F1E33 100%);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+    #loading-screen.hidden-fade { opacity:0; visibility:hidden; pointer-events:none; }
+    .loader-bar {
+      width:240px; height:3px; background:rgba(255,255,255,.1);
+      border-radius:999px; overflow:hidden; position:relative;
+    }
+    .loader-bar::after {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      animation: loaderSlide 1.4s ease-in-out infinite;
+    }
+    @keyframes loaderSlide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #E5E7EB 0%, #F3F4F6 50%, #E5E7EB 100%);
+      background-size: 200% 100%;
+      animation: skelShimmer 1.5s ease-in-out infinite;
+      border-radius:6px;
+    }
+    @keyframes skelShimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* Big metric numbers */
+    .big-metric {
+      font-family:'Inter', sans-serif;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .metric-72 {
+      font-size: clamp(32px, 5vw, 58px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      display: block;
+      width: 100%;
+    }
+    .metric-48 { font-size: clamp(28px, 4vw, 48px); }
+
+    /* Risk dots */
+    .rdot { width:22px; height:22px; border-radius:50%; display:inline-flex;
+            align-items:center; justify-content:center; font-size:10px;
+            font-weight:700; margin:0 2px; font-family:'Inter', sans-serif; }
+
+    /* Mini progress bar */
+    .mini-bar { height:4px; border-radius:2px; background:#E5E7EB; overflow:hidden; }
+    .mini-bar-fill { height:100%; border-radius:2px; transition: width .8s cubic-bezier(.2,.8,.2,1); }
+
+    .badge { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:600; letter-spacing:.02em; }
+    .tax-select-light {
+      width: 100%;
+      background: #fff !important;
+      color: #0A1628 !important;
+      border: 1px solid rgba(201,168,76,.45) !important;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: 700 12px/1.2 'Inter', sans-serif;
+      min-height: 42px;
+    }
+    .tax-select-light option {
+      background: #fff !important;
+      color: #0A1628 !important;
+    }
+
+    /* Accordion */
+    details.accordion {
+      background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(10,22,40,.05);
+      margin-bottom:10px; overflow:hidden; transition: box-shadow .25s ease;
+    }
+    details.accordion[open] { box-shadow:0 6px 24px rgba(10,22,40,.1); }
+    details.accordion summary {
+      list-style: none; cursor:pointer; padding:18px 22px;
+      display:flex; align-items:center; justify-content:space-between;
+      font-weight:600; color: var(--navy);
+    }
+    details.accordion summary::-webkit-details-marker { display:none; }
+    details.accordion summary::after {
+      content:'+'; font-size:24px; color: var(--gold); font-weight:300;
+      transition: transform .25s ease;
+    }
+    details.accordion[open] summary::after { transform: rotate(45deg); }
+    details.accordion .content { padding: 0 22px 22px; color:#475569; font-size:13px; line-height:1.7; }
+
+    .src-tag { font-size:10px; color:#94A3B8; font-style:italic; }
+    .data-na { color:#94A3B8; font-style:italic; font-size:11px; }
+    .data-cell { font-family:'Inter', sans-serif; font-variant-numeric: tabular-nums; }
+
+    /* Fade in transition for content */
+    .fade-in { animation: fadeInUp .4s cubic-bezier(.2,.8,.2,1); }
+    @keyframes fadeInUp {
+      from { opacity:0; transform:translateY(12px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* Number transition */
+    .num-transition { transition: color .4s ease; }
+
+    /* ── PDF layout (portrait client report) — hidden on screen, shown only in print ── */
+    #pdf-body { display: none; }
+
+    .pdf-page {
+      width: 8.5in;
+      height: 11in;
+      min-height: 11in;
+      background: #fff;
+      box-sizing: border-box;
+      font-family: 'Noto Sans SC','Inter',sans-serif;
+      color: #111827;
+      position: relative;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      overflow: hidden;
+    }
+    .pdf-dark {
+      background: #0B1B2E !important;
+      color: #fff !important;
+    }
+
+    @media print {
+      @page { size: Letter portrait; margin: 0; }
+
+      html, body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        width: 8.5in;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+      }
+
+      /* ── Hide all web layout ── */
+      #loading-screen, nav, .hero-bg,
+      main, footer { display: none !important; }
+
+      /* ── Show PDF layout ── */
+      #pdf-body { display: block !important; }
+
+      .pdf-page {
+        width: 8.5in;
+        height: 11in;
+        min-height: 11in;
+        overflow: hidden;
+        break-after: page;
+        page-break-after: always;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pdf-page:last-child {
+        break-after: auto;
+        page-break-after: avoid;
+      }
+
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+
+    /* Refresh button rotation */
+    .refresh-spin { animation: rotate360 1s linear infinite; }
+    @keyframes rotate360 { from{transform:rotate(0);} to{transform:rotate(360deg);} }
+
+    /* ── Typography Scale ──────────────────────────────── */
+    .t-display {
+      font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+      font-size:clamp(24px,4vw,38px); font-weight:800;
+      letter-spacing:0; line-height:1.16;
+    }
+    .t-section {
+      font-family:'Noto Sans SC','Inter',sans-serif;
+      font-size:18px; font-weight:700; line-height:1.3;
+      letter-spacing:-0.01em;
+    }
+    .t-label {
+      font-family:'Inter',sans-serif; font-size:10px;
+      font-weight:700; letter-spacing:0.18em;
+      text-transform:uppercase; color:var(--gold);
+    }
+    .t-caption { font-size:11px; color:#94A3B8; line-height:1.5; }
+    .t-num-lg {
+      font-family:'Inter',sans-serif; font-size:32px;
+      font-weight:800; font-variant-numeric:tabular-nums;
+      letter-spacing:-0.03em; line-height:1;
+    }
+    .t-num-sm {
+      font-family:'Inter',sans-serif; font-size:16px;
+      font-weight:700; font-variant-numeric:tabular-nums; line-height:1;
+    }
+
+    /* ── Section Divider ───────────────────────────────── */
+    .section-divider {
+      display:flex; align-items:center; gap:16px;
+      margin:44px 0 28px;
+    }
+    .section-divider::before,.section-divider::after {
+      content:''; flex:1; height:1px;
+      background:linear-gradient(90deg,transparent,#D1D5DB,transparent);
+    }
+    .section-divider span {
+      font-family:'Inter',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:0.2em; text-transform:uppercase;
+      color:#94A3B8; white-space:nowrap;
+    }
+
+    /* ── Dark chart card headings ──────────────────────── */
+    .lux-card-dark .chart-title {
+      color:rgba(255,255,255,.85); font-size:13px; font-weight:700;
+      letter-spacing:-0.01em; margin-bottom:14px;
+    }
+    .lux-card-dark .chart-subtitle { font-size:10px; color:rgba(255,255,255,.4); margin-top:2px; }
+
+    /* ── Fund table ────────────────────────────────────── */
+    .fund-table thead tr {
+      background:#F8FAFC; border-bottom:2px solid #E2E8F0;
+    }
+    .fund-table thead th {
+      font-family:'Inter',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;
+      padding:10px 10px;
+    }
+    .fund-table tbody tr { border-bottom:1px solid #F1F5F9; transition:background .15s; }
+    .fund-table tbody tr:nth-child(even) { background:#FAFBFC; }
+    .fund-table tbody tr:hover { background:#EFF6FF; }
+    .fund-table tfoot tr { background:#F1F5F9; border-top:2px solid #E2E8F0; }
+    .fund-table tfoot td {
+      font-family:'Inter',sans-serif; font-size:11px; font-weight:700;
+      color:#1A2D4D; padding:9px 10px;
+    }
+    .fund-table td { padding:10px 10px; }
+
+    .advisor-path {
+      display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px;
+    }
+    .path-step {
+      background:#fff; border:1px solid #E2E8F0; border-radius:8px; padding:14px;
+      box-shadow:0 3px 16px rgba(10,22,40,.04);
+    }
+    .path-step-num {
+      width:24px; height:24px; border-radius:50%; display:inline-flex;
+      align-items:center; justify-content:center; background:#0A1628; color:#C9A84C;
+      font-family:Inter,sans-serif; font-size:11px; font-weight:800; margin-bottom:10px;
+    }
+    .comparison-matrix {
+      display:grid; grid-template-columns:1.05fr 1fr 1fr; border:1px solid #E2E8F0;
+      border-radius:10px; overflow:hidden; background:#fff;
+    }
+    .matrix-cell {
+      padding:14px 16px; border-bottom:1px solid #E2E8F0; font-size:13px; line-height:1.55;
+    }
+    .matrix-cell:not(:nth-child(3n)) { border-right:1px solid #E2E8F0; }
+    .matrix-head { background:#0A1628; color:#fff; font-weight:800; font-size:13px; }
+    .matrix-gold { background:#FFFBEB; }
+    .matrix-muted { color:#64748B; }
+
+    @media (max-width: 767px) {
+      nav {
+        align-items:flex-start !important; gap:10px; padding:12px 16px !important;
+      }
+      nav > div:first-child { min-width:0; gap:8px !important; }
+      nav > div:first-child img { height:34px !important; }
+      nav > div:first-child .border-l { padding-left:8px !important; margin-left:0 !important; }
+      nav > div:first-child .font-bold { font-size:12px; line-height:1.1; }
+      nav > div:first-child .tracking-widest { font-size:8px; line-height:1.25; max-width:120px; display:block; }
+      nav > div:last-child { flex-direction:column; gap:6px !important; align-items:flex-end; flex-shrink:0; }
+      nav > div:last-child span { font-size:9px; padding:3px 8px; }
+      nav > div:last-child button { font-size:10px; padding:7px 10px; line-height:1; white-space:nowrap; }
+      .advisor-path { grid-template-columns:1fr; }
+      .comparison-matrix { grid-template-columns:1fr; }
+      .matrix-cell, .matrix-cell:not(:nth-child(3n)) { border-right:0; }
+      .matrix-cell:nth-child(3n) { border-bottom:2px solid #CBD5E1; }
+    }
+
+    body.embedded-shell nav.no-print,
+    body.embedded-shell #loading-screen {
+      display: none !important;
+    }
+    body.embedded-shell .hero-bg:first-of-type > div {
+      padding-top: 38px !important;
+      padding-bottom: 48px !important;
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+<script>
+  if (new URLSearchParams(location.search).has('embedded')) {
+    document.body.classList.add('embedded-shell');
+  }
+</script>
+
+<!-- ════════════════════ LOADING SCREEN ════════════════════ -->
+<div id="loading-screen">
+  <img src="triton-logo.png" alt="Triton Wealth" style="height:64px;margin-bottom:24px;opacity:.95;" onerror="this.style.display='none'" />
+  <div class="text-white text-sm tracking-widest mb-1" style="opacity:.7">TRITON WEALTH MANAGEMENT</div>
+  <div class="text-gold text-xs tracking-widest mb-8" style="color:#C9A84C;opacity:.6">PRIVATE WEALTH ADVISORY</div>
+  <div class="loader-bar"></div>
+  <div class="text-white text-xs mt-4 en" style="opacity:.5">正在加载实时市场数据 · Loading market data...</div>
+</div>
+
+<!-- ════════════════════ STICKY NAV ════════════════════ -->
+<nav class="hero-bg text-white px-6 py-3 flex items-center justify-between sticky top-0 z-50 no-print">
+  <div class="flex items-center space-x-3 relative z-10">
+    <img src="triton-logo.png" alt="Triton Wealth" style="height:42px;width:auto;" />
+    <div class="leading-tight border-l border-gold pl-3 ml-1" style="border-color:#C9A84C">
+      <div class="font-bold text-sm tracking-wide">富瑞财富管理</div>
+      <div class="text-[11px] tracking-widest en" style="color:#C9A84C">TRITON WEALTH · PRIVATE ADVISORY</div>
+    </div>
+  </div>
+  <div class="flex items-center space-x-3 relative z-10">
+    <div class="hidden md:flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.2)">
+      <span class="text-gray-400">数据更新：</span>
+      <span id="last-updated-display" class="font-medium num text-gold" style="color:#C9A84C">--</span>
+      <button onclick="refreshData()" id="refresh-btn" class="ml-1 text-gold hover:text-white transition-colors" title="刷新数据" style="color:#C9A84C">🔄</button>
+    </div>
+    <span class="text-xs border border-gold text-gold px-3 py-1 rounded-full font-medium" style="border-color:#C9A84C;color:#C9A84C">CONFIDENTIAL</span>
+    <button onclick="exportPDF()" class="bg-gold hover:bg-yellow-300 text-navy font-bold px-4 py-1.5 rounded-lg text-xs transition-all" style="background:#C9A84C;color:#0A1628">导出PDF</button>
+  </div>
+</nav>
+
+<!-- ════════════════════ HERO SECTION ════════════════════ -->
+<section class="hero-bg text-white relative overflow-hidden" style="position:relative">
+  <div class="max-w-6xl mx-auto px-6 pt-12 pb-16 relative z-10">
+
+    <!-- Heading -->
+    <div class="text-center mb-10">
+      <div class="inline-block text-xs tracking-[0.3em] font-medium mb-3" style="color:#C9A84C">SEGREGATED FUND ADVISORY · 分隔基金现场方案</div>
+      <h1 class="serif font-bold leading-tight mb-2" style="font-size:clamp(28px, 5vw, 52px);">
+        兼顾<span style="color:#C9A84C">增长、保障与传承</span>的配置方案
+      </h1>
+      <p class="text-blue-200 text-base md:text-lg font-light mb-1">Compare Growth · Tax · Estate · Risk · Guarantees</p>
+      <div class="gold-stripe w-24 mx-auto mt-5"></div>
+    </div>
+
+    <!-- Tab Selector -->
+    <div class="flex justify-center mb-10">
+      <div class="inline-flex bg-white/5 backdrop-blur rounded-2xl p-1.5 border border-white/10">
+        <button onclick="switchTab('a')" id="tab-a" class="tab-btn px-6 py-3 rounded-xl text-sm font-semibold transition-all">
+          <span class="block text-xs opacity-60 mb-0.5">A</span>稳健型
+        </button>
+        <button onclick="switchTab('b')" id="tab-b" class="tab-btn px-6 py-3 rounded-xl text-sm font-semibold transition-all">
+          <span class="block text-xs opacity-60 mb-0.5">B</span>均衡型
+        </button>
+        <button onclick="switchTab('c')" id="tab-c" class="tab-btn px-6 py-3 rounded-xl text-sm font-semibold transition-all">
+          <span class="block text-xs opacity-60 mb-0.5">C</span>进取型
+        </button>
+      </div>
+    </div>
+
+    <!-- BIG METRIC BAR -->
+    <div id="big-metrics" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      <!-- Annual Return — PRIMARY KPI -->
+      <div class="text-center p-6 rounded-2xl relative overflow-hidden" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.5);box-shadow:0 0 32px rgba(201,168,76,.12)">
+        <div class="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style="background:linear-gradient(90deg,transparent,#C9A84C,transparent)"></div>
+        <div class="t-label mb-3">5年平均历史回报</div>
+        <div class="big-metric metric-72 flex items-baseline justify-center gap-0.5" style="color:#10B981">
+          <span style="font-size:0.5em;font-weight:800;line-height:1;flex-shrink:0">+</span><span id="m-return5" style="flex-shrink:0">0.0</span><span style="font-size:0.42em;font-weight:800;flex-shrink:0">%</span>
+        </div>
+        <div class="t-caption mt-2">Historical Average Return (5Y)</div>
+      </div>
+
+      <!-- Volatility -->
+      <div class="text-center p-5 rounded-2xl" id="card-vol" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+        <div class="t-label mb-3">组合波动率</div>
+        <div class="big-metric metric-48 text-white">
+          <span id="m-vol">0.0</span><span style="font-size:0.5em;font-weight:700">%</span>
+        </div>
+        <div class="t-caption mt-2">Volatility (Estimated)</div>
+      </div>
+
+      <!-- Max Drawdown -->
+      <div class="text-center p-5 rounded-2xl" id="card-dd" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+        <div class="t-label mb-3">预期最大回撤</div>
+        <div class="big-metric metric-48" style="color:#EF4444">
+          <span id="m-dd">0.0</span><span style="font-size:0.5em;font-weight:700">%</span>
+        </div>
+        <div class="t-caption mt-2">Max Drawdown (Estimated)</div>
+      </div>
+
+      <!-- Sharpe Ratio -->
+      <div class="text-center p-5 rounded-2xl" id="card-sharpe" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+        <div class="t-label mb-3">夏普比率</div>
+        <div class="big-metric metric-48 text-white">
+          <span id="m-sharpe">0.00</span>
+        </div>
+        <div class="t-caption mt-2">Sharpe Ratio (Estimated)</div>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-gray-400 mt-5 max-w-3xl mx-auto">
+      ★ 历史回报基于上述基金真实公开数据加权计算；波动率、最大回撤、夏普比率为基于组合构成的估算值。<br />
+      Past performance does not guarantee future results.
+    </p>
+
+  </div>
+</section>
+
+<!-- ════════════════════ MAIN CONTENT ════════════════════ -->
+<main class="max-w-6xl mx-auto px-4 md:px-6 -mt-8 pb-16 relative z-20">
+
+  <div id="portfolio-content" class="fade-in"></div>
+
+  <!-- ═══════════ Advisor Conversation Path ═══════════ -->
+  <div class="section-divider"><span>现场讲解路径 · Advisory Flow</span></div>
+  <section class="mt-0">
+    <div class="text-center mb-8">
+      <div class="t-label mb-3">CLIENT CONVERSATION</div>
+      <h2 class="t-display text-navy mb-2" style="color:#0A1628">先对齐需求，再讨论产品</h2>
+      <p class="t-caption">把客户从“只看利率”带到“增长、税务、法务、风险、传承”的完整决策框架</p>
+    </div>
+    <div class="advisor-path mb-6">
+      <div class="path-step">
+        <div class="path-step-num">1</div>
+        <h3 class="font-bold text-navy text-sm mb-2">现金与确定性</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">哪些资金必须短期确定、不可波动，适合留在 GIC 或现金类工具。</p>
+      </div>
+      <div class="path-step">
+        <div class="path-step-num">2</div>
+        <h3 class="font-bold text-navy text-sm mb-2">中长期增长</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">哪些资产有 5 年以上周期，需要参与市场增长、抵御通胀。</p>
+      </div>
+      <div class="path-step">
+        <div class="path-step-num">3</div>
+        <h3 class="font-bold text-navy text-sm mb-2">税务效率</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">比较利息收入、资本利得、合格股息及注册账户中的不同税务结果。</p>
+      </div>
+      <div class="path-step">
+        <div class="path-step-num">4</div>
+        <h3 class="font-bold text-navy text-sm mb-2">法务与传承</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">说明受益人指定、潜在债权人保护、绕过遗产认证等合同特性。</p>
+      </div>
+      <div class="path-step">
+        <div class="path-step-num">5</div>
+        <h3 class="font-bold text-navy text-sm mb-2">风险边界</h3>
+        <p class="text-xs text-gray-500 leading-relaxed">明确市场波动、最大回撤、保证条款边界和建议持有周期。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ GIC vs Seg Fund Positioning ═══════════ -->
+  <div class="section-divider"><span>产品对比 · Product Positioning</span></div>
+  <section class="mt-0 page-break">
+    <div class="text-center mb-8">
+      <div class="t-label mb-3">BEYOND GIC</div>
+      <h2 class="t-display text-navy mb-2" style="color:#0A1628">分离基金 ≠ 与 GIC 竞争</h2>
+      <p class="t-caption">两类产品定位不同 · 应作互补而非替代</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="lux-card p-6" style="border-top:3px solid #94A3B8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style="background:#F1F5F9">🏦</div>
+          <div>
+            <h3 class="font-bold text-navy text-lg">银行 GIC</h3>
+            <p class="text-xs text-gray-400">短期确定性需求</p>
+          </div>
+        </div>
+        <ul class="text-sm text-gray-600 space-y-2.5">
+          <li class="flex gap-2"><span class="text-green-600">✓</span>持有至到期，本金与利息由发行方保证</li>
+          <li class="flex gap-2"><span class="text-green-600">✓</span>CDIC 提供 $100,000 存款保险</li>
+          <li class="flex gap-2"><span class="text-red-500">✗</span>利息 <strong>100%</strong> 作为利息收入应税</li>
+          <li class="flex gap-2"><span class="text-red-500">✗</span>长期回报通常难以跑赢通胀</li>
+          <li class="flex gap-2"><span class="text-red-500">✗</span>到期前赎回受罚息或锁定</li>
+        </ul>
+      </div>
+
+      <div class="lux-card p-6" style="border-top:3px solid #C9A84C">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style="background:#FEF3C7">📈</div>
+          <div>
+            <h3 class="font-bold text-navy text-lg">分离账户基金</h3>
+            <p class="text-xs text-gray-400">中长期资产配置</p>
+          </div>
+        </div>
+        <ul class="text-sm text-gray-600 space-y-2.5">
+          <li class="flex gap-2"><span class="text-green-600">✓</span>分散化市场参与，由专业基金经理管理</li>
+          <li class="flex gap-2"><span class="text-green-600">✓</span>长期成长潜力，有助降低通胀风险</li>
+          <li class="flex gap-2"><span class="text-green-600">✓</span>含<strong>身故/到期保证</strong>合同条款（75%–100%）</li>
+          <li class="flex gap-2"><span class="text-green-600">✓</span>潜在债权人保护 / 绕过遗产认证</li>
+          <li class="flex gap-2"><span class="text-red-500">✗</span>市场价值波动，本金非保证（除合同保证外）</li>
+        </ul>
+      </div>
+    </div>
+    <div class="comparison-matrix mt-6">
+      <div class="matrix-cell matrix-head">客户关心的问题</div>
+      <div class="matrix-cell matrix-head">银行 GIC</div>
+      <div class="matrix-cell matrix-head">分隔基金</div>
+
+      <div class="matrix-cell font-semibold text-navy">投资回报</div>
+      <div class="matrix-cell matrix-muted">确定利率，通常更适合短期资金；长期增长空间有限。</div>
+      <div class="matrix-cell matrix-gold">参与股票、债券及全球资产增长，适合中长期配置。</div>
+
+      <div class="matrix-cell font-semibold text-navy">税务属性</div>
+      <div class="matrix-cell matrix-muted">非注册账户中利息通常 100% 作为收入应税。</div>
+      <div class="matrix-cell matrix-gold">分派可包含资本利得、合格股息、利息或本金返还，需按账户类型规划。</div>
+
+      <div class="matrix-cell font-semibold text-navy">法务/传承</div>
+      <div class="matrix-cell matrix-muted">以存款合同为主，传承效率取决于账户登记及遗产安排。</div>
+      <div class="matrix-cell matrix-gold">可指定受益人，可能绕过遗产认证，并具备潜在债权人保护。</div>
+
+      <div class="matrix-cell font-semibold text-navy">风险性</div>
+      <div class="matrix-cell matrix-muted">本金和利息较确定，但存在再投资利率风险和通胀风险。</div>
+      <div class="matrix-cell matrix-gold">市场价值会波动，但合同身故/到期保证可提供底线保护。</div>
+
+      <div class="matrix-cell font-semibold text-navy">适合资金</div>
+      <div class="matrix-cell matrix-muted">短期备用金、确定支出、不能承受波动的资金。</div>
+      <div class="matrix-cell matrix-gold">5 年以上中长期资产、退休收入规划、家庭传承资金。</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ LEGAL / TAX / RISK ACCORDION ═══════════ -->
+  <div class="section-divider"><span>法律声明 · Disclosures</span></div>
+  <section class="mt-0">
+    <div class="text-center mb-8">
+      <div class="t-label mb-3">DISCLOSURES</div>
+      <h2 class="t-display text-navy mb-2" style="color:#0A1628">法律 · 税务 · 风险声明</h2>
+      <p class="t-caption">Legal · Tax · Risk Disclosures</p>
+    </div>
+
+    <details class="accordion" open>
+      <summary>
+        <span class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#FEF3C7;color:#92400E">⚖</span>
+          法律声明 · Legal Disclaimer
+        </span>
+      </summary>
+      <div class="content">
+        <p class="mb-2"><strong>中文：</strong>本材料仅供参考，不构成投资建议或要约。过往业绩不代表未来表现。投资涉及风险，本金可能蒙受损失。</p>
+        <p class="mb-3"><strong>English:</strong> This material is for informational purposes only and does not constitute investment advice or an offer. Past performance is not indicative of future results. Investment involves risks including possible loss of principal.</p>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>
+        <span class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#DBEAFE;color:#1E40AF">📊</span>
+          税务提示 · Tax Considerations
+        </span>
+      </summary>
+      <div class="content">
+        <p class="mb-2"><strong>中文：</strong>不同投资者的税务处理因个人情况而异，建议咨询专业税务顾问。</p>
+        <p class="mb-3"><strong>English:</strong> Tax treatment varies by individual circumstances. Please consult your tax advisor.</p>
+        <ul class="space-y-1.5 text-xs list-disc pl-5">
+          <li>GIC 利息收入在非注册账户中通常按 100% 作为普通收入应税</li>
+          <li>分离基金分派可能包括资本利得（50% 计入应税）、合格股息（享股息税收抵免）、利息或本金返还</li>
+          <li>TFSA / RRSP / RRIF / 非注册账户应分别规划，配合分离基金优化整体税务效率</li>
+          <li><span class="text-gray-400">[离岸账户/分离账户结构税务特别说明 — 由客户经理根据个案补充]</span></li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>
+        <span class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#FEE2E2;color:#B91C1C">⚠</span>
+          风险披露 · Risk Disclosure
+        </span>
+      </summary>
+      <div class="content">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+          <div class="rounded-lg p-3" style="background:#FEF2F2;border:1px solid #FECACA">
+            <div class="font-semibold text-red-700 text-xs mb-1">市场风险 Market Risk</div>
+            <p class="text-xs text-gray-600">分离基金价值随股票/债券市场波动；短期内可能出现显著下跌。</p>
+          </div>
+          <div class="rounded-lg p-3" style="background:#FEF2F2;border:1px solid #FECACA">
+            <div class="font-semibold text-red-700 text-xs mb-1">流动性风险 Liquidity Risk</div>
+            <p class="text-xs text-gray-600">部分赎回可能影响合同保证额度的计算；通常不建议短期频繁交易。</p>
+          </div>
+          <div class="rounded-lg p-3" style="background:#FEF2F2;border:1px solid #FECACA">
+            <div class="font-semibold text-red-700 text-xs mb-1">汇率风险 Currency Risk</div>
+            <p class="text-xs text-gray-600">投资于非加元资产的基金面临汇率波动；可能放大或缩小回报。</p>
+          </div>
+        </div>
+        <p class="text-xs">投资者应仔细阅读 <strong>Fund Facts</strong> 和 <strong>Information Folder</strong>，了解全部风险后再做投资决定。</p>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>
+        <span class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#E0E7FF;color:#3730A3">📑</span>
+          数据来源与方法论 · Data Sources &amp; Methodology
+        </span>
+      </summary>
+      <div class="content">
+        <ul class="space-y-2 text-xs list-disc pl-5">
+          <li><strong>基金表现数据：</strong>Equitable Life Fund Performance Database (<span class="en">equitablelife.fundata.com</span>)；回报已扣除 MER</li>
+          <li><strong>资产/行业/地区配置：</strong>基于 Fund Facts 及底层指数构成（Vanguard / Invesco / Fidelity）的合理估算</li>
+          <li><strong>加权历史回报：</strong>Σ(基金配置% × 基金真实历史回报)；数据缺失基金按可用权重归一化</li>
+          <li><strong>波动率 / 最大回撤 / 夏普比率：</strong>基于组合构成及历史基金波动估算，非精确测算</li>
+          <li>数据每小时自动刷新（如配置 API 接入）；当前为 JSON 静态数据模式</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════ 客户经理联系卡片 ═══════════ -->
+  <div class="section-divider"><span>您的专属顾问 · Your Advisor</span></div>
+  <section class="mt-0">
+    <div class="lux-card-dark advisor-card p-8" style="background:linear-gradient(135deg,#0A1628 0%,#1A2D4D 100%)">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+        <div class="lg:col-span-1 text-center lg:text-left">
+          <img src="triton-logo.png" alt="Triton Wealth" style="height:80px;width:auto;margin:0 auto;" class="lg:mx-0" onerror="this.style.display='none'" />
+          <div class="text-gold tracking-widest text-xs mt-3" style="color:#C9A84C">TRITON WEALTH MANAGEMENT</div>
+          <div class="text-white/60 text-xs mt-1">富瑞财富管理 · 私人财富顾问</div>
+        </div>
+        <div class="lg:col-span-2">
+          <div class="text-xs tracking-[0.3em] mb-2" style="color:#C9A84C">YOUR DEDICATED ADVISOR</div>
+          <h3 class="serif text-2xl font-bold mb-1">您的专属客户经理</h3>
+          <p class="text-white/60 text-sm mb-5">如对本提案有任何疑问，请随时联系</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.15)">
+              <div class="text-[10px] tracking-widest mb-1" style="color:#C9A84C">姓名 NAME</div>
+              <div class="font-semibold text-base text-white">Jeffrey Yuan</div>
+              <div class="text-xs text-white/50 mt-1">Independent Broker</div>
+            </div>
+            <div class="p-4 rounded-xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.15)">
+              <div class="text-[10px] tracking-widest mb-1" style="color:#C9A84C">电话 PHONE</div>
+              <div class="font-semibold text-base text-white en">778-837-6688</div>
+              <div class="text-xs text-white/50 mt-1">Mon–Fri 9:00–18:00 PST</div>
+            </div>
+            <div class="p-4 rounded-xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.15)">
+              <div class="text-[10px] tracking-widest mb-1" style="color:#C9A84C">邮箱 EMAIL</div>
+              <div class="font-semibold text-sm text-white en break-all">Jeffrey.Yuan@TritonWealth.ca</div>
+              <div class="text-xs text-white/50 mt-1">回复时间 24h 内</div>
+            </div>
+          </div>
+
+          <div class="gold-stripe w-full mt-6 mb-5" style="background:linear-gradient(90deg,transparent,#C9A84C,transparent);height:1px;"></div>
+
+          <!-- Brand Pillars -->
+          <div class="grid grid-cols-3 gap-4 mb-5">
+            <div class="text-center">
+              <div class="t-num-sm" style="color:#C9A84C">独立</div>
+              <div class="text-white/45 text-xs mt-1 leading-relaxed">Independent<br>No proprietary funds</div>
+            </div>
+            <div class="text-center">
+              <div class="t-num-sm" style="color:#C9A84C">透明</div>
+              <div class="text-white/45 text-xs mt-1 leading-relaxed">Transparent<br>Full cost disclosure</div>
+            </div>
+            <div class="text-center">
+              <div class="t-num-sm" style="color:#C9A84C">专注</div>
+              <div class="text-white/45 text-xs mt-1 leading-relaxed">Focused<br>High-net-worth clients</div>
+            </div>
+          </div>
+
+          <!-- Closing Quote -->
+          <p class="text-center text-white/35 text-xs italic mb-4 leading-relaxed">
+            "Protecting and growing generational wealth — one family at a time."
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center text-xs text-white/30 gap-2">
+            <span class="en">www.tritonwealth.ca</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="mt-10 text-center text-xs text-gray-500 leading-relaxed">
+    <div class="gold-stripe w-32 mx-auto mb-5"></div>
+    <p>© 2026 Triton Wealth Management Corporation · 富瑞财富管理 · www.tritonwealth.ca</p>
+    <p class="mt-1">报告生成日期：<span id="report-date">2026年5月</span> | 数据截至：<span id="footer-asof">--</span></p>
+  </footer>
+
+</main>
+
+<!-- ════════════════════ PDF LAYOUT (hidden; built by JS before print) ════════ -->
+<div id="pdf-body"></div>
+
+<!-- ════════════════════ DATA & LOGIC ════════════════════ -->
+<script>
+// ════════════════════════════════════════════════════════════════════
+// DATA CONFIG · 实时数据源配置（预留 API 接入）
+// ════════════════════════════════════════════════════════════════════
+const DATA_CONFIG = {
+  updateInterval: 3600000, // 每小时自动刷新（毫秒）
+  dataSources: {
+    bloomberg:   { endpoint: '', apiKey: '' },
+    morningstar: { endpoint: '', apiKey: '' },
+    custom:      { endpoint: './portfolio_data.json' }
+  }
+};
+
+// ════════════════════════════════════════════════════════════════════
+// FALLBACK DATA · 当 fetch 失败（file://）时使用的内嵌数据
+// ════════════════════════════════════════════════════════════════════
+const FALLBACK_DATA = {
+  "lastUpdated": "2026-04-30T16:00:00-04:00",
+  "asOfLabel": "2026年4月30日",
+  "benchmarks": {
+    "sp500":      { "label":"S&P 500",   "y1":30.0, "y3":20.0, "y5":13.2, "ytd":3.7 },
+    "msci_world": { "label":"MSCI World","y1":28.0, "y3":17.5, "y5":11.8, "ytd":4.5 },
+    "gic_5yr":    { "label":"5Y GIC",    "y1":3.5,  "y3":3.4,  "y5":3.2,  "ytd":1.4 }
+  },
+  "portfolios": {
+    "a": {
+      "id":"a", "name":"稳健型组合", "nameEN":"Conservative Portfolio",
+      "tagline":"防守优先 · 稳定现金流",
+      "riskLevel":2, "horizon":"5–10 年",
+      "objective":"以收益型与低波动资产为核心，降低组合回撤，争取明显优于定存的中长期复合增长。",
+      "suitableClient":"风险承受度较低、接近退休或已退休、希望减少市场波动但仍保留长期增长潜力的客户。",
+      "metrics":{ "annualReturn3Y":13.55, "annualReturn5Y":9.41, "annualReturn1Y":24.25, "ytdReturn":5.69, "volatility":7.8, "maxDrawdown":-9.5, "sharpeRatio":1.20, "vsSP500_3Y":-6.45, "vsMSCI_3Y":-3.95 },
+      "funds":[
+        { "name":"Fidelity® Tactical High Income",      "alloc":50, "role":"收益核心",    "y1":24.6, "y3":11.4, "y5":7.3,  "ytd":5.6, "mer":2.82 },
+        { "name":"MFS Low Volatility Canadian Equity",   "alloc":20, "role":"低波动加股",  "y1":21.2, "y3":16.0, "y5":11.4, "ytd":4.4, "mer":2.60 },
+        { "name":"Fidelity® Dividend",                  "alloc":15, "role":"股息成长",    "y1":24.4, "y3":13.6, "y5":11.2, "ytd":8.3, "mer":2.80 },
+        { "name":"Vanguard Canada Index ETF",           "alloc":5,  "role":"加股市场宽度","y1":32.7, "y3":18.5, "y5":13.4, "ytd":6.4, "mer":2.48 },
+        { "name":"Vanguard S&P 500 Index ETF",          "alloc":5,  "role":"美股核心",    "y1":30.0, "y3":20.0, "y5":13.2, "ytd":3.7, "mer":2.33 },
+        { "name":"Fidelity® Global Equity+ Balanced",    "alloc":5,  "role":"全球稳定器",  "y1":18.4, "y3":null, "y5":null, "ytd":4.9, "mer":2.76 }
+      ],
+      "asset":  { "labels":["收益型 Income","股票 Equity","均衡 Balanced"], "data":[50,45,5] },
+      "sector": { "labels":["固收/收益","金融","医疗保健","能源","日常消费","科技","工业","非必需消费","通讯服务"], "data":[39,17,10,10,8,7,5,3,1] },
+      "geo":    { "labels":["加拿大","美国","国际发达市场","全球/多区域","新兴市场"], "data":[42,24,18,11,5] }
+    },
+    "b": {
+      "id":"b", "name":"均衡型组合", "nameEN":"Balanced Portfolio",
+      "tagline":"成长增强 · 全球分散",
+      "riskLevel":3, "horizon":"5–10 年",
+      "objective":"在可接受中等波动的前提下，提高美股、全球价值与国际股票配置，明显拉开与稳健型的增长目标。",
+      "suitableClient":"希望提升长期增长潜力、可接受中等市场波动、投资期 5 年以上的成长型客户。",
+      "metrics":{ "annualReturn3Y":18.87, "annualReturn5Y":12.34, "annualReturn1Y":30.77, "ytdReturn":6.04, "volatility":13.5, "maxDrawdown":-18.5, "sharpeRatio":1.18, "vsSP500_3Y":-1.13, "vsMSCI_3Y":1.37 },
+      "funds":[
+        { "name":"Vanguard S&P 500 Index ETF",            "alloc":24, "role":"美股核心引擎", "y1":30.0, "y3":20.0, "y5":13.2, "ytd":3.7, "mer":2.33 },
+        { "name":"Fidelity® U.S. Focused Stock",           "alloc":16, "role":"美股成长增强","y1":45.5, "y3":26.0, "y5":14.8, "ytd":11.9, "mer":2.84 },
+        { "name":"Brandes Global Equity",                 "alloc":20, "role":"全球价值",    "y1":24.6, "y3":18.5, "y5":13.5, "ytd":1.3, "mer":2.83 },
+        { "name":"Vanguard Canada Index ETF",             "alloc":15, "role":"本国核心",    "y1":32.7, "y3":18.5, "y5":13.4, "ytd":6.4, "mer":2.48 },
+        { "name":"Vanguard Developed All Cap ex NA ETF",   "alloc":15, "role":"国际分散",    "y1":30.0, "y3":15.3, "y5":9.1,  "ytd":8.1, "mer":2.50 },
+        { "name":"Fidelity® Tactical High Income",         "alloc":10, "role":"收益缓冲",    "y1":24.6, "y3":11.4, "y5":7.3,  "ytd":5.6, "mer":2.82 }
+      ],
+      "asset":  { "labels":["股票 Equity","收益型 Income"], "data":[90,10] },
+      "sector": { "labels":["科技","金融","医疗保健","非必需消费","工业","能源","通讯服务","固收/收益","其他"], "data":[24,18,12,11,9,8,8,6,4] },
+      "geo":    { "labels":["美国","加拿大","国际发达市场","全球/多区域","新兴市场"], "data":[45,24,20,6,5] }
+    },
+    "c": {
+      "id":"c", "name":"进取型组合", "nameEN":"Growth Portfolio",
+      "tagline":"长期资本增长 · 科技与创新主导",
+      "riskLevel":4, "horizon":"7–10+ 年",
+      "objective":"追求中长期资本增长，重仓美股成长、科技与全球创新主题、新兴市场。波动较高。",
+      "suitableClient":"追求资本增长、能承受较大短期市场波动、投资期 7 年以上的积极型客户。",
+      "metrics":{ "annualReturn3Y":29.13, "annualReturn5Y":14.97, "annualReturn1Y":49.96, "ytdReturn":13.19, "volatility":17.0, "maxDrawdown":-25.0, "sharpeRatio":1.57, "vsSP500_3Y":9.13, "vsMSCI_3Y":11.63 },
+      "funds":[
+        { "name":"Fidelity® U.S. Focused Stock",          "alloc":22, "role":"美股成长龙头","y1":45.5, "y3":26.0, "y5":14.8, "ytd":11.9, "mer":2.84 },
+        { "name":"Fidelity® Global Innovators",           "alloc":20, "role":"创新核心",    "y1":66.0, "y3":42.3, "y5":18.7, "ytd":21.9, "mer":2.89 },
+        { "name":"Invesco NASDAQ 100 Index ETF",          "alloc":18, "role":"科技敞口",    "y1":43.1, "y3":27.5, "y5":null, "ytd":6.8,  "mer":2.38 },
+        { "name":"Fidelity® Special Situations",          "alloc":15, "role":"Alpha 引擎",  "y1":62.8, "y3":31.1, "y5":16.0, "ytd":18.1, "mer":3.05 },
+        { "name":"Vanguard S&P 500 Index ETF",            "alloc":15, "role":"市场锚定",    "y1":30.0, "y3":20.0, "y5":13.2, "ytd":3.7,  "mer":2.33 },
+        { "name":"Mackenzie Emerging Markets",            "alloc":10, "role":"新兴市场引擎","y1":50.7, "y3":23.3, "y5":9.0,  "ytd":17.0, "mer":2.86 }
+      ],
+      "asset":  { "labels":["股票 Equity","现金与防御"], "data":[97,3] },
+      "sector": { "labels":["科技","非必需消费","医疗保健","通讯服务","金融","工业","日常消费","能源","其他"], "data":[34,13,12,11,10,8,5,3,4] },
+      "geo":    { "labels":["美国","国际发达市场","新兴市场","加拿大","全球/多区域"], "data":[52,16,15,10,7] }
+    }
+  }
+};
+
+// ════════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════════
+let APP_DATA = null;
+let currentTab = 'a';
+let CH = { fund:null, asset:null, sector:null, geo:null, growth:null };
+const FUND_PALETTE   = ['#3B82F6','#C9A84C','#10B981','#8B5CF6','#EF4444','#14B8A6'];
+const ASSET_PALETTE  = ['#3B82F6','#C9A84C','#10B981','#8B5CF6'];
+const SECTOR_PALETTE = ['#3B82F6','#10B981','#C9A84C','#8B5CF6','#EF4444','#14B8A6','#F59E0B','#F472B6','#64748B'];
+const GEO_PALETTE    = ['#EF4444','#3B82F6','#10B981','#F59E0B','#8B5CF6'];
+const TAB_COLORS = { a:'#3B82F6', b:'#10B981', c:'#C9A84C' };
+const SEG_TAX_DATA_FALLBACK = {
+  2026: {
+    year: 2026,
+    status: '2026 · Built-in fallback',
+    sourceNote: '2026 fallback based on CRA federal rates plus AB, BC and ON published provincial brackets. Capital gains use a simplified 50% inclusion rate.',
+    provinces: {
+      ON: {
+        label: 'Ontario',
+        brackets: [
+          { id:'ON_01', labelEN:'Ontario 1', range:'Up to $53,891', interest:0.1905, capGain:0.0953 },
+          { id:'ON_02', labelEN:'Ontario 2', range:'$53,891-$58,523', interest:0.2315, capGain:0.1158 },
+          { id:'ON_MID', labelEN:'Ontario Mid', range:'$58,523-$107,785', interest:0.2965, capGain:0.1483 },
+          { id:'ON_04', labelEN:'Ontario 4', range:'$107,785-$117,045', interest:0.3166, capGain:0.1583 },
+          { id:'ON_05', labelEN:'Ontario 5', range:'$117,045-$150,000', interest:0.3716, capGain:0.1858 },
+          { id:'ON_06', labelEN:'Ontario 6', range:'$150,000-$181,440', interest:0.4341, capGain:0.2171 },
+          { id:'ON_07', labelEN:'Ontario 7', range:'$181,440-$220,000', interest:0.4829, capGain:0.2415 },
+          { id:'ON_HIGH', labelEN:'Ontario High', range:'$220,000-$258,482', interest:0.4953, capGain:0.2477 },
+          { id:'ON_TOP', labelEN:'Ontario Top', range:'>$258,482', interest:0.5353, capGain:0.2677 },
+        ]
+      },
+      BC: {
+        label: 'British Columbia',
+        brackets: [
+          { id:'BC_01', labelEN:'BC 1', range:'Up to $50,363', interest:0.1960, capGain:0.0980 },
+          { id:'BC_02', labelEN:'BC 2', range:'$50,363-$58,523', interest:0.2170, capGain:0.1085 },
+          { id:'BC_MID', labelEN:'BC Mid', range:'$58,523-$100,728', interest:0.2820, capGain:0.1410 },
+          { id:'BC_04', labelEN:'BC 4', range:'$100,728-$115,648', interest:0.3100, capGain:0.1550 },
+          { id:'BC_05', labelEN:'BC 5', range:'$115,648-$117,045', interest:0.3279, capGain:0.1640 },
+          { id:'BC_UPPER', labelEN:'BC Upper', range:'$117,045-$140,430', interest:0.3829, capGain:0.1915 },
+          { id:'BC_07', labelEN:'BC 7', range:'$140,430-$181,440', interest:0.4070, capGain:0.2035 },
+          { id:'BC_08', labelEN:'BC 8', range:'$181,440-$190,405', interest:0.4370, capGain:0.2185 },
+          { id:'BC_HIGH', labelEN:'BC High', range:'$190,405-$258,482', interest:0.4580, capGain:0.2290 },
+          { id:'BC_10', labelEN:'BC 10', range:'$258,482-$265,545', interest:0.4980, capGain:0.2490 },
+          { id:'BC_TOP', labelEN:'BC Top', range:'>$265,545', interest:0.5350, capGain:0.2675 },
+        ]
+      },
+      AB: {
+        label: 'Alberta',
+        brackets: [
+          { id:'AB_01', labelEN:'Alberta 1', range:'Up to $58,523', interest:0.2200, capGain:0.1100 },
+          { id:'AB_02', labelEN:'Alberta 2', range:'$58,523-$61,200', interest:0.2850, capGain:0.1425 },
+          { id:'AB_MID', labelEN:'Alberta Mid', range:'$61,200-$117,045', interest:0.3050, capGain:0.1525 },
+          { id:'AB_04', labelEN:'Alberta 4', range:'$117,045-$154,259', interest:0.3600, capGain:0.1800 },
+          { id:'AB_05', labelEN:'Alberta 5', range:'$154,259-$181,440', interest:0.3800, capGain:0.1900 },
+          { id:'AB_06', labelEN:'Alberta 6', range:'$181,440-$185,111', interest:0.4100, capGain:0.2050 },
+          { id:'AB_HIGH', labelEN:'Alberta High', range:'$185,111-$246,813', interest:0.4200, capGain:0.2100 },
+          { id:'AB_08', labelEN:'Alberta 8', range:'$246,813-$258,482', interest:0.4300, capGain:0.2150 },
+          { id:'AB_09', labelEN:'Alberta 9', range:'$258,482-$370,220', interest:0.4700, capGain:0.2350 },
+          { id:'AB_TOP', labelEN:'Alberta Top', range:'>$370,220', interest:0.4800, capGain:0.2400 },
+        ]
+      }
+    }
+  }
+};
+let SEG_TAX_DATA = SEG_TAX_DATA_FALLBACK[2026];
+let segTaxState = { province: 'BC', taxBracketId: 'BC_TOP' };
+
+// ════════════════════════════════════════════════════════════════════
+// DATA LOADING — fetch JSON, fallback to inline data if blocked
+// ════════════════════════════════════════════════════════════════════
+async function loadData(forceRefresh=false) {
+  const refreshBtn = document.getElementById('refresh-btn');
+  if (refreshBtn) refreshBtn.classList.add('refresh-spin');
+
+  try {
+    const url = DATA_CONFIG.dataSources.custom.endpoint;
+    const sep = url.includes('?') ? '&' : '?';
+    const res = await fetch(url + sep + 't=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    APP_DATA = await res.json();
+  } catch (e) {
+    console.warn('Fetch failed, using FALLBACK_DATA:', e.message);
+    APP_DATA = FALLBACK_DATA;
+  }
+
+  // Update last-updated UI
+  const ts = APP_DATA.lastUpdated ? new Date(APP_DATA.lastUpdated) : new Date();
+  document.getElementById('last-updated-display').textContent =
+    ts.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit'}) + ' ' +
+    ts.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
+  document.getElementById('footer-asof').textContent = APP_DATA.asOfLabel || '--';
+
+  setTimeout(()=>{ if(refreshBtn) refreshBtn.classList.remove('refresh-spin'); }, 600);
+}
+
+async function refreshData() {
+  // Show skeleton
+  document.getElementById('portfolio-content').innerHTML = skeletonHTML();
+  await loadData(true);
+  renderAll();
+}
+
+// Auto-refresh interval
+setInterval(()=>{ loadData(true).then(renderAll); }, DATA_CONFIG.updateInterval);
+
+// ════════════════════════════════════════════════════════════════════
+// COUNT UP ANIMATION
+// ════════════════════════════════════════════════════════════════════
+function countUp(elId, target, decimals=1, duration=1400) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const start = parseFloat(el.textContent.replace(/[^0-9.-]/g,'')) || 0;
+  const startTime = performance.now();
+  function tick(now) {
+    const p = Math.min((now-startTime)/duration, 1);
+    const eased = 1 - Math.pow(1-p, 3);
+    const val = start + (target-start)*eased;
+    el.textContent = val.toFixed(decimals);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function getSegProvinceData() {
+  return SEG_TAX_DATA.provinces[segTaxState.province] || SEG_TAX_DATA.provinces.ON;
+}
+
+function getSelectedSegTaxBracket() {
+  const province = getSegProvinceData();
+  return province.brackets.find(b => b.id === segTaxState.taxBracketId) || province.brackets[province.brackets.length - 1];
+}
+
+function segTaxProvinceOptions() {
+  return ['BC','AB','ON'].map(code => {
+    const p = SEG_TAX_DATA.provinces[code];
+    return `<option value="${code}" ${code === segTaxState.province ? 'selected' : ''}>${p.label}</option>`;
+  }).join('');
+}
+
+function segTaxBracketOptions() {
+  const p = getSegProvinceData();
+  if (!p.brackets.some(b => b.id === segTaxState.taxBracketId)) {
+    segTaxState.taxBracketId = p.brackets[p.brackets.length - 1].id;
+  }
+  return p.brackets.map(b =>
+    `<option value="${b.id}" ${b.id === segTaxState.taxBracketId ? 'selected' : ''}>${b.labelEN} · ${b.range} · ${(b.interest*100).toFixed(2)}%</option>`
+  ).join('');
+}
+
+function onSegTaxProvinceChange() {
+  segTaxState.province = document.getElementById('segTaxProvince').value;
+  const p = getSegProvinceData();
+  segTaxState.taxBracketId = p.brackets[p.brackets.length - 1].id;
+  renderAll();
+}
+
+function onSegTaxBracketChange() {
+  segTaxState.taxBracketId = document.getElementById('segTaxBracket').value;
+  renderAll();
+}
+
+function calculateTaxComparison(growthAmount) {
+  const b = getSelectedSegTaxBracket();
+  const gicTax = growthAmount * b.interest;
+  const segTax = growthAmount * b.capGain;
+  return { bracket: b, gicTax, segTax, difference: gicTax - segTax };
+}
+
+// ════════════════════════════════════════════════════════════════════
+// SKELETON HTML
+// ════════════════════════════════════════════════════════════════════
+function skeletonHTML() {
+  return `
+    <div class="lux-card p-6 mb-6">
+      <div class="skeleton h-6 w-48 mb-4"></div>
+      <div class="skeleton h-4 w-full mb-2"></div>
+      <div class="skeleton h-4 w-3/4"></div>
+    </div>
+    <div class="grid grid-cols-2 gap-6 mb-6">
+      <div class="lux-card p-6"><div class="skeleton h-64 w-full"></div></div>
+      <div class="lux-card p-6"><div class="skeleton h-64 w-full"></div></div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════════
+// RENDER PORTFOLIO
+// ════════════════════════════════════════════════════════════════════
+function renderPortfolio(d, color) {
+  const stars = n => [1,2,3,4,5].map(i=>`<div class="rdot" style="${i<=n?`background:${color};color:#fff`:'background:#E5E7EB;color:#9CA3AF'}">${i}</div>`).join('');
+  const FUND_PAL = FUND_PALETTE;
+  const fmtPct = (v) => {
+    if (v===null || v===undefined) return '<span class="data-na">N/A</span>';
+    const bg = v >= 0 ? 'rgba(16,185,129,.13)' : 'rgba(239,68,68,.13)';
+    const fg = v >= 0 ? '#047857' : '#B91C1C';
+    return `<span class="data-cell font-bold text-xs px-2 py-0.5 rounded-md inline-block" style="background:${bg};color:${fg}">${v>0?'+':''}${v.toFixed(1)}%</span>`;
+  };
+
+  const funds5y = d.funds.filter(f=>f.y5!==null);
+  const total5yAlloc = funds5y.reduce((s,f)=>s+f.alloc,0);
+  const weighted5y = total5yAlloc>0 ? funds5y.reduce((s,f)=>s+f.y5*f.alloc,0)/total5yAlloc : null;
+
+  // Fund rows
+  const fundRows = d.funds.map((f,i)=>{
+    return `
+      <tr>
+        <td class="pl-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-3 h-3 rounded-full flex-shrink-0" style="background:${FUND_PAL[i%FUND_PAL.length]}"></div>
+            <span class="font-medium text-navy text-[11px] en leading-tight">Equitable ${f.name}</span>
+          </div>
+        </td>
+        <td class="text-right pr-3">
+          <span class="font-extrabold text-sm data-cell" style="color:${color}">${f.alloc}%</span>
+          <div class="mini-bar w-12 ml-auto mt-1" style="height:5px"><div class="mini-bar-fill" style="width:${Math.min(f.alloc*3.3,100)}%;background:${color}"></div></div>
+        </td>
+        <td class="text-right pr-3">${fmtPct(f.y1)}</td>
+        <td class="text-right pr-3">${fmtPct(f.y5)}</td>
+        <td class="text-right pr-3">${fmtPct(f.ytd)}</td>
+        <td class="px-2"><span class="badge text-white text-[10px]" style="background:${color}">${f.role}</span></td>
+      </tr>`;
+  }).join('');
+  const fundCards = d.funds.map((f,i)=>`
+    <div class="p-4 rounded-lg" style="background:${i%2===0?'#FFFFFF':'#F8FAFC'};border:1px solid #E2E8F0">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-3 h-3 rounded-full flex-shrink-0 mt-1" style="background:${FUND_PAL[i%FUND_PAL.length]}"></div>
+        <div class="min-w-0 flex-1">
+          <div class="font-semibold text-navy text-xs en leading-snug">Equitable ${f.name}</div>
+          <div class="mt-2"><span class="badge text-white text-[10px]" style="background:${color}">${f.role}</span></div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="t-label mb-1" style="color:#94A3B8">配置</div>
+          <div class="font-extrabold text-base data-cell" style="color:${color}">${f.alloc}%</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div><div class="t-label mb-1" style="color:#94A3B8">1Y</div>${fmtPct(f.y1)}</div>
+        <div><div class="t-label mb-1" style="color:#94A3B8">5Y</div>${fmtPct(f.y5)}</div>
+        <div><div class="t-label mb-1" style="color:#94A3B8">YTD</div>${fmtPct(f.ytd)}</div>
+      </div>
+    </div>`).join('');
+  const scenarioPrincipal = 100000;
+  const scenarioYears = [1, 3, 5, 10];
+  const gicRate = APP_DATA.benchmarks.gic_5yr.y5;
+  const futureValue = (rate, years) => scenarioPrincipal * Math.pow(1 + rate / 100, years);
+  const fmtMoney = (v) => '$' + Math.round(v).toLocaleString();
+  const tax5 = calculateTaxComparison(10000);
+  const tax10 = calculateTaxComparison(25000);
+  const taxProvince = getSegProvinceData();
+  const taxBracket = getSelectedSegTaxBracket();
+  const taxCard = (label, growth, tax) => `
+    <div class="p-4 rounded-xl" style="background:#FFFFFF;border:1px solid #E2E8F0">
+      <div class="t-label mb-1.5" style="color:#94A3B8">${label}</div>
+      <div class="text-xs text-gray-500 mb-3">同等增长金额 ${fmtMoney(growth)} 的税务示意</div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <div class="text-[10px] text-gray-400 mb-1">GIC 利息税</div>
+          <div class="font-extrabold en" style="color:#B91C1C">${fmtMoney(tax.gicTax)}</div>
+        </div>
+        <div>
+          <div class="text-[10px] text-gray-400 mb-1">Seg Fund 资本利得税</div>
+          <div class="font-extrabold en" style="color:#047857">${fmtMoney(tax.segTax)}</div>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500">税务差额约 <span class="font-extrabold en" style="color:#0A1628">${fmtMoney(tax.difference)}</span></div>
+    </div>`;
+  const scenarioRows = scenarioYears.map(y => `
+    <tr>
+      <td class="py-3 px-3 font-bold text-navy">${y} 年后</td>
+      <td class="py-3 px-3 text-right font-extrabold en text-gray-500">${fmtMoney(futureValue(gicRate, y))}</td>
+      <td class="py-3 px-3 text-right font-extrabold en" style="color:#9A7B2E">${fmtMoney(futureValue(d.metrics.annualReturn5Y, y))}</td>
+    </tr>`).join('');
+
+  document.getElementById('portfolio-content').innerHTML = `
+
+    <!-- ═══ Your Customized Portfolio Header ═══ -->
+    <div class="text-center mb-6 mt-2">
+      <div class="t-label mb-3" style="color:${color}">YOUR CUSTOMIZED PORTFOLIO</div>
+      <h2 class="t-display text-navy mb-1" style="color:#0A1628">您的专属组合配置</h2>
+      <p class="t-caption mt-2">${d.name} · <span class="en">${d.nameEN}</span> · ${d.tagline}</p>
+    </div>
+
+    <!-- ═══ Overview Card ═══ -->
+    <div class="lux-card p-6 mb-6" style="border-top:4px solid ${color}">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="badge text-white" style="background:${color}">${d.name}</span>
+            <span class="text-xs text-gray-400">${d.nameEN}</span>
+          </div>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-sm font-medium text-gray-500">风险等级：</span>
+            <div class="flex">${stars(d.riskLevel)}</div>
+          </div>
+          <div class="space-y-2 text-sm">
+            <div><strong class="text-navy">投资目标：</strong><span class="text-gray-600">${d.objective}</span></div>
+            <div><strong class="text-navy">建议投资期：</strong><span class="text-gray-600">${d.horizon}</span></div>
+            <div><strong class="text-navy">适合客户：</strong><span class="text-gray-600">${d.suitableClient}</span></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-4 rounded-xl text-center" style="background:#F8FAFC;border:1px solid #E5E7EB">
+            <div class="t-label mb-1.5" style="color:#94A3B8">YTD</div>
+            <div class="t-num-sm" style="color:${d.metrics.ytdReturn>=0?'#047857':'#B91C1C'}">+${d.metrics.ytdReturn.toFixed(1)}%</div>
+          </div>
+          <div class="p-4 rounded-xl text-center" style="background:#F8FAFC;border:1px solid #E5E7EB">
+            <div class="t-label mb-1.5" style="color:#94A3B8">1Y</div>
+            <div class="t-num-sm" style="color:#047857">+${d.metrics.annualReturn1Y.toFixed(1)}%</div>
+          </div>
+          <div class="p-4 rounded-xl text-center" style="background:#F8FAFC;border:1px solid #E5E7EB">
+            <div class="t-label mb-1.5" style="color:#94A3B8">5Y 平均回报</div>
+            <div class="t-num-sm" style="color:#047857">+${d.metrics.annualReturn5Y.toFixed(1)}%</div>
+          </div>
+          <div class="p-4 rounded-xl text-center" style="background:#F8FAFC;border:1px solid #E5E7EB">
+            <div class="t-label mb-1.5" style="color:#94A3B8">vs 5Y GIC</div>
+            <div class="t-num-sm" style="color:${(d.metrics.annualReturn5Y-gicRate)>=0?'#047857':'#B91C1C'}">${(d.metrics.annualReturn5Y-gicRate)>=0?'+':''}${(d.metrics.annualReturn5Y-gicRate).toFixed(1)}%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Fund Allocation Table ═══ -->
+    <div class="section-divider"><span>基金配置明细 · Portfolio Constituents</span></div>
+    <div class="lux-card p-6 mb-6">
+      <div class="flex items-end justify-between mb-4">
+        <div>
+          <h3 class="t-section text-navy">组合基金配置</h3>
+          <p class="t-caption mt-0.5">6 funds · Real historical returns net of MER</p>
+        </div>
+        <span class="t-caption italic">Source: equitablelife.fundata.com</span>
+      </div>
+      <div class="md:hidden space-y-3">${fundCards}</div>
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full fund-table">
+          <thead>
+            <tr>
+              <th class="text-left">基金 Fund</th>
+              <th class="text-right">配置%</th>
+              <th class="text-right">1Y 回报</th>
+              <th class="text-right">5Y 平均</th>
+              <th class="text-right">YTD</th>
+              <th class="text-left">角色定位</th>
+            </tr>
+          </thead>
+          <tbody>${fundRows}</tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" class="text-left pl-3 text-navy font-bold text-xs">组合加权 5Y 平均回报</td>
+              <td></td>
+              <td class="text-right pr-3">${weighted5y!==null?fmtPct(weighted5y):'<span class="data-na">N/A</span>'}</td>
+              <td></td>
+              <td class="text-right pr-3 text-[10px] text-gray-400 italic">weighted avg</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ Long-term value scenario ═══ -->
+    <div class="section-divider"><span>长期持有情景 · Account Value Scenario</span></div>
+    <div class="lux-card p-6 mb-6" style="border-top:4px solid ${color}">
+      <div class="flex items-start justify-between gap-4 mb-5 flex-wrap">
+        <div>
+          <h3 class="t-section text-navy">如果长期持有，历史情景下账户价值如何变化？</h3>
+          <p class="t-caption mt-1">$100,000 初始投资 · 使用当前组合真实历史 5Y 平均回报作情景假设</p>
+        </div>
+        <span class="t-caption italic">Hypothetical · Not a forecast</span>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-gray-200 mb-4">
+        <table class="w-full text-sm" style="border-collapse:collapse;background:#fff">
+          <thead>
+            <tr style="background:#F8FAFC;color:#64748B">
+              <th class="text-left py-3 px-3 text-[10px] uppercase tracking-wide">期限</th>
+              <th class="text-right py-3 px-3 text-[10px] uppercase tracking-wide">GIC</th>
+              <th class="text-right py-3 px-3 text-[10px] uppercase tracking-wide">本组合 5Y 情景</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">${scenarioRows}</tbody>
+        </table>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+        <div class="p-4 rounded-xl" style="background:#F8FAFC;border:1px solid #E2E8F0">
+          <div class="t-label mb-1.5" style="color:#94A3B8">GIC 确定性参考</div>
+          <div class="text-xl font-extrabold en" style="color:#475569">${gicRate.toFixed(2)}%</div>
+          <div class="text-xs text-gray-500 mt-1">利率确定性较高，但长期增长空间相对有限。</div>
+        </div>
+        <div class="p-4 rounded-xl" style="background:#FFFBF0;border:1px solid rgba(201,168,76,.35)">
+          <div class="t-label mb-1.5" style="color:${color}">本组合历史情景</div>
+          <div class="text-xl font-extrabold en" style="color:${color}">${d.metrics.annualReturn5Y.toFixed(2)}%</div>
+          <div class="text-xs text-gray-500 mt-1">使用 5Y 平均历史回报展示账户价值变化。</div>
+        </div>
+        <div class="p-4 rounded-xl" style="background:#F8FAFC;border:1px solid #E2E8F0">
+          <div class="t-label mb-1.5" style="color:#94A3B8">风险语境</div>
+          <div class="text-sm font-bold text-navy en">Vol ${d.metrics.volatility.toFixed(1)}% · Max DD ${d.metrics.maxDrawdown.toFixed(1)}%</div>
+          <div class="text-xs text-gray-500 mt-1">同时评估波动、回撤、合同保证与传承规划。</div>
+        </div>
+      </div>
+      <div class="rounded-xl p-4" style="background:#F8FAFC;border:1px solid #E2E8F0">
+        <div class="flex items-start justify-between gap-4 flex-wrap mb-4">
+          <div>
+            <div class="t-label mb-1" style="color:${color}">税务视角 · Tax Perspective</div>
+            <h4 class="font-bold text-navy">GIC 利息收入 vs 分隔基金资本利得税务示意</h4>
+            <p class="text-xs text-gray-500 mt-1">当前税阶：${taxProvince.label} · ${taxBracket.labelEN} · ${taxBracket.range}</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 min-w-[280px]">
+            <select id="segTaxProvince" onchange="onSegTaxProvinceChange()" class="tax-select-light">${segTaxProvinceOptions()}</select>
+            <select id="segTaxBracket" onchange="onSegTaxBracketChange()" class="tax-select-light">${segTaxBracketOptions()}</select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          ${taxCard('5 年观察点', 10000, tax5)}
+          ${taxCard('10 年观察点', 25000, tax10)}
+        </div>
+        <p class="text-[11px] text-gray-500 mt-3 leading-relaxed">税务示意，不构成税务建议；实际分隔基金分派可能包含资本利得、合格股息、利息或本金返还，客户应咨询专业税务顾问。</p>
+      </div>
+      <p class="t-caption mt-4">历史回报情景，不构成预测；分隔基金并非月度派息产品，若客户需要现金流，应另行设计赎回计划。</p>
+    </div>
+
+    <!-- ═══ Historical Growth Chart ═══ -->
+    <div class="section-divider"><span>复合增长 · Growth Simulation</span></div>
+    <div class="lux-card-dark chart-card p-6 mb-6">
+      <div class="flex items-start justify-between mb-1 flex-wrap gap-2">
+        <div>
+          <div class="chart-title" style="margin-bottom:4px">$100,000 中长期增长情景：本组合 vs GIC</div>
+          <div class="chart-subtitle">本组合 5Y 情景与确定性收益参考 · S&amp;P 500 移至市场背景说明</div>
+        </div>
+        <span class="t-caption italic">Hypothetical · Not a forecast</span>
+      </div>
+      <div style="height:360px;margin-top:16px"><canvas id="chartGrowth"></canvas></div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-4">
+        <div class="p-3 rounded-lg" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+          <div class="t-label mb-1" style="color:#94A3B8">5Y 平均回报</div>
+          <div class="t-num-sm" style="color:${color}">${d.metrics.annualReturn5Y>=0?'+':''}${d.metrics.annualReturn5Y.toFixed(1)}%</div>
+        </div>
+        <div class="p-3 rounded-lg" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+          <div class="t-label mb-1" style="color:#94A3B8">波动率</div>
+          <div class="t-num-sm text-white">${d.metrics.volatility.toFixed(1)}%</div>
+        </div>
+        <div class="p-3 rounded-lg" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+          <div class="t-label mb-1" style="color:#94A3B8">最大回撤</div>
+          <div class="t-num-sm" style="color:#EF4444">${d.metrics.maxDrawdown.toFixed(1)}%</div>
+        </div>
+        <div class="p-3 rounded-lg" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+          <div class="t-label mb-1" style="color:#94A3B8">S&amp;P 500 背景</div>
+          <div class="t-num-sm text-white">+${APP_DATA.benchmarks.sp500.y5.toFixed(1)}%</div>
+        </div>
+      </div>
+      <p class="t-caption mt-3">S&amp;P 500 是纯股票指数参考，用于理解市场背景；本组合评估重点是增长、波动、回撤、合同保证与传承规划的综合适配。</p>
+    </div>
+
+  `;
+
+  setTimeout(()=>initCharts(d, color), 80);
+  setTimeout(()=>animateMetrics(d), 100);
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ANIMATE HERO METRICS
+// ════════════════════════════════════════════════════════════════════
+function animateMetrics(d) {
+  countUp('m-return5', d.metrics.annualReturn5Y, 1);
+  countUp('m-vol',    d.metrics.volatility, 1);
+  countUp('m-dd',     d.metrics.maxDrawdown, 1);
+  countUp('m-sharpe', d.metrics.sharpeRatio, 2);
+}
+
+// ════════════════════════════════════════════════════════════════════
+// INIT CHARTS
+// ════════════════════════════════════════════════════════════════════
+function initCharts(d, color) {
+  ['fund','asset','sector','geo','growth'].forEach(k=>{ if(CH[k]){CH[k].destroy();CH[k]=null;} });
+
+  const LIGHT_TEXT  = '#E2E8F0';
+  const MUTED_TEXT  = '#A7B2C2';
+  const GRID_LINE   = 'rgba(255,255,255,.06)';
+
+  const donut = (labels,data,colors)=>({
+    type:'doughnut',
+    data:{labels, datasets:[{data, backgroundColor:colors, borderWidth:1.25, borderColor:'rgba(15,30,51,.82)', hoverOffset:5}]},
+    options:{
+      responsive:true, maintainAspectRatio:true, cutout:'70%',
+      plugins:{
+        legend:{
+          position:'bottom',
+          labels:{font:{size:10,family:'Inter',weight:'500'}, color:LIGHT_TEXT, padding:10, usePointStyle:true, pointStyleWidth:8, boxWidth:8}
+        },
+        tooltip:{padding:12, backgroundColor:'#0A1628', titleColor:'#C9A84C', bodyColor:'#E2E8F0',
+                 callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}}
+      }
+    }
+  });
+
+  const hbar = (labels,data,colors,maxX)=>({
+    type:'bar',
+    data:{labels, datasets:[{data, backgroundColor:colors, borderRadius:3, barThickness:14, borderSkipped:false}]},
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{padding:12, backgroundColor:'#0A1628', titleColor:'#C9A84C', bodyColor:'#E2E8F0',
+                 callbacks:{label:c=>` ${c.parsed.x}%`}}
+      },
+      scales:{
+        x:{max:maxX||50,
+           ticks:{callback:v=>v+'%', font:{size:9,family:'Inter'}, color:MUTED_TEXT},
+           grid:{color:GRID_LINE},
+           border:{color:'transparent'}
+        },
+        y:{
+          ticks:{font:{size:9,family:'Noto Sans SC,Inter'}, color:LIGHT_TEXT},
+          grid:{display:false},
+          border:{color:'transparent'}
+        }
+      }
+    }
+  });
+
+  const FUND_PAL = FUND_PALETTE;
+  const fundCanvas = document.getElementById('chartFund');
+  if (fundCanvas) {
+    CH.fund = new Chart(fundCanvas,
+      donut(d.funds.map(f=>f.name.length>22?f.name.slice(0,20)+'…':f.name),
+            d.funds.map(f=>f.alloc), FUND_PAL.slice(0,d.funds.length)));
+  }
+
+  const assetCanvas = document.getElementById('chartAsset');
+  if (assetCanvas) {
+    CH.asset = new Chart(assetCanvas,
+      donut(d.asset.labels, d.asset.data, ASSET_PALETTE.slice(0,d.asset.labels.length)));
+  }
+
+  const sectorCanvas = document.getElementById('chartSector');
+  if (sectorCanvas) {
+    CH.sector = new Chart(sectorCanvas,
+      hbar(d.sector.labels, d.sector.data, SECTOR_PALETTE, 40));
+  }
+
+  const geoCanvas = document.getElementById('chartGeo');
+  if (geoCanvas) {
+    CH.geo = new Chart(geoCanvas,
+      hbar(d.geo.labels, d.geo.data, GEO_PALETTE, 60));
+  }
+
+  // Growth chart (cumulative)
+  const growthCanvas = document.getElementById('chartGrowth');
+  if (!growthCanvas) return;
+  const years = [0,1,2,3,4,5];
+  const rate5y = d.metrics.annualReturn5Y / 100;
+  const gic_5y = APP_DATA.benchmarks.gic_5yr.y5 / 100;
+  const grow = r => years.map(y=>Math.round(100000*Math.pow(1+r,y)));
+  const roundedRect = (ctx, x, y, w, h, r) => {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + w - radius, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    ctx.lineTo(x + w, y + h - radius);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    ctx.lineTo(x + radius, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  };
+  const growthEndLabelPlugin = {
+    id: 'growthEndLabel',
+    afterDatasetsDraw(chart) {
+      const { ctx, chartArea, data } = chart;
+      if (!chartArea) return;
+      ctx.save();
+      ctx.font = '700 10px Inter, Arial, sans-serif';
+      ctx.textBaseline = 'middle';
+      const labels = [];
+      data.datasets.forEach((dataset, index) => {
+        const meta = chart.getDatasetMeta(index);
+        if (!meta || meta.hidden || !meta.data.length) return;
+        const lastPoint = meta.data[meta.data.length - 1];
+        const lastValue = dataset.data[dataset.data.length - 1];
+        if (!lastPoint || !Number.isFinite(lastValue)) return;
+        labels.push({
+          x: lastPoint.x,
+          y: Math.max(chartArea.top + 12, Math.min(chartArea.bottom - 12, lastPoint.y)),
+          text: '$' + Math.round(lastValue).toLocaleString(),
+          color: dataset.borderColor || '#C9A84C',
+          muted: index > 0
+        });
+      });
+      labels.sort((a, b) => a.y - b.y);
+      for (let i = 1; i < labels.length; i++) {
+        if (labels[i].y - labels[i - 1].y < 22) labels[i].y = labels[i - 1].y + 22;
+      }
+      labels.forEach(label => {
+        label.y = Math.max(chartArea.top + 12, Math.min(chartArea.bottom - 12, label.y));
+        const textWidth = ctx.measureText(label.text).width;
+        const boxW = textWidth + 14;
+        const boxH = 20;
+        const x = Math.min(label.x + 8, chartArea.right - boxW + 72);
+        const y = label.y - boxH / 2;
+        ctx.fillStyle = label.muted ? 'rgba(255,255,255,.92)' : label.color;
+        roundedRect(ctx, x, y, boxW, boxH, 8);
+        ctx.fill();
+        ctx.fillStyle = label.muted ? '#334155' : '#08111F';
+        ctx.fillText(label.text, x + 7, label.y);
+      });
+      ctx.restore();
+    }
+  };
+
+  CH.growth = new Chart(growthCanvas, {
+    type:'line',
+    data:{
+      labels: years.map(y=>'Year '+y),
+      datasets:[
+        { label:'本组合 5Y 情景', data: grow(rate5y), borderColor:color, backgroundColor:color+'16', borderWidth:2.75, pointRadius:3, pointHoverRadius:4.5, pointBackgroundColor:color, tension:.28, fill:true },
+        { label:'5Y GIC 确定性参考', data: grow(gic_5y), borderColor:'#D5DCE6', borderWidth:1.1, pointRadius:1, pointHoverRadius:2.5, borderDash:[2,5], tension:.28, fill:false }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+      layout:{padding:{right:82}},
+      plugins:{
+        legend:{position:'bottom', labels:{font:{size:10,family:'Inter',weight:'500'}, color:LIGHT_TEXT, padding:12, usePointStyle:true, pointStyleWidth:9, boxWidth:9}},
+        tooltip:{padding:14, backgroundColor:'#0A1628', titleColor:'#C9A84C', bodyColor:'#E2E8F0',
+                 callbacks:{label:c=>` ${c.dataset.label}: $${c.parsed.y.toLocaleString()}`}}
+      },
+      scales:{
+        y:{
+          ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'K', font:{size:9,family:'Inter'}, color:MUTED_TEXT},
+          grid:{color:GRID_LINE},
+          border:{color:'transparent'}
+        },
+        x:{
+          ticks:{font:{size:10,family:'Inter'}, color:LIGHT_TEXT},
+          grid:{display:false},
+          border:{color:'transparent'}
+        }
+      }
+    },
+    plugins:[growthEndLabelPlugin]
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════
+// SWITCH TAB
+// ════════════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  ['a','b','c'].forEach(t=>{
+    const btn = document.getElementById('tab-'+t);
+    if (t===tab) {
+      btn.classList.add('active');
+      btn.style.background = 'rgba(201,168,76,.15)';
+      btn.style.color = '#C9A84C';
+    } else {
+      btn.classList.remove('active');
+      btn.style.background = 'transparent';
+      btn.style.color = 'rgba(255,255,255,.7)';
+    }
+  });
+  // Tint secondary KPI card borders to match portfolio color
+  const c = TAB_COLORS[tab];
+  ['card-vol','card-dd','card-sharpe'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.style.borderColor = c + '55';
+  });
+  renderAll();
+}
+
+function renderAll() {
+  if (!APP_DATA) return;
+  const d = APP_DATA.portfolios[currentTab];
+  const color = TAB_COLORS[currentTab];
+  renderPortfolio(d, color);
+  // Invalidate cached PDF layout so next export rebuilds for the new portfolio
+  document.getElementById('pdf-body').innerHTML = '';
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PDF LAYOUT BUILDER — generates 6 purpose-built print pages
+// ════════════════════════════════════════════════════════════════════
+
+function buildLegacyPDFLayout() {
+  const d   = APP_DATA.portfolios[currentTab];
+  const col = TAB_COLORS[currentTab];
+  const m   = d.metrics;
+
+  // Capture charts
+  const charts = {};
+  document.querySelectorAll('canvas').forEach(c => {
+    try { charts[c.id] = c.toDataURL('image/png', 1.0); } catch(e) { charts[c.id]=''; }
+  });
+
+  // ────────────────────────────────────────────────────────────────
+  // 16:9 LANDSCAPE PITCH DECK (297mm × 167mm per slide)
+  // ────────────────────────────────────────────────────────────────
+
+  // Design tokens
+  const G    = '#C9A84C';
+  const NAVY = '#0B1B2E';
+  const NAVY2= '#10243D';
+  const BG   = '#F7F9FC';
+  const POS  = '#079455';
+  const NEG  = '#D92D20';
+  const BORD = '#E4E8EF';
+  const TX1  = '#111827';
+  const TX2  = '#667085';
+  const FUND_PAL = FUND_PALETTE;
+
+  const fN  = (v, d=1) => (v!=null) ? v.toFixed(d) : 'N/A';
+  const fP  = (v, d=1) => (v!=null) ? (v>0?'+':'')+v.toFixed(d)+'%' : 'N/A';
+  const fCol= (v) => (v!=null && v>=0) ? POS : NEG;
+  const chartImg = (id, h='120px') => charts[id]
+    ? `<img src="${charts[id]}" style="width:100%;height:auto;max-height:${h};object-fit:contain;display:block" alt="">`
+    : `<div style="height:${h};background:#F1F5F9;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:7.5px;border-radius:4px">[Chart unavailable — open in browser first]</div>`;
+
+  // ── Shared slide components (16:9 landscape) ──────────────────────
+  const slideHdr = (sub='') => `
+    <div style="background:${NAVY};padding:3.5mm 9mm;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:7px">
+        <img src="triton-logo.png" style="height:20px;width:auto" onerror="this.style.display='none'">
+        <div style="width:1px;height:13px;background:rgba(201,168,76,.4)"></div>
+        <span style="color:${G};font-size:7.5px;letter-spacing:2.5px;font-family:Inter;font-weight:700">TRITON WEALTH</span>
+        <span style="color:#4A6380;font-size:7px;font-family:Inter;margin-left:8px">${sub}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="color:#4A6380;font-size:6.5px;font-family:Inter">${d.name} · ${d.nameEN}</span>
+        <span style="background:${col};color:#fff;font-size:6px;padding:1.5px 7px;border-radius:100px;font-family:Inter;font-weight:700;letter-spacing:0.5px">PORTFOLIO ${d.id.toUpperCase()}</span>
+      </div>
+    </div>
+    <div style="height:1.5px;background:linear-gradient(90deg,${NAVY},${G},${NAVY});flex-shrink:0"></div>`;
+
+  const slideFooter = (pg='') => `
+    <div style="background:${NAVY};padding:2mm 9mm;display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+      <span style="color:#2D3F55;font-size:6px;font-family:Inter">© 2026 Triton Wealth Management Corporation · CONFIDENTIAL · Past performance does not guarantee future results.</span>
+      <span style="color:${G};font-size:6.5px;font-family:Inter;font-weight:700;letter-spacing:1px">${pg}</span>
+    </div>`;
+
+  const stars = n => [1,2,3,4,5].map(i=>`<span style="width:9px;height:9px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6px;font-weight:700;margin:0 1px;background:${i<=n?col:'#E5E7EB'};color:${i<=n?'#fff':'#9CA3AF'}">${i}</span>`).join('');
+
+  const sectLabel = (en, cn) => `
+    <div style="margin-bottom:3mm">
+      <div style="font-size:6.5px;color:${G};letter-spacing:2.5px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:1mm">${en}</div>
+      <div style="font-size:14px;font-weight:800;color:${TX1};font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;letter-spacing:0">${cn}</div>
+    </div>`;
+
+  // ════ SLIDE 1: COVER ═══════════════════════════════════════════════
+  const s1 = `
+  <div class="pdf-page pdf-dark" style="display:flex;flex-direction:column;padding:0">
+    <!-- Top bar -->
+    <div style="background:#071426;padding:5mm 12mm;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <img src="triton-logo.png" style="height:30px;width:auto" onerror="this.style.display='none'">
+      <div style="text-align:right">
+        <div style="color:${G};font-size:7.5px;letter-spacing:3px;font-family:Inter;font-weight:700">CONFIDENTIAL · PRIVATE WEALTH PROPOSAL</div>
+        <div style="color:#2D3F55;font-size:6.5px;font-family:Inter;margin-top:1.5px">数据截至 As of ${APP_DATA.asOfLabel}</div>
+      </div>
+    </div>
+    <div style="height:2px;background:linear-gradient(90deg,transparent,${G},transparent);flex-shrink:0"></div>
+
+    <!-- Two-column main: left = title, right = KPIs -->
+    <div style="flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:0;padding:0;overflow:hidden">
+      <!-- LEFT: title side -->
+      <div style="padding:9mm 8mm 9mm 14mm;display:flex;flex-direction:column;justify-content:center">
+        <div style="background:${col}22;border:1px solid ${col}99;color:${col};font-size:8px;padding:2.5px 12px;border-radius:100px;letter-spacing:2px;font-family:Inter;font-weight:700;align-self:flex-start;margin-bottom:6mm">
+          PORTFOLIO ${d.id.toUpperCase()} · ${d.nameEN.toUpperCase()}
+        </div>
+        <h1 style="font-size:34px;color:#fff;font-weight:900;line-height:1.12;margin:0 0 3mm;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;letter-spacing:0">
+          为您量身定制的<br><span style="color:${G}">机构级</span>投资组合
+        </h1>
+        <p style="color:#8BA0BB;font-size:12px;margin:0 0 6mm;letter-spacing:0.3px;font-family:Inter;line-height:1.4">
+          Institutional-Grade Portfolio<br>Tailored for Your Wealth Journey
+        </p>
+        <div style="width:30mm;height:1px;background:linear-gradient(90deg,${G},transparent);margin-bottom:5mm"></div>
+        <div style="color:#4A6380;font-size:8.5px;font-family:'Noto Sans SC',sans-serif;line-height:1.6">
+          <strong style="color:${G};font-family:Inter;letter-spacing:1px">PREPARED FOR</strong><br>
+          <span style="color:#fff;font-size:10px">高净值客户专属提案</span> · High-Net-Worth Client
+        </div>
+      </div>
+
+      <!-- RIGHT: 4-KPI 2x2 -->
+      <div style="padding:9mm 14mm 9mm 4mm;display:flex;flex-direction:column;justify-content:center">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3mm">
+          <div style="background:rgba(201,168,76,.09);border:1px solid rgba(201,168,76,.5);border-radius:7px;padding:5mm;text-align:center">
+            <div style="font-size:7px;color:${G};letter-spacing:1.8px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">5年平均历史回报</div>
+            <div style="font-size:32px;font-weight:800;color:#10B981;font-family:Inter;line-height:1;letter-spacing:-1.5px;margin-bottom:1.5mm">+${fN(m.annualReturn5Y)}%</div>
+            <div style="font-size:6.5px;color:#64748B;font-family:Inter">Historical Average Return (5Y)</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:5mm;text-align:center">
+            <div style="font-size:7px;color:${G};letter-spacing:1.8px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">夏普比率</div>
+            <div style="font-size:26px;font-weight:800;color:#fff;font-family:Inter;line-height:1;margin-bottom:1.5mm">${fN(m.sharpeRatio,2)}</div>
+            <div style="font-size:6.5px;color:#64748B;font-family:Inter">Sharpe Ratio (Estimated)</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:5mm;text-align:center">
+            <div style="font-size:7px;color:${G};letter-spacing:1.8px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">组合波动率</div>
+            <div style="font-size:26px;font-weight:800;color:#fff;font-family:Inter;line-height:1;margin-bottom:1.5mm">${fN(m.volatility)}%</div>
+            <div style="font-size:6.5px;color:#64748B;font-family:Inter">Volatility (Estimated)</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:5mm;text-align:center">
+            <div style="font-size:7px;color:${G};letter-spacing:1.8px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">预期最大回撤</div>
+            <div style="font-size:26px;font-weight:800;color:#EF4444;font-family:Inter;line-height:1;margin-bottom:1.5mm">${fN(m.maxDrawdown)}%</div>
+            <div style="font-size:6.5px;color:#64748B;font-family:Inter">Max Drawdown (Estimated)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div style="background:#071426;padding:3.5mm 12mm;border-top:1px solid rgba(201,168,76,.12);flex-shrink:0">
+      <p style="color:#3D5270;font-size:6.5px;text-align:center;font-family:Inter;line-height:1.55;margin:0">
+        Past performance does not guarantee future results. This material is for informational purposes only and does not constitute investment advice. · 历史回报已扣除管理费（MER）；波动率、最大回撤及夏普比率为估算值。
+      </p>
+      <p style="color:#2A3D56;font-size:6px;text-align:center;font-family:Inter;margin:1.5mm 0 0">
+        © 2026 Triton Wealth Management Corporation · 富瑞财富管理 · www.tritonwealth.ca
+      </p>
+    </div>
+  </div>`;
+
+  // ════ SLIDE 2: PORTFOLIO OVERVIEW (兼性能指标) ═════════════════════
+  const s2 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${slideHdr('PORTFOLIO OVERVIEW · 组合概览')}
+    <div style="padding:6mm 12mm;flex:1;display:grid;grid-template-columns:1.4fr 1fr;gap:6mm;overflow:hidden">
+
+      <!-- LEFT: Overview details -->
+      <div style="display:flex;flex-direction:column">
+        ${sectLabel('PORTFOLIO PROFILE','组合定位与适配')}
+
+        <div style="background:#fff;border:1px solid ${BORD};border-left:3px solid ${col};border-radius:6px;padding:5mm;flex:1">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4mm;padding-bottom:3mm;border-bottom:1px dashed ${BORD}">
+            <div>
+              <span style="background:${col};color:#fff;font-size:8px;padding:2px 9px;border-radius:100px;font-family:Inter;font-weight:700">${d.name}</span>
+              <span style="color:${TX2};font-size:8px;font-family:Inter;margin-left:6px">${d.nameEN}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px">
+              <span style="font-size:7.5px;color:${TX2};font-family:Inter">风险等级:</span>${stars(d.riskLevel)}
+            </div>
+          </div>
+          <div style="margin-bottom:3.5mm">
+            <div style="font-size:7px;color:${G};letter-spacing:1.5px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:1.5mm">投资目标 OBJECTIVE</div>
+            <div style="font-size:9px;color:${TX1};font-family:'Noto Sans SC',sans-serif;line-height:1.6">${d.objective}</div>
+          </div>
+          <div style="margin-bottom:3.5mm">
+            <div style="font-size:7px;color:${G};letter-spacing:1.5px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:1.5mm">建议投资期 HORIZON</div>
+            <div style="font-size:9px;color:${TX1};font-family:'Noto Sans SC',sans-serif">${d.horizon}</div>
+          </div>
+          <div>
+            <div style="font-size:7px;color:${G};letter-spacing:1.5px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:1.5mm">适合客户 SUITABLE CLIENT</div>
+            <div style="font-size:9px;color:${TX1};font-family:'Noto Sans SC',sans-serif;line-height:1.6">${d.suitableClient}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Key performance metrics -->
+      <div style="display:flex;flex-direction:column">
+        ${sectLabel('KEY PERFORMANCE','核心绩效指标')}
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;margin-bottom:3mm">
+          ${[
+            ['3Y 年化', m.annualReturn3Y, true],
+            ['5Y 年化', m.annualReturn5Y, false],
+            ['1Y 回报', m.annualReturn1Y, false],
+            ['YTD',     m.ytdReturn, false]
+          ].map(([lbl,v,pri])=>`
+            <div style="background:#fff;border:1px solid ${pri?'rgba(201,168,76,.6)':BORD};${pri?`box-shadow:0 0 0 1px rgba(201,168,76,.15)`:''};border-radius:6px;padding:3.5mm;text-align:center">
+              <div style="font-size:6.5px;color:${pri?G:TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:2mm">${lbl}</div>
+              <div style="font-size:${pri?'22':'18'}px;font-weight:800;color:${fCol(v)};font-family:Inter;line-height:1">${fP(v)}</div>
+            </div>`).join('')}
+        </div>
+
+        <div style="background:#fff;border:1px solid ${BORD};border-radius:6px;padding:3.5mm;display:grid;grid-template-columns:1fr 1fr 1fr;gap:3mm;text-align:center">
+          <div>
+            <div style="font-size:6px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.5mm">波动率 Vol</div>
+            <div style="font-size:13px;font-weight:800;color:${TX1};font-family:Inter">${fN(m.volatility)}%</div>
+          </div>
+          <div style="border-left:1px solid ${BORD};border-right:1px solid ${BORD}">
+            <div style="font-size:6px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.5mm">最大回撤 DD</div>
+            <div style="font-size:13px;font-weight:800;color:${NEG};font-family:Inter">${fN(m.maxDrawdown)}%</div>
+          </div>
+          <div>
+            <div style="font-size:6px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.5mm">夏普比率</div>
+            <div style="font-size:13px;font-weight:800;color:${TX1};font-family:Inter">${fN(m.sharpeRatio,2)}</div>
+          </div>
+        </div>
+
+        <div style="background:#F0F4F8;border-radius:6px;padding:3mm 3.5mm;margin-top:3mm;border-left:2px solid ${col}">
+          <div style="font-size:6.5px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:1.5mm">vs 基准 BENCHMARK (3Y annualized)</div>
+          <div style="display:flex;justify-content:space-between;font-size:8px;color:${TX1};font-family:Inter">
+            <span><strong>vs S&P 500</strong> ${fP(m.vsSP500_3Y)}</span>
+            <span><strong>vs MSCI World</strong> ${fP(m.vsMSCI_3Y)}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    ${slideFooter('2 / 9')}
+  </div>`;
+
+  // ════ SLIDE 3: FUND HOLDINGS TABLE ═════════════════════════════════
+  const funds3y = d.funds.filter(f=>f.y3!==null);
+  const w3y_total = funds3y.reduce((s,f)=>s+f.alloc,0);
+  const w3y = w3y_total>0 ? funds3y.reduce((s,f)=>s+f.y3*f.alloc,0)/w3y_total : null;
+
+  const fundRows = d.funds.map((f,i)=>{
+    const rb = i%2===0?'#fff':BG;
+    const fC = (v) => v!=null
+      ? `<span style="color:${fCol(v)};font-weight:700;font-family:Inter">${fP(v)}</span>`
+      : `<span style="color:#94A3B8;font-style:italic;font-size:7px">N/A</span>`;
+    return `<tr style="background:${rb}">
+      <td style="padding:2.6mm 3mm 2.6mm 5mm;border-bottom:1px solid ${BORD}">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:${FUND_PAL[i%6]}"></div>
+          <span style="font-size:8.5px;color:${TX1};font-family:Inter;font-weight:500">${f.name}</span>
+        </div>
+      </td>
+      <td style="padding:2.6mm 3mm;text-align:right;border-bottom:1px solid ${BORD}">
+        <span style="font-size:10px;font-weight:800;color:${col};font-family:Inter">${f.alloc}%</span>
+        <div style="width:90%;height:3.5px;background:#E5E7EB;border-radius:2px;margin:2px 0 0 auto"><div style="width:${Math.min(f.alloc*3.3,100)}%;height:3.5px;background:${col};border-radius:2px"></div></div>
+      </td>
+      <td style="padding:2.6mm 3mm;text-align:right;border-bottom:1px solid ${BORD};font-size:9px">${fC(f.y1)}</td>
+      <td style="padding:2.6mm 3mm;text-align:right;border-bottom:1px solid ${BORD};font-size:9px">${fC(f.y3)}</td>
+      <td style="padding:2.6mm 3mm;text-align:right;border-bottom:1px solid ${BORD};font-size:9px">${fC(f.y5)}</td>
+      <td style="padding:2.6mm 3mm;text-align:right;border-bottom:1px solid ${BORD};font-size:9px">${fC(f.ytd)}</td>
+      <td style="padding:2.6mm 3mm;text-align:right;border-bottom:1px solid ${BORD};font-size:8.5px;color:${TX2};font-family:Inter">${f.mer.toFixed(2)}%</td>
+      <td style="padding:2.6mm 4mm 2.6mm 3mm;border-bottom:1px solid ${BORD}">
+        <span style="background:${col};color:#fff;font-size:7px;padding:2px 7px;border-radius:100px;font-family:Inter;font-weight:600;white-space:nowrap">${f.role}</span>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const s3 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${slideHdr('FUND HOLDINGS · 基金持仓明细')}
+    <div style="padding:6mm 12mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3mm">
+        <div>
+          ${sectLabel('PORTFOLIO CONSTITUENTS','组合基金配置明细 · 6 funds')}
+        </div>
+        <span style="font-size:7px;color:${TX2};font-family:Inter;font-style:italic">Source: equitablelife.fundata.com · Returns net of MER</span>
+      </div>
+
+      <div style="background:#fff;border:1px solid ${BORD};border-radius:6px;overflow:hidden;flex:1">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:${NAVY}">
+              ${[['基金 Fund','left',''],['配置%','right',''],['1Y','right',''],['3Y 年化','right',''],['5Y 年化','right',''],['YTD','right',''],['MER','right',''],['角色 Role','left','']]
+              .map(([h,al],i)=>`<th style="padding:3mm ${i===0?'3mm 3mm 5mm':(i===7?'3mm 4mm 3mm 3mm':'3mm')};text-align:${al};font-size:7.5px;font-weight:700;color:${G};font-family:Inter;text-transform:uppercase;letter-spacing:1px">${h}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>${fundRows}</tbody>
+          <tfoot>
+            <tr style="background:#F1F5F9;border-top:2px solid ${BORD}">
+              <td colspan="3" style="padding:3mm 3mm 3mm 5mm;font-size:9px;font-weight:700;color:${TX1};font-family:'Noto Sans SC',sans-serif">组合加权 3Y 年化回报 · Weighted Average</td>
+              <td style="padding:3mm 3mm;text-align:right;font-size:11px;font-weight:800;color:${w3y!=null?fCol(w3y):'#94A3B8'};font-family:Inter">${w3y!=null?fP(w3y):'N/A'}</td>
+              <td colspan="4" style="padding:3mm 4mm 3mm 3mm;font-size:7px;color:${TX2};font-family:Inter;font-style:italic;text-align:right">normalized for funds with available 3Y data</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    ${slideFooter('3 / 9')}
+  </div>`;
+
+  // ════ SLIDE 4: ALLOCATION CHARTS (2x2) ═════════════════════════════
+  const s4 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${slideHdr('ALLOCATION OVERVIEW · 配置图览')}
+    <div style="padding:5mm 12mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="margin-bottom:3mm">
+        ${sectLabel('PORTFOLIO ALLOCATION','基金 / 资产类别 / 行业 / 地区 — 四维视图')}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3mm;flex:1">
+        ${[['chartFund','基金权重分布','Fund Allocation by Weight'],['chartAsset','资产类别配置','Asset Class Allocation'],['chartSector','行业配置','Sector Allocation'],['chartGeo','地区配置','Geographic Allocation']].map(([id,cn,en])=>`
+          <div style="background:#fff;border:1px solid ${BORD};border-radius:6px;padding:3.5mm;display:flex;flex-direction:column">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2.5mm">
+              <span style="font-size:9.5px;font-weight:700;color:${TX1};font-family:'Noto Sans SC',sans-serif">${cn}</span>
+              <span style="font-size:7px;color:${TX2};font-family:Inter">${en}</span>
+            </div>
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden">${chartImg(id,'95px')}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    ${slideFooter('4 / 9')}
+  </div>`;
+
+  // ════ SLIDE 5: $100K GROWTH SIMULATION ═════════════════════════════
+  const s5 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${slideHdr('GROWTH SIMULATION · 复合增长模拟')}
+    <div style="padding:6mm 12mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3mm">
+        <div>
+          ${sectLabel('$100,000 GROWTH','五年复合增长情景 · 本组合 vs GIC')}
+        </div>
+        <span style="font-size:7px;color:#94A3B8;font-family:Inter;font-style:italic">Hypothetical based on historical returns · Not a forecast</span>
+      </div>
+      <div style="background:#fff;border:1px solid ${BORD};border-radius:6px;padding:5mm;flex:1;display:flex;flex-direction:column">
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden">${chartImg('chartGrowth','120px')}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3mm;padding-top:4mm;border-top:1px dashed ${BORD};margin-top:3mm">
+          <div style="text-align:center">
+            <div style="font-size:6.5px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.5mm">本组合 (5Y 年化)</div>
+            <div style="font-size:14px;font-weight:800;color:${col};font-family:Inter">+${fN(m.annualReturn5Y)}%</div>
+            <div style="font-size:7px;color:${TX2};font-family:Inter;margin-top:1mm">$100K → $${(100000*Math.pow(1+m.annualReturn5Y/100,5)/1000).toFixed(0)}K</div>
+          </div>
+          <div style="text-align:center;border-left:1px solid ${BORD};border-right:1px solid ${BORD}">
+            <div style="font-size:6.5px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.5mm">5Y GIC 参考</div>
+            <div style="font-size:14px;font-weight:800;color:${TX2};font-family:Inter">+${fN(APP_DATA.benchmarks.gic_5yr.y5)}%</div>
+            <div style="font-size:7px;color:${TX2};font-family:Inter;margin-top:1mm">$100K → $${(100000*Math.pow(1+APP_DATA.benchmarks.gic_5yr.y5/100,5)/1000).toFixed(0)}K</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:6.5px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.5mm">5Y GIC</div>
+            <div style="font-size:14px;font-weight:800;color:#94A3B8;font-family:Inter">+${fN(APP_DATA.benchmarks.gic_5yr.y5)}%</div>
+            <div style="font-size:7px;color:${TX2};font-family:Inter;margin-top:1mm">$100K → $${(100000*Math.pow(1+APP_DATA.benchmarks.gic_5yr.y5/100,5)/1000).toFixed(0)}K</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    ${slideFooter('5 / 9')}
+  </div>`;
+
+  // ════ SLIDE 6: CLIENT DECISION SUMMARY ════════════════════════════
+  const sDecision = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${slideHdr('CLIENT DECISION FRAMEWORK · 客户决策摘要')}
+    <div style="padding:5mm 12mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3mm">
+        <div>
+          ${sectLabel('GIC VS SEGREGATED FUNDS','GIC 与分隔基金的适用场景比较')}
+        </div>
+        <span style="font-size:7px;color:${TX2};font-family:Inter;font-style:italic">Advisor conversation page · For client discussion</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3mm;margin-bottom:3mm">
+        ${[
+          ['投资增长','Growth','比较利率确定性与中长期增长潜力之间的取舍。','本组合 5Y 平均回报',fP(m.annualReturn5Y),POS],
+          ['风险边界','Risk Boundary','分隔基金有市场波动，但合约保证可提供身故/到期底线。','预期最大回撤',fP(m.maxDrawdown),NEG],
+          ['传承效率','Estate','受益人指定、潜在债权人保护及绕过遗产认证，是 GIC 通常不具备的合同属性。','规划重点','Protection',G]
+        ].map(([cn,en,body,kpi,kval,kcol])=>`
+          <div style="background:#fff;border:1px solid ${BORD};border-top:3px solid ${kcol};border-radius:7px;padding:4mm;min-height:34mm">
+            <div style="font-size:7px;color:${TX2};font-family:Inter;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:1mm">${en}</div>
+            <div style="font-size:12px;color:${TX1};font-family:'Noto Sans SC',sans-serif;font-weight:800;margin-bottom:2mm">${cn}</div>
+            <div style="font-size:7.5px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.6;margin-bottom:3mm">${body}</div>
+            <div style="border-top:1px dashed ${BORD};padding-top:2.5mm">
+              <div style="font-size:6.5px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px;margin-bottom:1mm">${kpi}</div>
+              <div style="font-size:13px;color:${kcol};font-family:Inter;font-weight:800">${kval}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <div style="background:#fff;border:1px solid ${BORD};border-radius:7px;overflow:hidden;flex:1">
+        <div style="display:grid;grid-template-columns:1.05fr 1fr 1fr;background:${NAVY};color:#fff">
+          <div style="padding:3mm 4mm;font-size:8px;font-family:'Noto Sans SC',sans-serif;font-weight:800">客户关心的问题</div>
+          <div style="padding:3mm 4mm;font-size:8px;font-family:'Noto Sans SC',sans-serif;font-weight:800;border-left:1px solid rgba(255,255,255,.12)">银行 GIC</div>
+          <div style="padding:3mm 4mm;font-size:8px;font-family:'Noto Sans SC',sans-serif;font-weight:800;border-left:1px solid rgba(255,255,255,.12);color:${G}">分隔基金</div>
+        </div>
+        ${[
+          ['投资回报','确定利率，适合短期资金；长期增长空间有限。','参与全球资产增长，适合 5 年以上中长期配置。'],
+          ['税务属性','非注册账户中利息通常 100% 作为收入应税。','分派可包含资本利得、合格股息、利息或本金返还，需按账户规划。'],
+          ['法务/传承','以存款合同为主，传承效率取决于账户登记和遗产安排。','可指定受益人，可能绕过遗产认证，并有潜在债权人保护。'],
+          ['风险性','本金和利息较确定，但存在再投资利率风险和通胀风险。','市场价值会波动，合同身故/到期保证提供一定底线保护。']
+        ].map(([q,gic,seg],i)=>`
+          <div style="display:grid;grid-template-columns:1.05fr 1fr 1fr;background:${i%2?'#fff':'#F8FAFC'};border-top:1px solid ${BORD}">
+            <div style="padding:2.7mm 4mm;font-size:8px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif">${q}</div>
+            <div style="padding:2.7mm 4mm;font-size:7.5px;color:${TX2};font-family:'Noto Sans SC',sans-serif;line-height:1.5;border-left:1px solid ${BORD}">${gic}</div>
+            <div style="padding:2.7mm 4mm;font-size:7.5px;color:${TX1};font-family:'Noto Sans SC',sans-serif;line-height:1.5;border-left:1px solid ${BORD};background:#FFFBEB">${seg}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    ${slideFooter('6 / 9')}
+  </div>`;
+
+  // ════ SLIDE 6: PRODUCT COMPARISON ══════════════════════════════════
+  const col_item = (tick, txt) => `
+    <div style="display:flex;gap:6px;margin-bottom:2mm;align-items:flex-start">
+      <span style="flex-shrink:0;width:13px;height:13px;border-radius:50%;background:${tick?'rgba(7,148,85,.12)':'rgba(217,45,32,.1)'};color:${tick?POS:NEG};font-size:7.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-family:Inter;margin-top:0.5px">${tick?'✓':'✗'}</span>
+      <span style="font-size:8px;color:${TX1};font-family:'Noto Sans SC',sans-serif;line-height:1.5">${txt}</span>
+    </div>`;
+
+  const s6 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${slideHdr('PRODUCT POSITIONING · 产品定位对比')}
+    <div style="padding:5mm 12mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="text-align:center;margin-bottom:3mm">
+        <div style="font-size:7px;color:${G};letter-spacing:2.5px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:1.5mm">BEYOND GIC · COMPLEMENTARY NOT COMPETITIVE</div>
+        <div style="font-size:16px;font-weight:800;color:${TX1};font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;letter-spacing:0">分离基金与 GIC：各司其职</div>
+        <div style="font-size:8px;color:${TX2};font-family:'Noto Sans SC',sans-serif;margin-top:1mm">两类产品定位不同 · 可作互补配置 · 中长期财富规划中分离基金可提供合约特性</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5mm;flex:1">
+        <!-- GIC -->
+        <div style="background:#fff;border:1px solid ${BORD};border-top:3px solid #64748B;border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="padding:3.5mm 5mm;background:#F8FAFC;border-bottom:1px solid ${BORD}">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:${TX1};font-family:'Noto Sans SC',sans-serif">银行 GIC</div>
+                <div style="font-size:7.5px;color:${TX2};font-family:Inter;margin-top:0.5mm">Guaranteed Investment Certificate</div>
+              </div>
+              <span style="background:#F1F5F9;color:#475569;font-size:6.5px;padding:1.5px 7px;border-radius:100px;font-family:Inter;font-weight:600">短期确定性</span>
+            </div>
+          </div>
+          <div style="padding:4mm 5mm;flex:1">
+            ${col_item(true,'持有至到期，本金与利息由发行方保证 · Principal &amp; interest guaranteed by issuer')}
+            ${col_item(true,'CDIC 最高 $100,000 存款保险 · CDIC insurance up to $100,000')}
+            ${col_item(false,'利息按 100% 普通收入应税 · Interest fully taxable as ordinary income')}
+            ${col_item(false,'长期回报通常难以跑赢通胀 · Nominal returns may lag inflation long-term')}
+            ${col_item(false,'提前赎回受罚息或期限锁定 · Early redemption subject to penalty')}
+          </div>
+        </div>
+
+        <!-- Seg Fund -->
+        <div style="background:#fff;border:1px solid ${BORD};border-top:3px solid ${G};border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="padding:3.5mm 5mm;background:#FFFBF0;border-bottom:1px solid ${BORD}">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:${TX1};font-family:'Noto Sans SC',sans-serif">分离账户基金</div>
+                <div style="font-size:7.5px;color:${TX2};font-family:Inter;margin-top:0.5mm">Segregated Fund · Guaranteed Investment Fund</div>
+              </div>
+              <span style="background:rgba(201,168,76,.15);color:#92400E;font-size:6.5px;padding:1.5px 7px;border-radius:100px;font-family:Inter;font-weight:600">中长期增长</span>
+            </div>
+          </div>
+          <div style="padding:4mm 5mm;flex:1">
+            ${col_item(true,'专业基金经理管理 · 分散化市场参与 · Professionally managed and diversified')}
+            ${col_item(true,'合同身故/到期保证 (75%-100%) · Death &amp; maturity guarantees provide a safety floor')}
+            ${col_item(true,'潜在债权人保护及绕过遗产认证 · Potential creditor protection &amp; probate bypass')}
+            ${col_item(true,'分派含资本利得 (50% 计税) 及合格股息 · Tax-efficient distribution types available')}
+            ${col_item(false,'市场价值波动，短期可能下跌 · Subject to market volatility (within guarantee floor)')}
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:3mm;padding:3mm 4mm;background:#F0F4F8;border-left:3px solid ${G};border-radius:4px;font-size:7.5px;color:${TX1};font-family:'Noto Sans SC',sans-serif;line-height:1.6">
+        <strong>顾问观点 Advisor View：</strong>GIC 适合短期流动性储备与确定性需求；分离基金更适合中长期财富增值与传承规划。两者定位不同、可作互补。<span style="color:${TX2};font-family:Inter">Product suitability depends on individual financial circumstances; consult your advisor for personalized analysis.</span>
+      </div>
+    </div>
+    ${slideFooter('7 / 9')}
+  </div>`;
+
+  // ════ SLIDE 7: DISCLOSURES ═════════════════════════════════════════
+  const disc = (cn, en, body) => `
+    <div style="background:#fff;border:1px solid ${BORD};border-radius:5px;overflow:hidden">
+      <div style="background:#F8FAFC;border-bottom:1px solid ${BORD};padding:2mm 3mm;display:flex;align-items:baseline;gap:5px">
+        <span style="font-size:8.5px;font-weight:700;color:${TX1};font-family:'Noto Sans SC',sans-serif">${cn}</span>
+        <span style="font-size:7px;color:${TX2};font-family:Inter">· ${en}</span>
+      </div>
+      <div style="padding:2.5mm 3mm;font-size:7.2px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.55">${body}</div>
+    </div>`;
+
+  const s7 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${slideHdr('LEGAL · TAX · RISK · 法律 / 税务 / 风险声明')}
+    <div style="padding:5mm 12mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="margin-bottom:3mm">
+        ${sectLabel('REGULATORY DISCLOSURES','合规与风险披露 — 客户必读')}
+      </div>
+
+      <!-- 2-column disclosure grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3mm;flex:1">
+        <div style="display:flex;flex-direction:column;gap:2.5mm">
+          ${disc('法律声明','Legal Disclaimer',`
+            <strong>中文：</strong>本材料仅供参考，不构成投资建议、招揽或要约。过往业绩不代表未来表现。投资涉及风险，本金可能蒙受损失。<br>
+            <strong>EN:</strong> For informational purposes only; does not constitute advice or an offer. Past performance not indicative of future results.
+            `)}
+          ${disc('税务提示','Tax Considerations',`
+            <strong>中文：</strong>税务处理因个人情况而异，建议咨询税务顾问。<br>
+            <strong>EN:</strong> Tax treatment varies; consult a qualified tax advisor.<br>
+            <span style="color:${TX1}">・</span> GIC 利息按 100% 普通收入应税<br>
+            <span style="color:${TX1}">・</span> 分离基金分派可含资本利得 (50% 计税)、合格股息、利息、ROC<br>
+            <span style="color:${TX1}">・</span> TFSA / RRSP / RRIF / 非注册账户应分别规划`)}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2.5mm">
+          ${disc('风险披露','Risk Disclosure',`
+            <strong>中文：</strong>投资分离账户基金涉及以下主要风险：
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5mm;margin-top:1.5mm">
+              ${[['市场风险','Market','分离基金价值随市场波动'],['流动性','Liquidity','赎回可能影响合同保证额度'],['汇率','Currency','非加元资产面临汇率波动']].map(([cn,en,t])=>`
+                <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:3px;padding:1.5mm 2mm">
+                  <div style="font-size:6.5px;font-weight:700;color:#B91C1C;font-family:Inter;margin-bottom:1mm">${cn} · ${en}</div>
+                  <div style="font-size:6.5px;color:#475569;line-height:1.5">${t}</div>
+                </div>`).join('')}
+            </div>
+            <div style="margin-top:2mm;font-size:6.8px">投资者应仔细阅读 <strong>Fund Facts</strong> 和 <strong>Information Folder</strong>。</div>`)}
+          ${disc('数据来源与方法论','Data Sources &amp; Methodology',`
+            <span style="color:${TX1}">・</span> 基金表现：Equitable Life Fund Performance Database；回报已扣除 MER<br>
+            <span style="color:${TX1}">・</span> 行业/地区配置：基于 Fund Facts 及底层指数构成的合理估算<br>
+            <span style="color:${TX1}">・</span> 加权历史回报：Σ(配置% × 真实回报)；缺失数据归一化<br>
+            <span style="color:${TX1}">・</span> 波动率 / 最大回撤 / 夏普比率：基于组合构成的估算值`)}
+        </div>
+      </div>
+    </div>
+    ${slideFooter('8 / 9')}
+  </div>`;
+
+  // ════ SLIDE 8: ADVISOR CLOSING ═════════════════════════════════════
+  const s8 = `
+  <div class="pdf-page pdf-dark" style="display:flex;flex-direction:column;background:${NAVY};padding:0">
+    <div style="height:2px;background:linear-gradient(90deg,transparent,${G},transparent);flex-shrink:0"></div>
+
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1.2fr;padding:0;overflow:hidden">
+      <!-- LEFT: brand identity -->
+      <div style="padding:9mm 8mm 9mm 14mm;display:flex;flex-direction:column;justify-content:center;border-right:1px solid rgba(201,168,76,.15)">
+        <img src="triton-logo.png" style="height:48px;width:auto;margin-bottom:5mm;opacity:.95;align-self:flex-start" onerror="this.style.display='none'">
+        <div style="color:${G};font-size:7.5px;letter-spacing:3px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:1mm">TRITON WEALTH MANAGEMENT</div>
+        <div style="color:#8BA0BB;font-size:9px;font-family:'Noto Sans SC',sans-serif;margin-bottom:6mm">富瑞财富管理 · 私人财富顾问</div>
+
+        <div style="width:30mm;height:1px;background:linear-gradient(90deg,${G},transparent);margin-bottom:5mm"></div>
+
+        <!-- Three pillars stacked vertically -->
+        <div style="display:flex;flex-direction:column;gap:3mm;margin-bottom:5mm">
+          ${[['独立','Independent','No proprietary funds — we recommend what fits your goals'],['透明','Transparent','Full cost disclosure on every recommendation'],['专注','Focused','Exclusively serving high-net-worth families']].map(([cn,en,sub])=>`
+            <div style="display:flex;align-items:flex-start;gap:5mm">
+              <div style="flex-shrink:0;width:14mm;text-align:center">
+                <div style="font-size:16px;font-weight:800;color:${G};font-family:'Noto Sans SC',sans-serif;line-height:1">${cn}</div>
+                <div style="font-size:6.5px;color:${G};font-family:Inter;letter-spacing:1.5px;font-weight:700;margin-top:1.5mm">${en.toUpperCase()}</div>
+              </div>
+              <div style="font-size:7.5px;color:#8BA0BB;font-family:Inter;line-height:1.5;padding-top:1.5mm">${sub}</div>
+            </div>`).join('')}
+        </div>
+
+        <p style="color:#4A6380;font-size:8.5px;font-style:italic;line-height:1.55;margin:0;padding-left:8mm;border-left:2px solid rgba(201,168,76,.3)">
+          "Protecting and growing generational wealth<br>— one family at a time."
+        </p>
+      </div>
+
+      <!-- RIGHT: advisor contact -->
+      <div style="padding:9mm 14mm 9mm 8mm;display:flex;flex-direction:column;justify-content:center">
+        <div style="font-size:7px;color:${G};letter-spacing:3px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2mm">YOUR DEDICATED ADVISOR</div>
+        <h2 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:24px;color:#fff;font-weight:900;margin:0 0 1.5mm;letter-spacing:0">您的专属客户经理</h2>
+        <p style="color:#8BA0BB;font-size:9px;font-family:'Noto Sans SC',sans-serif;margin:0 0 6mm">如对本提案有任何疑问，请随时与您的顾问联系。</p>
+
+        <!-- Advisor card -->
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.25);border-radius:8px;padding:6mm;margin-bottom:5mm">
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:1mm">
+            <span style="font-size:22px;font-weight:800;color:#fff;font-family:Inter;letter-spacing:-0.3px">Jeffrey Yuan</span>
+            <span style="background:${G};color:${NAVY};font-size:7px;padding:2px 8px;border-radius:100px;font-family:Inter;font-weight:700;letter-spacing:0.5px">INDEPENDENT BROKER</span>
+          </div>
+          <div style="color:#8BA0BB;font-size:8px;font-family:'Noto Sans SC',sans-serif;margin-bottom:4mm">独立持牌经纪 · 私人财富顾问</div>
+
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:2.5mm 5mm;font-size:9px;font-family:Inter">
+            <div style="color:${G};font-weight:700;letter-spacing:1.5px;font-size:6.5px;text-transform:uppercase">PHONE</div>
+            <div style="color:#fff;font-weight:600">778-837-6688 <span style="color:#4A6380;font-size:7px;margin-left:5px">Mon–Fri 9:00–18:00 PST</span></div>
+
+            <div style="color:${G};font-weight:700;letter-spacing:1.5px;font-size:6.5px;text-transform:uppercase">EMAIL</div>
+            <div style="color:#fff;font-weight:600;word-break:break-all">Jeffrey.Yuan@TritonWealth.ca</div>
+
+            <div style="color:${G};font-weight:700;letter-spacing:1.5px;font-size:6.5px;text-transform:uppercase">WEB</div>
+            <div style="color:#fff;font-weight:600">www.tritonwealth.ca</div>
+          </div>
+        </div>
+
+        <div style="color:#2D3F55;font-size:7px;font-family:Inter;line-height:1.55;text-align:center;border-top:1px solid rgba(201,168,76,.12);padding-top:3mm">
+          © 2026 Triton Wealth Management Corporation · 富瑞财富管理 · CONFIDENTIAL<br>
+          报告生成 Generated: May 2026 · 数据截至 Data as of: ${APP_DATA.asOfLabel}
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  return s1 + s2 + s3 + s4 + s5 + sDecision + s6 + s7 + s8;
+}
+
+function buildPDFLayout() {
+  const d = APP_DATA.portfolios[currentTab];
+  const col = TAB_COLORS[currentTab];
+  const m = d.metrics;
+  Object.values(CH).forEach(chart => {
+    if (!chart) return;
+    if (chart.options?.plugins?.legend?.labels) {
+      chart.options.plugins.legend.labels.color = '#475467';
+      chart.options.plugins.legend.labels.font = { size: 10, family: 'Inter', weight: '500' };
+      chart.options.plugins.legend.labels.pointStyleWidth = 8;
+      chart.options.plugins.legend.labels.boxWidth = 8;
+      chart.options.plugins.legend.labels.padding = 10;
+    }
+    chart.data?.datasets?.forEach((ds, i) => {
+      if (chart.config.type === 'doughnut') {
+        ds.borderWidth = 1;
+        ds.borderColor = '#F8FAFC';
+        ds.hoverOffset = 1;
+      }
+      if (chart.config.type === 'line') {
+        ds.borderWidth = i === 0 ? 2.3 : 1;
+        ds.pointRadius = i === 0 ? 2.4 : 1;
+        ds.pointHoverRadius = i === 0 ? 4 : 2.8;
+        ds.backgroundColor = i === 0 ? `${col}10` : 'transparent';
+        if (i === 1) ds.borderColor = '#B8C3D1';
+        if (i === 2) ds.borderColor = '#D3DAE4';
+      }
+    });
+    if (chart.options?.scales) {
+      Object.values(chart.options.scales).forEach(scale => {
+        if (scale?.ticks) {
+          scale.ticks.color = '#667085';
+          scale.ticks.font = { size: 12, family: 'Inter', weight: '500' };
+        }
+        if (scale?.grid) scale.grid.color = '#E4E8EF';
+      });
+    }
+    chart.update('none');
+  });
+  const charts = {};
+  document.querySelectorAll('canvas').forEach(c => {
+    try { charts[c.id] = c.toDataURL('image/png', 1.0); } catch(e) { charts[c.id] = ''; }
+  });
+
+  const NAVY = '#0A1628';
+  const NAVY2 = '#123052';
+  const GOLD = '#B99A45';
+  const BG = '#F7F8FA';
+  const LINE = '#DDE3EA';
+  const TEXT = '#172033';
+  const MUTED = '#667085';
+  const POS = '#047857';
+  const NEG = '#B42318';
+  const FUND_PAL = FUND_PALETTE;
+  const TOTAL = 9;
+
+  const fN = (v, dec=1) => (v == null ? 'N/A' : v.toFixed(dec));
+  const fP = (v, dec=1) => (v == null ? 'N/A' : `${v > 0 ? '+' : ''}${v.toFixed(dec)}%`);
+  const fCol = v => (v != null && v >= 0 ? POS : NEG);
+
+  const chartImg = (id, h='230px') => charts[id]
+    ? `<img src="${charts[id]}" style="width:100%;height:${h};object-fit:contain;display:block" alt="">`
+    : `<div style="height:${h};display:flex;align-items:center;justify-content:center;background:#F3F6F9;color:#98A2B3;border:1px solid ${LINE};font-size:9px">Chart unavailable - open the web report before exporting.</div>`;
+
+  const page = (num, eyebrow, title, body, opts={}) => `
+    <section class="pdf-page" style="display:flex;flex-direction:column;background:${opts.dark ? NAVY : '#fff'};color:${opts.dark ? '#fff' : TEXT};padding:0">
+      <header style="height:58px;padding:18px 42px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <img src="${opts.cover ? 'triton-logo.png' : 'LOGO PNG 竖版.png'}" style="height:${opts.cover ? '34px' : '34px'};width:auto;object-fit:contain" onerror="this.style.display='none'">
+          <div style="height:24px;width:1px;background:${opts.dark ? 'rgba(201,168,76,.45)' : LINE}"></div>
+          <div>
+            <div style="font-family:Inter,sans-serif;font-size:8px;font-weight:800;letter-spacing:1.8px;color:${GOLD}">TRITON WEALTH</div>
+            <div style="font-size:7.5px;color:${opts.dark ? '#8CA1BA' : MUTED};margin-top:2px">Private Wealth Advisory</div>
+          </div>
+        </div>
+        <div style="text-align:right;font-family:Inter,sans-serif;font-size:8px;color:${opts.dark ? '#8CA1BA' : MUTED}">
+          <div style="font-weight:800;color:${opts.dark ? GOLD : NAVY}">CONFIDENTIAL</div>
+          <div style="margin-top:2px">Data as of ${APP_DATA.asOfLabel}</div>
+        </div>
+      </header>
+      <div class="pdf-main" style="flex:1;padding:${opts.cover ? '42px 54px 34px' : '24px 42px 20px'};overflow:hidden">
+        ${!opts.cover ? `
+          <div style="border-top:1px solid ${LINE};padding-top:18px;margin-bottom:18px">
+            <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:7px">${eyebrow}</div>
+            <h1 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:25px;line-height:1.22;font-weight:800;letter-spacing:0;margin:0;color:${TEXT}">${title}</h1>
+          </div>` : body}
+        ${!opts.cover ? body : ''}
+      </div>
+      <footer style="height:36px;padding:0 42px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid ${opts.dark ? 'rgba(255,255,255,.12)' : LINE};font-family:Inter,sans-serif;font-size:7.5px;color:${opts.dark ? '#758BA8' : '#8A94A6'};flex-shrink:0">
+        <span>© 2026 Triton Wealth Management Corporation · Past performance does not guarantee future results.</span>
+        <span>Page ${num} of ${TOTAL}</span>
+      </footer>
+    </section>`;
+
+  const metricBox = (label, value, color, note='') => `
+    <div style="border:1px solid ${LINE};border-radius:6px;padding:14px 14px;background:#fff">
+      <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:${MUTED};margin-bottom:9px">${label}</div>
+      <div style="font-family:Inter,sans-serif;font-size:25px;line-height:1;font-weight:800;color:${color};letter-spacing:0">${value}</div>
+      ${note ? `<div style="font-size:9px;color:${MUTED};margin-top:8px;line-height:1.45">${note}</div>` : ''}
+    </div>`;
+
+  const section = (title, body) => `
+    <div style="border:1px solid ${LINE};border-radius:7px;background:#fff;padding:16px 18px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:${NAVY};margin-bottom:8px">${title}</div>
+      <div style="font-size:10.5px;line-height:1.62;color:${TEXT}">${body}</div>
+    </div>`;
+
+  const comparisonRows = [
+    ['投资回报', '确定利率，适合短期资金和确定支出；长期增长空间有限。', '参与股票、债券及全球资产增长，适合 5 年以上中长期配置。'],
+    ['税务属性', '非注册账户中，利息通常 100% 作为普通收入应税。', '分派可能包含资本利得、合格股息、利息或本金返还，应结合账户类型规划。'],
+    ['法务/传承', '以存款合同为主，传承效率取决于账户登记与遗产安排。', '可指定受益人，可能绕过遗产认证，并具备潜在债权人保护。'],
+    ['风险性', '本金与利息较确定，但存在通胀风险和再投资利率风险。', '市场价值会波动；合同身故/到期保证可提供一定底线保护。'],
+    ['适合资金', '短期备用金、确定支出、不能承受波动的资金。', '退休规划、长期增长资产、家庭传承资金。']
+  ];
+
+  const funds5yPdf = d.funds.filter(f => f.y5 !== null);
+  const w5yTotal = funds5yPdf.reduce((s,f) => s + f.alloc, 0);
+  const w5y = w5yTotal ? funds5yPdf.reduce((s,f) => s + f.y5 * f.alloc, 0) / w5yTotal : null;
+  const fundRows = d.funds.map((f,i) => `
+    <tr style="background:${i % 2 ? '#FAFBFC' : '#fff'}">
+      <td style="padding:9px 8px;border-bottom:1px solid ${LINE}">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span style="width:8px;height:8px;border-radius:50%;background:${FUND_PAL[i % FUND_PAL.length]};display:inline-block;flex-shrink:0"></span>
+          <span style="font-family:Inter,sans-serif;font-size:9px;font-weight:650;color:${TEXT};line-height:1.25">${f.name}</span>
+        </div>
+      </td>
+      <td style="padding:9px 8px;border-bottom:1px solid ${LINE};text-align:right;font-family:Inter,sans-serif;font-size:10px;font-weight:800;color:${col}">${f.alloc}%</td>
+      <td style="padding:9px 8px;border-bottom:1px solid ${LINE};text-align:right;font-family:Inter,sans-serif;font-size:9px;font-weight:800;color:${fCol(f.y1)}">${fP(f.y1)}</td>
+      <td style="padding:9px 8px;border-bottom:1px solid ${LINE};text-align:right;font-family:Inter,sans-serif;font-size:9px;font-weight:800;color:${fCol(f.y5)}">${fP(f.y5)}</td>
+      <td style="padding:9px 8px;border-bottom:1px solid ${LINE};font-size:8.5px;color:${MUTED};line-height:1.25">${f.role}</td>
+    </tr>`).join('');
+  const allocationBars = (items, colors) => items.map((item, i) => `
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:5px">
+        <div style="display:flex;align-items:center;gap:7px;min-width:0">
+          <span style="width:8px;height:8px;border-radius:50%;background:${colors[i % colors.length]};display:inline-block;flex-shrink:0"></span>
+          <span style="font-size:10px;font-weight:700;color:${TEXT};line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.label}</span>
+        </div>
+        <span style="font-family:Inter,sans-serif;font-size:10px;font-weight:800;color:${NAVY}">${item.value}%</span>
+      </div>
+      <div style="height:6px;background:#EEF2F6;border-radius:99px;overflow:hidden">
+        <div style="height:100%;width:${item.value}%;background:${colors[i % colors.length]};border-radius:99px"></div>
+      </div>
+    </div>`).join('');
+  const scenarioPrincipal = 100000;
+  const scenarioYears = [1, 3, 5, 10];
+  const gicRate = APP_DATA.benchmarks.gic_5yr.y5;
+  const fv = (rate, y) => scenarioPrincipal * Math.pow(1 + rate / 100, y);
+  const money = (v) => '$' + Math.round(v).toLocaleString();
+  const taxProvince = getSegProvinceData();
+  const taxBracket = getSelectedSegTaxBracket();
+  const tax5 = calculateTaxComparison(10000);
+  const tax10 = calculateTaxComparison(25000);
+  const scenarioTableRows = scenarioYears.map((y, i) => `
+    <tr style="background:${i % 2 ? '#fff' : BG}">
+      <td style="padding:12px 14px;border-bottom:1px solid ${LINE};font-size:11px;font-weight:800;color:${NAVY}">${y} 年后</td>
+      <td style="padding:12px 14px;border-bottom:1px solid ${LINE};text-align:right;font-family:Inter,sans-serif;font-size:11px;font-weight:800;color:${MUTED}">${money(fv(gicRate, y))}</td>
+      <td style="padding:12px 14px;border-bottom:1px solid ${LINE};text-align:right;font-family:Inter,sans-serif;font-size:12px;font-weight:800;color:${GOLD}">${money(fv(m.annualReturn5Y, y))}</td>
+    </tr>`).join('');
+
+  const cover = page(1, '', '', `
+    <div style="height:100%;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="font-family:Inter,sans-serif;font-size:9px;letter-spacing:2.4px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:20px">Segregated Fund Advisory Report</div>
+        <h1 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:30px;line-height:1.26;font-weight:800;letter-spacing:0;margin:0 0 14px;color:#fff">
+          分隔基金投资组合<br>客户建议报告
+        </h1>
+        <div style="width:82px;height:2px;background:${GOLD};margin:24px 0"></div>
+        <div style="font-size:13px;line-height:1.65;color:#C7D2E1">
+          兼顾增长、保障与传承的分隔基金配置方案<br>
+          <span style="font-family:Inter,sans-serif;color:#8CA1BA">Growth · Tax · Estate · Risk · Guarantees</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div style="border:1px solid rgba(201,168,76,.38);background:rgba(255,255,255,.035);border-radius:7px;padding:16px">
+          <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Portfolio</div>
+          <div style="font-size:17px;font-weight:800;color:#fff">${d.name}</div>
+          <div style="font-family:Inter,sans-serif;font-size:10px;color:#8CA1BA;margin-top:4px">${d.nameEN}</div>
+        </div>
+        <div style="border:1px solid rgba(201,168,76,.38);background:rgba(255,255,255,.035);border-radius:7px;padding:16px">
+          <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Prepared For</div>
+          <div style="font-size:17px;font-weight:800;color:#fff">High-Net-Worth Client</div>
+          <div style="font-family:Inter,sans-serif;font-size:10px;color:#8CA1BA;margin-top:4px">Data as of ${APP_DATA.asOfLabel}</div>
+        </div>
+      </div>
+    </div>`, { dark:true, cover:true });
+
+  const exec = page(2, 'Executive Summary', 'GIC 与分隔基金的适用场景比较', `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      ${metricBox('5Y Average Return', fP(m.annualReturn5Y), POS, '组合历史加权平均回报')}
+      ${metricBox('Volatility', `${fN(m.volatility)}%`, NAVY, '组合估算波动率')}
+      ${metricBox('Max Drawdown', fP(m.maxDrawdown), NEG, '组合估算最大回撤')}
+    </div>
+    ${section('核心观点', '不同资金用途对应不同工具。GIC 偏向短期确定性和已知现金流安排；分隔基金偏向中长期增长、合同保证、税务效率和传承安排。两者不应被简单看作替代关系，而应根据资金用途进行分层配置。')}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      ${section('适合保留在银行产品中的资金', '短期备用金、明确支出、不能承受净值波动的资金，以及客户心理上必须保持确定性的资金。')}
+      ${section('适合讨论分隔基金的资金', '5 年以上周期的中长期资产、退休收入规划、希望兼顾增长与合同保证的资金，以及有传承安排需求的家庭资产。')}
+      ${section('顾问讲解重点', '先确认资金用途和时间周期，再比较税务、法务、投资回报和风险边界。重点是评估利率确定性与中长期增长潜力之间的取舍。')}
+      ${section('重要提醒', '分隔基金有市场波动，保证条款以合同为准；历史回报不代表未来表现，本报告仅供讨论，不构成税务或法律建议。')}
+    </div>`);
+
+  const compare = page(3, 'GIC vs Segregated Fund', '银行 GIC 与分隔基金对比', `
+    <div style="border:1px solid ${LINE};border-radius:7px;overflow:hidden;background:#fff">
+      <div style="display:grid;grid-template-columns:1fr 1.25fr 1.25fr;background:${NAVY};color:#fff;font-size:10px;font-weight:800">
+        <div style="padding:12px 14px">客户关心的问题</div>
+        <div style="padding:12px 14px;border-left:1px solid rgba(255,255,255,.15)">银行 GIC</div>
+        <div style="padding:12px 14px;border-left:1px solid rgba(255,255,255,.15);color:${GOLD}">分隔基金</div>
+      </div>
+      ${comparisonRows.map((r,i)=>`
+        <div style="display:grid;grid-template-columns:1fr 1.25fr 1.25fr;background:${i % 2 ? '#fff' : BG};border-top:1px solid ${LINE}">
+          <div style="padding:13px 14px;font-size:11px;font-weight:800;color:${NAVY}">${r[0]}</div>
+          <div style="padding:13px 14px;font-size:10px;line-height:1.55;color:${MUTED};border-left:1px solid ${LINE}">${r[1]}</div>
+          <div style="padding:13px 14px;font-size:10px;line-height:1.55;color:${TEXT};border-left:1px solid ${LINE};background:#FFFCF3">${r[2]}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:16px;border-left:3px solid ${GOLD};padding:10px 13px;background:#F8FAFC;font-size:10.5px;line-height:1.6;color:${TEXT}">
+      顾问观点：GIC 适合短期确定性资金；分隔基金适合中长期财富增长和传承规划。产品适配应以客户目标、账户类型、风险承受度和时间周期为基础。
+    </div>`);
+
+  const overview = page(4, 'Portfolio Overview', '组合定位与核心指标', `
+    <div style="display:grid;grid-template-columns:1.12fr .88fr;gap:14px">
+      <div>
+        ${section('组合定位', `<strong>${d.name}</strong> · ${d.nameEN}<br>${d.tagline}`)}
+        ${section('投资目标', d.objective)}
+        ${section('适合客户', d.suitableClient)}
+        ${section('建议投资期', d.horizon)}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr;gap:10px">
+        ${metricBox('YTD', fP(m.ytdReturn), fCol(m.ytdReturn))}
+        ${metricBox('1Y Return', fP(m.annualReturn1Y), POS)}
+        ${metricBox('5Y Annualized', fP(m.annualReturn5Y), POS)}
+        ${metricBox('Sharpe Ratio', fN(m.sharpeRatio,2), NAVY)}
+      </div>
+    </div>`);
+
+  const holdings = page(5, 'Fund Holdings', '组合基金配置明细', `
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px">
+      <div style="font-size:10px;color:${MUTED}">6 funds · Historical returns net of MER</div>
+      <div style="font-size:9px;color:${MUTED};font-style:italic">Source: equitablelife.fundata.com</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;border:1px solid ${LINE};border-radius:7px;overflow:hidden">
+      <thead>
+        <tr style="background:${NAVY};color:#fff">
+          ${['Fund','Alloc.','1Y','5Y','Role'].map((h,i)=>`<th style="padding:10px 8px;text-align:${i===0||i===4?'left':'right'};font-family:Inter,sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:${i===0?GOLD:'#DDE7F3'}">${h}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody>${fundRows}</tbody>
+      <tfoot>
+        <tr style="background:#F1F5F9">
+          <td colspan="3" style="padding:11px 8px;font-size:10px;font-weight:800;color:${NAVY}">组合加权 5Y 平均回报</td>
+          <td style="padding:11px 8px;text-align:right;font-family:Inter,sans-serif;font-size:11px;font-weight:800;color:${fCol(w5y)}">${fP(w5y)}</td>
+          <td style="padding:11px 8px;text-align:right;font-size:8.5px;color:${MUTED};font-style:italic">weighted average</td>
+        </tr>
+      </tfoot>
+    </table>`);
+
+  const allocation = page(6, 'Long-Term Growth Scenario', '长期增长情景', `
+    <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:14px">
+      <div style="border:1px solid ${LINE};border-radius:7px;background:#fff;overflow:hidden">
+        <div style="padding:14px 16px;border-bottom:1px solid ${LINE};background:#FFFCF3">
+          <div style="font-size:13px;font-weight:800;color:${NAVY};margin-bottom:4px">如果长期持有，历史情景下账户价值如何变化？</div>
+          <div style="font-family:Inter,sans-serif;font-size:9px;color:${MUTED}">$100,000 initial investment · 5Y annualized historical scenario</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:${NAVY};color:#fff">
+              <th style="padding:10px 14px;text-align:left;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:${GOLD};font-family:Inter">Holding Period</th>
+              <th style="padding:10px 14px;text-align:right;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:Inter">GIC Reference</th>
+              <th style="padding:10px 14px;text-align:right;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:Inter">Portfolio 5Y</th>
+            </tr>
+          </thead>
+          <tbody>${scenarioTableRows}</tbody>
+        </table>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr;gap:10px">
+        ${metricBox('本组合 5Y 情景', fP(m.annualReturn5Y), col, `$100K · historical average return scenario`)}
+        ${metricBox('GIC 确定性参考', fP(gicRate), MUTED, '确定性收益参考，长期增长空间相对有限')}
+        ${metricBox('风险语境', `${fN(m.volatility)}% Vol`, NAVY, `Max drawdown ${fP(m.maxDrawdown)} · Review guarantees and estate fit together`)}
+      </div>
+    </div>
+    <div style="margin-top:14px;border:1px solid ${LINE};border-radius:7px;background:#fff;padding:14px">
+      <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-size:12px;font-weight:800;color:${NAVY};margin-bottom:3px">税务视角 · Tax Perspective</div>
+          <div style="font-size:8.5px;color:${MUTED};line-height:1.45">Tax bracket: ${taxProvince.label} · ${taxBracket.labelEN} · ${taxBracket.range}</div>
+        </div>
+        <div style="font-size:8px;color:${MUTED};text-align:right">Same growth amount illustration<br>Capital gains use 50% inclusion simplification</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        ${metricBox('5Y Observation · $10K Gain', money(tax5.difference), POS, `GIC tax ${money(tax5.gicTax)} vs Seg fund gain tax ${money(tax5.segTax)}`)}
+        ${metricBox('10Y Observation · $25K Gain', money(tax10.difference), POS, `GIC tax ${money(tax10.gicTax)} vs Seg fund gain tax ${money(tax10.segTax)}`)}
+      </div>
+    </div>
+    <div style="margin-top:16px;border-left:3px solid ${GOLD};padding:10px 13px;background:#F8FAFC;font-size:9.5px;line-height:1.55;color:${MUTED}">
+      历史回报情景，不构成预测；税务示意不构成税务建议；实际分隔基金分派可能包含资本利得、合格股息、利息或本金返还。
+    </div>`);
+
+  const growth = page(7, 'Growth Scenario Comparison', '$100,000 中长期增长情景：本组合 vs GIC', `
+    <div style="border:1px solid ${LINE};border-radius:7px;padding:18px;background:#fff">
+      ${chartImg('chartGrowth','390px')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px">
+      ${metricBox('This Portfolio 5Y', fP(m.annualReturn5Y), col, `$100K → $${(100000*Math.pow(1+m.annualReturn5Y/100,5)/1000).toFixed(0)}K · Vol ${fN(m.volatility)}%, Max DD ${fP(m.maxDrawdown)}`)}
+      ${metricBox('5Y GIC Reference', fP(APP_DATA.benchmarks.gic_5yr.y5), MUTED, `$100K → $${(100000*Math.pow(1+APP_DATA.benchmarks.gic_5yr.y5/100,5)/1000).toFixed(0)}K · Deterministic return reference`)}
+      ${metricBox('S&P 500 Context', fP(APP_DATA.benchmarks.sp500.y5), '#667085', `Pure equity index; not comparable on guarantees, tax, estate features`)}
+    </div>
+    <div style="font-size:9px;line-height:1.55;color:${MUTED};margin-top:12px">
+      S&amp;P 500 是纯股票指数参考，用于理解市场背景；本组合评估重点是增长、波动、回撤、合同保证与传承规划的综合适配。Hypothetical based on historical annualized returns; not a forecast.
+    </div>`);
+
+  const disclosures = page(8, 'Disclosures', '法律、税务与风险提示', `
+    ${section('法律声明 · Legal Disclaimer', '本材料仅供参考，不构成投资建议、招揽或要约。过往业绩不代表未来表现。投资涉及风险，本金可能蒙受损失。This material is for informational purposes only and does not constitute investment advice or an offer.')}
+    ${section('税务提示 · Tax Considerations', '税务处理因个人情况、账户类型和投资结构而异。GIC 利息在非注册账户中通常作为普通收入应税；分隔基金分派可能包含资本利得、合格股息、利息或本金返还。请咨询专业税务顾问。')}
+    ${section('风险披露 · Risk Disclosure', '分隔基金价值会随股票、债券、汇率和市场流动性变化而波动。合同保证、费用、赎回规则和受益人安排以正式合同及 Fund Facts / Information Folder 为准。')}
+    ${section('数据来源与方法论 · Data Sources', '基金表现数据来自 Equitable Life Fund Performance Database，回报已扣除 MER。资产、行业、地区配置和波动率、最大回撤、夏普比率为基于组合构成的估算值。')}
+    <div style="font-size:9px;line-height:1.55;color:${MUTED};margin-top:10px">客户在作出投资决定前，应阅读相关基金文件并结合自身财务状况、风险承受度和投资期限进行评估。</div>`);
+
+  const contact = page(9, 'Advisor Contact', '您的专属客户经理', `
+    <div style="height:100%;display:flex;flex-direction:column;justify-content:center">
+      <div style="border:1px solid ${LINE};border-top:4px solid ${GOLD};border-radius:8px;padding:28px;background:#fff">
+        <div style="font-family:Inter,sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:10px">Your Dedicated Advisor</div>
+        <div style="font-family:Inter,sans-serif;font-size:28px;line-height:1;font-weight:800;color:${NAVY};margin-bottom:8px">Jeffrey Yuan</div>
+        <div style="font-size:12px;color:${MUTED};margin-bottom:24px">Independent Broker · Private Wealth Advisor</div>
+        <div style="display:grid;grid-template-columns:92px 1fr;gap:12px 18px;font-family:Inter,sans-serif;font-size:12px">
+          <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:${GOLD}">Phone</div>
+          <div style="font-weight:700;color:${TEXT}">778-837-6688</div>
+          <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:${GOLD}">Email</div>
+          <div style="font-weight:700;color:${TEXT}">Jeffrey.Yuan@TritonWealth.ca</div>
+          <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:${GOLD}">Website</div>
+          <div style="font-weight:700;color:${TEXT}">www.tritonwealth.ca</div>
+        </div>
+      </div>
+      <div style="margin-top:22px;border-left:3px solid ${GOLD};padding:12px 15px;background:#F8FAFC;font-size:11px;line-height:1.65;color:${TEXT}">
+        Protecting and growing generational wealth, one family at a time.
+      </div>
+    </div>`);
+
+  return cover + exec + compare + overview + holdings + allocation + growth + disclosures + contact;
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PDF EXPORT — build layout then print
+// ════════════════════════════════════════════════════════════════════
+function exportPDF() {
+  if (!APP_DATA) { alert('数据未加载，请稍候再试'); return; }
+
+  const btn = document.querySelector('nav.no-print [onclick="exportPDF()"]');
+  const originalText = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = '准备中...'; btn.disabled = true; }
+
+  // Allow charts to finish any pending animation, then build and print
+  setTimeout(() => {
+    try {
+      document.getElementById('pdf-body').innerHTML = buildPDFLayout();
+      setTimeout(() => {
+        try {
+          if (btn) { btn.textContent = originalText || '导出PDF'; btn.disabled = false; }
+          window.print();
+        } finally {
+          if (btn) { btn.textContent = originalText || '导出PDF'; btn.disabled = false; }
+          if (APP_DATA) setTimeout(() => initCharts(APP_DATA.portfolios[currentTab], TAB_COLORS[currentTab]), 300);
+        }
+      }, 150);
+    } catch (err) {
+      console.error('PDF export failed', err);
+      if (btn) { btn.textContent = originalText || '导出PDF'; btn.disabled = false; }
+      alert('PDF 生成失败，请刷新页面后再试。');
+    }
+  }, 300);
+}
+
+window.addEventListener('message', event => {
+  if (event.data && event.data.type === 'TRITON_EXPORT_PDF') exportPDF();
+});
+
+// Ctrl+P fallback: build layout before native print dialog
+window.addEventListener('beforeprint', () => {
+  if (APP_DATA && !document.getElementById('pdf-body').innerHTML.trim()) {
+    document.getElementById('pdf-body').innerHTML = buildPDFLayout();
+  }
+});
+window.addEventListener('afterprint', () => {
+  // Keep layout cached for fast re-print; clear on tab switch instead
+});
+
+// ════════════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════════════
+async function boot() {
+  await loadData();
+  switchTab('a');
+  // Hide loading screen after data loads
+  setTimeout(()=>{
+    document.getElementById('loading-screen').classList.add('hidden-fade');
+  }, 800);
+}
+window.addEventListener('DOMContentLoaded', boot);
+</script>
+
+</body>
+</html>

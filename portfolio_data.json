@@ -1,0 +1,112 @@
+{
+  "lastUpdated": "2026-04-30T16:00:00-04:00",
+  "asOfLabel": "2026年4月30日",
+  "dataSource": {
+    "primary": "Equitable Life Fund Performance Database",
+    "url": "https://equitablelife.fundata.com",
+    "note": "All returns net of MER. Volatility / Max Drawdown / Sharpe Ratio are estimated from portfolio composition and historical fund-level volatility."
+  },
+  "benchmarks": {
+    "sp500":      { "label": "S&P 500", "y1": 30.0, "y3": 20.0, "y5": 13.2, "ytd": 3.7 },
+    "msci_world": { "label": "MSCI World", "y1": 28.0, "y3": 17.5, "y5": 11.8, "ytd": 4.5 },
+    "gic_5yr":    { "label": "5Y GIC",  "y1": 3.5,  "y3": 3.4,  "y5": 3.2,  "ytd": 1.4 }
+  },
+  "portfolios": {
+    "a": {
+      "id": "a",
+      "name": "稳健型组合",
+      "nameEN": "Conservative Portfolio",
+      "tagline": "防守优先 · 稳定现金流",
+      "riskLevel": 2,
+      "horizon": "5–10 年",
+      "objective": "以收益型与低波动资产为核心，降低组合回撤，争取明显优于定存的中长期复合增长。",
+      "suitableClient": "风险承受度较低、接近退休或已退休、希望减少市场波动但仍保留长期增长潜力的客户。",
+      "metrics": {
+        "annualReturn3Y":  13.55,
+        "annualReturn5Y":   9.41,
+        "annualReturn1Y":  24.25,
+        "ytdReturn":        5.69,
+        "volatility":       7.8,
+        "maxDrawdown":     -9.5,
+        "sharpeRatio":      1.20,
+        "vsSP500_3Y":     -6.45,
+        "vsMSCI_3Y":      -3.95
+      },
+      "funds": [
+        { "name": "Fidelity® Tactical High Income",        "alloc": 50, "role": "收益核心",    "y1":24.6, "y3":11.4, "y5":7.3,  "ytd":5.6, "mer":2.82 },
+        { "name": "MFS Low Volatility Canadian Equity",     "alloc": 20, "role": "低波动加股",  "y1":21.2, "y3":16.0, "y5":11.4, "ytd":4.4, "mer":2.60 },
+        { "name": "Fidelity® Dividend",                    "alloc": 15, "role": "股息成长",    "y1":24.4, "y3":13.6, "y5":11.2, "ytd":8.3, "mer":2.80 },
+        { "name": "Vanguard Canada Index ETF",             "alloc": 5,  "role": "加股市场宽度","y1":32.7, "y3":18.5, "y5":13.4, "ytd":6.4, "mer":2.48 },
+        { "name": "Vanguard S&P 500 Index ETF",            "alloc": 5,  "role": "美股核心",    "y1":30.0, "y3":20.0, "y5":13.2, "ytd":3.7, "mer":2.33 },
+        { "name": "Fidelity® Global Equity+ Balanced",      "alloc": 5,  "role": "全球稳定器",  "y1":18.4, "y3":null, "y5":null, "ytd":4.9, "mer":2.76 }
+      ],
+      "asset":  { "labels":["收益型 Income","股票 Equity","均衡 Balanced"], "data":[50,45,5] },
+      "sector": { "labels":["固收/收益","金融","医疗保健","能源","日常消费","科技","工业","非必需消费","通讯服务"], "data":[39,17,10,10,8,7,5,3,1] },
+      "geo":    { "labels":["加拿大","美国","国际发达市场","全球/多区域","新兴市场"], "data":[42,24,18,11,5] }
+    },
+    "b": {
+      "id": "b",
+      "name": "均衡型组合",
+      "nameEN": "Balanced Portfolio",
+      "tagline": "成长增强 · 全球分散",
+      "riskLevel": 3,
+      "horizon": "5–10 年",
+      "objective": "在可接受中等波动的前提下，提高美股、全球价值与国际股票配置，明显拉开与稳健型的增长目标。",
+      "suitableClient": "希望提升长期增长潜力、可接受中等市场波动、投资期 5 年以上的成长型客户。",
+      "metrics": {
+        "annualReturn3Y":  18.87,
+        "annualReturn5Y":  12.34,
+        "annualReturn1Y":  30.77,
+        "ytdReturn":        6.04,
+        "volatility":      13.5,
+        "maxDrawdown":    -18.5,
+        "sharpeRatio":      1.18,
+        "vsSP500_3Y":     -1.13,
+        "vsMSCI_3Y":       1.37
+      },
+      "funds": [
+        { "name": "Vanguard S&P 500 Index ETF",            "alloc": 24, "role": "美股核心引擎", "y1":30.0, "y3":20.0, "y5":13.2, "ytd":3.7, "mer":2.33 },
+        { "name": "Fidelity® U.S. Focused Stock",           "alloc": 16, "role": "美股成长增强","y1":45.5, "y3":26.0, "y5":14.8, "ytd":11.9, "mer":2.84 },
+        { "name": "Brandes Global Equity",                 "alloc": 20, "role": "全球价值",    "y1":24.6, "y3":18.5, "y5":13.5, "ytd":1.3, "mer":2.83 },
+        { "name": "Vanguard Canada Index ETF",             "alloc": 15, "role": "本国核心",    "y1":32.7, "y3":18.5, "y5":13.4, "ytd":6.4, "mer":2.48 },
+        { "name": "Vanguard Developed All Cap ex NA ETF",   "alloc": 15, "role": "国际分散",    "y1":30.0, "y3":15.3, "y5":9.1,  "ytd":8.1, "mer":2.50 },
+        { "name": "Fidelity® Tactical High Income",         "alloc": 10, "role": "收益缓冲",    "y1":24.6, "y3":11.4, "y5":7.3,  "ytd":5.6, "mer":2.82 }
+      ],
+      "asset":  { "labels":["股票 Equity","收益型 Income"], "data":[90,10] },
+      "sector": { "labels":["科技","金融","医疗保健","非必需消费","工业","能源","通讯服务","固收/收益","其他"], "data":[24,18,12,11,9,8,8,6,4] },
+      "geo":    { "labels":["美国","加拿大","国际发达市场","全球/多区域","新兴市场"], "data":[45,24,20,6,5] }
+    },
+    "c": {
+      "id": "c",
+      "name": "进取型组合",
+      "nameEN": "Growth Portfolio",
+      "tagline": "长期资本增长 · 科技与创新主导",
+      "riskLevel": 4,
+      "horizon": "7–10+ 年",
+      "objective": "追求中长期资本增长，重仓美股成长、科技与全球创新主题、新兴市场。波动较高。",
+      "suitableClient": "追求资本增长、能承受较大短期市场波动、投资期 7 年以上的积极型客户。",
+      "metrics": {
+        "annualReturn3Y":  29.13,
+        "annualReturn5Y":  14.97,
+        "annualReturn1Y":  49.96,
+        "ytdReturn":       13.19,
+        "volatility":      17.0,
+        "maxDrawdown":    -25.0,
+        "sharpeRatio":      1.57,
+        "vsSP500_3Y":      9.13,
+        "vsMSCI_3Y":      11.63
+      },
+      "funds": [
+        { "name": "Fidelity® U.S. Focused Stock",          "alloc": 22, "role": "美股成长龙头","y1":45.5, "y3":26.0, "y5":14.8, "ytd":11.9, "mer":2.84 },
+        { "name": "Fidelity® Global Innovators",           "alloc": 20, "role": "创新核心",    "y1":66.0, "y3":42.3, "y5":18.7, "ytd":21.9, "mer":2.89 },
+        { "name": "Invesco NASDAQ 100 Index ETF",          "alloc": 18, "role": "科技敞口",    "y1":43.1, "y3":27.5, "y5":null, "ytd":6.8,  "mer":2.38 },
+        { "name": "Fidelity® Special Situations",          "alloc": 15, "role": "Alpha 引擎",  "y1":62.8, "y3":31.1, "y5":16.0, "ytd":18.1, "mer":3.05 },
+        { "name": "Vanguard S&P 500 Index ETF",            "alloc": 15, "role": "市场锚定",    "y1":30.0, "y3":20.0, "y5":13.2, "ytd":3.7,  "mer":2.33 },
+        { "name": "Mackenzie Emerging Markets",            "alloc": 10, "role": "新兴市场引擎","y1":50.7, "y3":23.3, "y5":9.0,  "ytd":17.0, "mer":2.86 }
+      ],
+      "asset":  { "labels":["股票 Equity","现金与防御"], "data":[97,3] },
+      "sector": { "labels":["科技","非必需消费","医疗保健","通讯服务","金融","工业","日常消费","能源","其他"], "data":[34,13,12,11,10,8,5,3,4] },
+      "geo":    { "labels":["美国","国际发达市场","新兴市场","加拿大","全球/多区域"], "data":[52,16,15,10,7] }
+    }
+  }
+}

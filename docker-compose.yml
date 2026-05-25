@@ -1,0 +1,22 @@
+services:
+  proposal:
+    image: node:22-alpine
+    container_name: triton-fund-proposal
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      TRITON_HOST: 0.0.0.0
+      TRITON_PORT: 8790
+    volumes:
+      - ./:/app
+    command: node server.js
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.5.0
+    container_name: triton-fund-proposal-tunnel
+    restart: unless-stopped
+    depends_on:
+      - proposal
+    volumes:
+      - ./deploy/cloudflared:/etc/cloudflared:ro
+    command: tunnel --config /etc/cloudflared/config.yml run TRITON-PROPOSAL

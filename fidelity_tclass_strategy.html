@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fidelity T-Class · 税务高效月度现金流策略 | Triton Wealth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <script src="auth.js" defer></script>
+
+  <style>
+    :root {
+      --navy:    #0A1628;
+      --navy-2:  #0F1E33;
+      --navy-3:  #1A2D4D;
+      --navy-d:  #071426;
+      --gold:    #C9A84C;
+      --gold-l:  #E8D5A3;
+      --gold-d:  #9A7B2E;
+      --pos:     #10B981;
+      --pos-d:   #079455;
+      --neg:     #EF4444;
+      --neg-d:   #D92D20;
+      --bg:      #F7F9FC;
+      --bord:    #E4E8EF;
+      --tx1:     #111827;
+      --tx2:     #667085;
+    }
+
+    body {
+      font-family: 'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+      background: #F7F8FA;
+      color: #1A2D4D;
+    }
+    .num, .en { font-family: 'Inter', 'Helvetica Neue', sans-serif; }
+    .serif    { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* hero gradient */
+    .hero-bg {
+      background:
+        radial-gradient(ellipse at top left, rgba(201,168,76,0.15), transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(201,168,76,0.08), transparent 50%),
+        linear-gradient(135deg, #0A1628 0%, #0F1E33 50%, #142B4D 100%);
+    }
+    .hero-bg::before {
+      content:''; position:absolute; inset:0; opacity:.04;
+      background-image:
+        linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events:none;
+    }
+
+    .gold-stripe { background: linear-gradient(90deg, transparent, #C9A84C, transparent); height:1px; }
+
+    /* Cards */
+    .lux-card {
+      background:#fff; border-radius:16px;
+      box-shadow:0 4px 24px rgba(10,22,40,.06), 0 1px 2px rgba(10,22,40,.04);
+      transition: transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1);
+    }
+    .lux-card:hover {
+      transform: translateY(-3px);
+      box-shadow:0 12px 40px rgba(10,22,40,.12), 0 0 0 1px rgba(201,168,76,.2);
+    }
+    .lux-card-dark {
+      background: linear-gradient(135deg, var(--navy-2) 0%, var(--navy-3) 100%);
+      color:#fff; border-radius:16px;
+      box-shadow: 0 8px 32px rgba(10,22,40,.4);
+    }
+
+    /* Loading screen */
+    #loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background: linear-gradient(135deg, #0A1628 0%, #0F1E33 100%);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+    #loading-screen.hidden-fade { opacity:0; visibility:hidden; pointer-events:none; }
+    .loader-bar {
+      width:240px; height:3px; background:rgba(255,255,255,.1);
+      border-radius:999px; overflow:hidden; position:relative;
+    }
+    .loader-bar::after {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+      animation: loaderSlide 1.4s ease-in-out infinite;
+    }
+    @keyframes loaderSlide { 0% {transform:translateX(-100%);} 100% {transform:translateX(100%);} }
+
+    /* Big metric */
+    .big-metric {
+      font-family:'Inter', sans-serif;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    /* Risk dots */
+    .rdot { width:18px; height:18px; border-radius:50%; display:inline-flex;
+            align-items:center; justify-content:center; font-size:9px;
+            font-weight:700; margin:0 2px; font-family:'Inter', sans-serif; }
+
+    .badge { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:600; letter-spacing:.02em; }
+
+    /* Typography Scale */
+    .t-display {
+      font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei','Inter',sans-serif;
+      font-size:clamp(24px,4vw,40px); font-weight:900;
+      letter-spacing:-0.02em; line-height:1.1;
+    }
+    .t-section {
+      font-family:'Noto Sans SC','Inter',sans-serif;
+      font-size:18px; font-weight:700; line-height:1.3;
+      letter-spacing:-0.01em;
+    }
+    .t-label {
+      font-family:'Inter',sans-serif; font-size:10px;
+      font-weight:700; letter-spacing:0.18em;
+      text-transform:uppercase; color:var(--gold);
+    }
+    .t-caption { font-size:11px; color:#94A3B8; line-height:1.5; }
+    .t-num-lg {
+      font-family:'Inter',sans-serif; font-size:32px;
+      font-weight:800; font-variant-numeric:tabular-nums;
+      letter-spacing:-0.03em; line-height:1;
+    }
+    .t-num-sm {
+      font-family:'Inter',sans-serif; font-size:16px;
+      font-weight:700; font-variant-numeric:tabular-nums; line-height:1;
+    }
+    .data-cell { font-family:'Inter', sans-serif; font-variant-numeric: tabular-nums; }
+    .tax-select-light {
+      width: 100%;
+      background: #fff !important;
+      color: #0A1628 !important;
+      border: 1px solid rgba(201,168,76,.45) !important;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: 700 12px/1.2 'Inter', sans-serif;
+      min-height: 42px;
+    }
+    .tax-select-light option {
+      background: #fff !important;
+      color: #0A1628 !important;
+    }
+
+    /* Section divider */
+    .section-divider {
+      display:flex; align-items:center; gap:16px;
+      margin:44px 0 28px;
+    }
+    .section-divider::before,.section-divider::after {
+      content:''; flex:1; height:1px;
+      background:linear-gradient(90deg,transparent,#D1D5DB,transparent);
+    }
+    .section-divider span {
+      font-family:'Inter',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:0.2em; text-transform:uppercase;
+      color:#94A3B8; white-space:nowrap;
+    }
+
+    /* T5/T8 toggle */
+    .tclass-toggle {
+      display:inline-flex; background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.25);
+      border-radius:999px; padding:3px;
+    }
+    .tclass-toggle button {
+      padding:5px 18px; font-size:12px; font-weight:700; font-family:'Inter',sans-serif;
+      border-radius:999px; color:rgba(255,255,255,.6); transition:all .25s;
+      letter-spacing:0.5px;
+    }
+    .tclass-toggle button.active {
+      background:#C9A84C; color:#0A1628;
+      box-shadow:0 2px 8px rgba(201,168,76,.3);
+    }
+
+    /* Calculator slider */
+    .calc-slider {
+      -webkit-appearance:none; appearance:none;
+      width:100%; height:6px; border-radius:3px;
+      background:linear-gradient(90deg, #C9A84C 0%, #C9A84C var(--pct, 5%), #E5E7EB var(--pct, 5%), #E5E7EB 100%);
+      outline:none;
+    }
+    .calc-slider::-webkit-slider-thumb {
+      -webkit-appearance:none; appearance:none;
+      width:22px; height:22px; border-radius:50%;
+      background:#fff; border:3px solid #C9A84C;
+      cursor:pointer; box-shadow:0 2px 8px rgba(201,168,76,.4);
+      transition: transform .15s;
+    }
+    .calc-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .calc-slider::-moz-range-thumb {
+      width:22px; height:22px; border-radius:50%;
+      background:#fff; border:3px solid #C9A84C;
+      cursor:pointer; box-shadow:0 2px 8px rgba(201,168,76,.4);
+    }
+
+    /* Portfolio tab */
+    .ptab-btn {
+      transition: all .25s; cursor:pointer; position:relative;
+      border:2px solid transparent;
+    }
+    .ptab-btn.active::after {
+      content:''; position:absolute; bottom:-2px; left:50%; transform:translateX(-50%);
+      width:32px; height:3px; background:#C9A84C; border-radius:2px;
+    }
+
+    /* Accordion */
+    details.accordion {
+      background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(10,22,40,.05);
+      margin-bottom:10px; overflow:hidden; transition: box-shadow .25s ease;
+    }
+    details.accordion[open] { box-shadow:0 6px 24px rgba(10,22,40,.1); }
+    details.accordion summary {
+      list-style: none; cursor:pointer; padding:18px 22px;
+      display:flex; align-items:center; justify-content:space-between;
+      font-weight:600; color: var(--navy);
+    }
+    details.accordion summary::-webkit-details-marker { display:none; }
+    details.accordion summary::after {
+      content:'+'; font-size:24px; color: var(--gold); font-weight:300;
+      transition: transform .25s ease;
+    }
+    details.accordion[open] summary::after { transform: rotate(45deg); }
+    details.accordion .content { padding: 0 22px 22px; color:#475569; font-size:13px; line-height:1.7; }
+
+    /* Concept card */
+    .concept-card {
+      background:#fff; border-radius:14px; padding:24px;
+      border:1px solid var(--bord);
+      transition: transform .3s, box-shadow .3s, border-color .3s;
+    }
+    .concept-card:hover {
+      transform:translateY(-4px);
+      box-shadow:0 12px 32px rgba(10,22,40,.1);
+      border-color:rgba(201,168,76,.3);
+    }
+    .concept-icon {
+      width:48px; height:48px; border-radius:12px;
+      display:inline-flex; align-items:center; justify-content:center;
+      font-size:22px; margin-bottom:14px;
+    }
+
+    /* Preset chip buttons */
+    .preset-chip {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(201,168,76,.2);
+      color: rgba(255,255,255,.7);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .preset-chip:hover {
+      background: rgba(201,168,76,.15);
+      border-color: rgba(201,168,76,.5);
+      color: #C9A84C;
+    }
+    .preset-chip.active {
+      background: #C9A84C;
+      color: #0A1628;
+      border-color: #C9A84C;
+    }
+
+    /* Result card pulse on update */
+    .result-card { transition: transform .2s ease; }
+    .pulse-flash { animation: pulseFlash .5s ease; }
+    @keyframes pulseFlash {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.04); box-shadow: 0 8px 24px rgba(201,168,76,.3); }
+    }
+
+    /* ────────────────────────────────────────────────────────
+       PDF LAYOUT — Letter Portrait 216mm × 279mm
+       Hidden on screen; shown only in print
+       ──────────────────────────────────────────────────────── */
+    #pdf-body { display: none; }
+
+    .pdf-page {
+      width: 216mm;
+      height: 279mm;
+      min-height: 279mm;
+      background: #F7F9FC;
+      box-sizing: border-box;
+      font-family: 'Noto Sans SC','Inter',sans-serif;
+      color: #111827;
+      position: relative;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      overflow: hidden;
+    }
+    .pdf-dark {
+      background: #0B1B2E !important;
+      color: #fff !important;
+    }
+
+    @media print {
+      @page { size: letter portrait; margin: 0; }
+
+      html, body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        width: 216mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+      }
+
+      #loading-screen, nav, main, footer, .hero-bg { display: none !important; }
+
+      #pdf-body { display: block !important; }
+
+      .pdf-page {
+        width: 216mm;
+        height: 279mm;
+        min-height: 279mm;
+        overflow: hidden;
+        break-after: page;
+        page-break-after: always;
+        display: flex;
+        flex-direction: column;
+      }
+      .pdf-page:last-child {
+        break-after: auto;
+        page-break-after: avoid;
+      }
+
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+
+    body.embedded-shell nav.no-print,
+    body.embedded-shell #loading-screen {
+      display: none !important;
+    }
+    body.embedded-shell .hero-bg:first-of-type > div {
+      padding-top: 38px !important;
+      padding-bottom: 44px !important;
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+<script>
+  if (new URLSearchParams(location.search).has('embedded')) {
+    document.body.classList.add('embedded-shell');
+  }
+</script>
+
+<!-- ════════════════════ LOADING SCREEN ════════════════════ -->
+<div id="loading-screen">
+  <img src="triton-logo.png" alt="Triton Wealth" style="height:64px;margin-bottom:24px;opacity:.95;" onerror="this.style.display='none'" />
+  <div class="text-white text-sm tracking-widest mb-1" style="opacity:.7">TRITON WEALTH MANAGEMENT</div>
+  <div class="text-xs tracking-widest mb-8" style="color:#C9A84C;opacity:.6">FIDELITY T-CLASS STRATEGY</div>
+  <div class="loader-bar"></div>
+  <div class="text-white text-xs mt-4 en" style="opacity:.5">正在加载 · Loading...</div>
+</div>
+
+<!-- ════════════════════ STICKY NAV ════════════════════ -->
+<nav class="hero-bg text-white px-6 py-3 flex items-center justify-between sticky top-0 z-50 no-print" style="position:relative">
+  <div class="flex items-center space-x-3 relative z-10">
+    <img src="triton-logo.png" alt="Triton Wealth" style="height:42px;width:auto;" />
+    <div class="leading-tight border-l border-gold pl-3 ml-1" style="border-color:#C9A84C">
+      <div class="font-bold text-sm tracking-wide">富瑞财富管理</div>
+      <div class="text-[11px] tracking-widest en" style="color:#C9A84C">FIDELITY T-CLASS · TAX-EFFICIENT INCOME</div>
+    </div>
+  </div>
+  <div class="flex items-center space-x-3 relative z-10">
+    <!-- T5/T8 Toggle in nav -->
+    <div class="tclass-toggle">
+      <button id="navT5" onclick="setTClass('T5')">T5 · 5%</button>
+      <button id="navT8" onclick="setTClass('T8')" class="active">T8 · 8%</button>
+    </div>
+    <span class="text-xs border border-gold text-gold px-3 py-1 rounded-full font-medium" style="border-color:#C9A84C;color:#C9A84C">CONFIDENTIAL</span>
+    <button onclick="exportPDF()" class="bg-gold hover:bg-yellow-300 text-navy font-bold px-4 py-1.5 rounded-lg text-xs transition-all" style="background:#C9A84C;color:#0A1628">⬇ 导出PDF</button>
+  </div>
+</nav>
+
+<!-- ════════════════════ HERO SECTION ════════════════════ -->
+<section class="hero-bg text-white relative overflow-hidden" style="position:relative">
+  <div class="max-w-6xl mx-auto px-6 pt-12 pb-14 relative z-10">
+
+    <div class="text-center mb-9">
+      <div class="inline-block text-xs tracking-[0.3em] font-medium mb-3" style="color:#C9A84C">FIDELITY T-CLASS STRATEGY · 税务高效月度现金流</div>
+      <h1 class="font-bold leading-tight mb-2" style="font-size:clamp(28px, 5vw, 50px);letter-spacing:-0.02em">
+        每月稳定<span style="color:#C9A84C">现金流</span> · 税务智能<span style="color:#C9A84C">递延</span>
+      </h1>
+      <p class="text-blue-200 text-base md:text-lg font-light mb-1">Monthly Cash Flow · Tax-Smart Deferral via Return of Capital</p>
+      <div class="gold-stripe w-24 mx-auto mt-5"></div>
+      <p class="text-blue-200/70 text-sm mt-4 max-w-3xl mx-auto">
+        Fidelity T-Class（T5 / T8）以 <span class="text-gold font-semibold">Return of Capital（ROC）</span>机制为高净值客户提供税务高效的月度现金流，
+        是退休、税务递延与现金流规划的核心工具。
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════ MAIN CONTENT ════════════════════ -->
+<main class="max-w-6xl mx-auto px-4 md:px-6 -mt-6 pb-16 relative z-20">
+
+  <!-- ═══ Section 1: Cash Flow Calculator (Interactive) ═══ -->
+  <div class="section-divider"><span>现金流计算器 · Interactive Calculator</span></div>
+
+  <div class="lux-card-dark p-6 mb-6" style="background:linear-gradient(135deg,#0F1E33,#1A2D4D)">
+    <div class="text-center mb-6">
+      <div class="t-label mb-2">CASH FLOW CALCULATOR</div>
+      <h3 class="text-2xl font-bold text-white mb-1">您的专属现金流测算</h3>
+      <p class="text-blue-200/70 text-sm">调整投资额、T5/T8、税阶 — 实时计算月度派息与税务对比</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Inputs -->
+      <div class="space-y-5">
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-white/80 text-sm font-medium">投资金额 Investment Amount</label>
+            <span class="text-white/40 text-xs en">$10K — $10M</span>
+          </div>
+          <!-- Direct number input -->
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-gold text-2xl font-bold en" style="color:#C9A84C">$</span>
+            <input type="text" id="calcInput" value="100,000"
+                   class="flex-1 bg-transparent border-b-2 border-gold text-white text-2xl font-bold en outline-none px-1 py-1"
+                   style="border-color:#C9A84C;font-family:'Inter',sans-serif;letter-spacing:-0.02em"
+                   onfocus="this.select()" oninput="handleInputChange()" onchange="commitInputChange()" />
+            <span class="text-white/40 text-xs en">CAD</span>
+          </div>
+          <!-- Quick preset chips -->
+          <div class="flex gap-2 mb-3 flex-wrap">
+            <button onclick="setAmount(100000)"   class="preset-chip">$100K</button>
+            <button onclick="setAmount(250000)"   class="preset-chip">$250K</button>
+            <button onclick="setAmount(500000)"   class="preset-chip">$500K</button>
+            <button onclick="setAmount(1000000)"  class="preset-chip">$1M</button>
+            <button onclick="setAmount(2000000)"  class="preset-chip">$2M</button>
+            <button onclick="setAmount(5000000)"  class="preset-chip">$5M</button>
+          </div>
+          <input type="range" id="calcSlider" min="10000" max="10000000" step="10000" value="100000" class="calc-slider" oninput="syncSliderToInput()" />
+          <div class="flex justify-between text-xs text-white/40 mt-2 en">
+            <span>$10K</span><span>$1M</span><span>$5M</span><span>$10M</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-white/80 text-sm font-medium block mb-2">分配系列 T-Class Series</label>
+          <div class="tclass-toggle w-full justify-center">
+            <button id="calcT5" onclick="setTClass('T5')" class="flex-1">T5 · 5% 年化</button>
+            <button id="calcT8" onclick="setTClass('T8')" class="active flex-1">T8 · 8% 年化</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <label class="text-white/80 text-sm font-medium block">税务区域 Tax Jurisdiction</label>
+            <span id="taxDataStatus" class="text-[10px] en" style="color:#C9A84C">Tax data: loading...</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <select id="calcProvince" onchange="onProvinceChange()" class="tax-select-light">
+              <option value="BC" selected>British Columbia</option>
+              <option value="AB">Alberta</option>
+              <option value="ON">Ontario</option>
+            </select>
+            <select id="calcTaxBracket" onchange="updateTaxBracket()" class="tax-select-light"></select>
+          </div>
+          <div id="taxSourceNote" class="text-[11px] text-white/40 mt-2 leading-relaxed">
+            Tax rates are combined federal + provincial marginal rates. Capital gains shown at 50% inclusion.
+          </div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="result-card p-5 rounded-xl text-center" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35)" id="rcMonthly">
+          <div class="t-label mb-2" style="font-size:9px">月度现金流 MONTHLY</div>
+          <div class="big-metric text-white" style="font-size:30px">$<span id="oMonthly">667</span></div>
+          <div class="text-xs text-white/40 mt-1 en">Cash to your account</div>
+        </div>
+        <div class="result-card p-5 rounded-xl text-center" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)" id="rcAnnual">
+          <div class="t-label mb-2" style="font-size:9px">年度合计 ANNUAL</div>
+          <div class="big-metric text-white" style="font-size:26px">$<span id="oAnnual">8,000</span></div>
+          <div class="text-xs text-white/40 mt-1 en">Total per year</div>
+        </div>
+        <div class="result-card p-5 rounded-xl text-center" style="background:rgba(7,148,85,.1);border:1px solid rgba(7,148,85,.3)" id="rcTaxSaved">
+          <div class="t-label mb-2" style="font-size:9px;color:#10B981">首年税务节省 TAX SAVED Y1</div>
+          <div class="big-metric" style="font-size:26px;color:#10B981">$<span id="oTaxSaved">4,282</span></div>
+          <div class="text-xs text-white/40 mt-1 en">vs GIC interest income</div>
+        </div>
+        <div class="result-card p-5 rounded-xl text-center" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)" id="rcAcbYear">
+          <div class="t-label mb-2" style="font-size:9px">ACB→0 年数 DEPLETION</div>
+          <div class="big-metric text-white" style="font-size:26px"><span id="oAcbYear">12.5年</span></div>
+          <div class="text-xs text-white/40 mt-1 en">at selected historical return</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side-by-side comparison stripe -->
+    <div class="mt-6 p-4 rounded-xl" style="background:rgba(0,0,0,.2);border:1px solid rgba(201,168,76,.15)">
+      <div class="grid grid-cols-3 gap-4 text-center">
+        <div>
+          <div class="t-label" style="color:#94A3B8;font-size:9px">10年累计派息</div>
+          <div class="text-xl font-extrabold text-white en mt-1" id="o10y">$80,000</div>
+        </div>
+        <div style="border-left:1px solid rgba(255,255,255,.08);border-right:1px solid rgba(255,255,255,.08)">
+          <div class="t-label" style="color:#94A3B8;font-size:9px">10年GIC需缴税</div>
+          <div class="text-xl font-extrabold mt-1 en" style="color:#EF4444" id="o10yGicTax">$42,824</div>
+        </div>
+        <div>
+          <div class="t-label" style="color:#94A3B8;font-size:9px">10年T-Class递延税额</div>
+          <div class="text-xl font-extrabold mt-1 en" style="color:#10B981" id="o10yTcTax">$42,824</div>
+        </div>
+      </div>
+      <div class="text-[11px] text-white/45 mt-3 leading-relaxed">
+        注：T-Class 前期多为 ROC，本栏显示的是相对 GIC 被递延的税额，并非免税；未来 ACB 归零、赎回或处置时，可能以资本利得等形式纳税。
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ Section 2: Two Portfolios ═══ -->
+  <div class="section-divider"><span>两个组合配置 · Portfolio Options</span></div>
+  <div class="text-center mb-7">
+    <h2 class="t-display text-navy mb-1" style="color:#0A1628">两种 Fidelity T-Class 组合</h2>
+    <p class="t-caption">Choose Balanced or Growth based on your risk appetite</p>
+  </div>
+
+  <!-- Portfolio tabs -->
+  <div class="flex justify-center mb-6">
+    <div class="inline-flex bg-white rounded-2xl p-1.5 border border-gray-200 shadow-sm">
+      <button onclick="setPortfolio('balanced')" id="ptab-balanced" class="ptab-btn active px-6 py-3 rounded-xl text-sm font-semibold transition-all" style="background:rgba(201,168,76,.12);color:#9A7B2E">
+        均衡型 T-Class
+      </button>
+      <button onclick="setPortfolio('growth')" id="ptab-growth" class="ptab-btn px-6 py-3 rounded-xl text-sm font-semibold transition-all text-gray-500">
+        增长型 T-Class
+      </button>
+    </div>
+  </div>
+
+  <div class="lux-card p-6 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="badge text-white" id="pfBadge" style="background:#C9A84C">均衡型 T-Class</span>
+          <span class="text-xs text-gray-400 en" id="pfBadgeEN">Balanced T-Class</span>
+        </div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-sm font-medium text-gray-500">风险等级:</span>
+          <div class="flex" id="pfStars"></div>
+        </div>
+        <div class="space-y-2 text-sm" id="pfDesc"></div>
+
+        <div class="mt-5">
+          <h4 class="font-bold text-navy text-sm mb-3">持仓明细 Holdings</h4>
+          <table class="w-full text-sm" id="pfTable">
+            <thead>
+              <tr class="text-gray-500 font-semibold uppercase tracking-wide text-[10px]" style="background:#F8FAFC">
+                <th class="text-left py-2 px-3">基金 Fund</th>
+                <th class="text-right py-2 px-2">配置%</th>
+                <th class="text-right py-2 px-2">MER</th>
+                <th class="text-left py-2 px-2">角色</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="flex flex-col items-center justify-center">
+        <div style="width:240px;height:240px"><canvas id="chartPortfolio"></canvas></div>
+        <p class="text-xs text-gray-400 mt-3 text-center italic">所有持仓均为 Corporate Class · T5/T8 series available</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Section 2: T5 vs T8 20-Year Simulation ═══ -->
+  <div class="section-divider"><span>T5 vs T8 · 20年现金流与本金演变</span></div>
+  <div class="text-center mb-6">
+    <h2 class="t-display text-navy mb-1" style="color:#0A1628">"我每月能拿多少？多少年后还剩多少？"</h2>
+    <p class="t-caption">Side-by-side: monthly distribution &amp; remaining principal — T5 vs T8</p>
+  </div>
+
+  <!-- Historical Return Assumption Bar -->
+  <div class="lux-card p-5 mb-6" style="background:linear-gradient(135deg,#FFFBF0,#F0F4F8);border-left:4px solid #C9A84C">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+      <div>
+        <div class="text-[10px] tracking-widest font-bold mb-1" style="color:#9A7B2E">HISTORICAL RETURN ASSUMPTION</div>
+        <div class="text-lg font-bold text-navy">假设年化回报</div>
+        <div class="text-xs text-gray-500 mt-1">基于 Fidelity 公开 5Y 加权数据</div>
+      </div>
+      <div class="flex items-center gap-2 justify-center">
+        <span class="text-sm text-gray-600">当前组合:</span>
+        <span id="curPortfolioLbl" class="font-bold text-navy" style="color:#0A1628">均衡型 T-Class</span>
+      </div>
+      <div class="flex items-center gap-3 justify-end">
+        <span class="text-sm font-semibold text-gray-700">年化回报率：</span>
+        <input type="number" id="returnRateInput" value="12.1" step="0.1" min="-10" max="30"
+               class="text-2xl font-extrabold text-center w-20 bg-white rounded-lg en"
+               style="border:2px solid #C9A84C;color:#0A1628;font-family:'Inter',sans-serif;padding:4px 8px"
+               oninput="onReturnRateChange()" />
+        <span class="text-xl font-bold" style="color:#C9A84C">%</span>
+        <button onclick="resetReturnRate()" title="还原为 Fidelity 5Y 默认值" class="ml-1 text-xs text-gray-500 hover:text-gold underline">还原</button>
+      </div>
+    </div>
+    <div class="text-[11px] text-gray-500 mt-3 italic text-center">
+      💡 调整此值可模拟不同市场情景：输入历史回报（默认）、保守预期（如 6%）或乐观预期（如 18%），实时查看本金与现金流变化。
+      <span class="text-gray-400">Past performance does not guarantee future results.</span>
+    </div>
+  </div>
+
+  <!-- T5 vs T8 comparison cards -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+    <!-- T5 Card -->
+    <div class="lux-card p-6" style="border-top:4px solid #3B82F6">
+      <div class="flex items-baseline justify-between mb-4">
+        <div>
+          <div class="text-2xl font-extrabold text-navy">T5 · 5% 年化</div>
+          <p class="text-xs text-gray-500 mt-1">保守派息 · 本金侵蚀风险低</p>
+        </div>
+        <div class="text-right">
+          <div class="text-[10px] text-gray-400 tracking-wider">月度派息</div>
+          <div class="text-3xl font-extrabold text-blue-600 en" id="t5_monthly">$417</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <div class="rounded-lg p-3 text-center" style="background:#EFF6FF">
+          <div class="text-[10px] text-gray-500 tracking-wider mb-1">年度合计</div>
+          <div class="text-lg font-bold text-blue-700 en" id="t5_annual">$5,000</div>
+        </div>
+        <div class="rounded-lg p-3 text-center" style="background:#EFF6FF">
+          <div class="text-[10px] text-gray-500 tracking-wider mb-1">ACB→0 年数</div>
+          <div class="text-lg font-bold text-blue-700 en" id="t5_acbYear">--</div>
+        </div>
+      </div>
+      <h4 class="text-xs font-bold text-gray-500 tracking-wider mb-2 uppercase">本金与现金流演变 · 20年模拟</h4>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-[10px] text-gray-400 tracking-wider uppercase border-b border-gray-200">
+            <th class="text-left py-2">年份</th>
+            <th class="text-right py-2">每月派息</th>
+            <th class="text-right py-2">累计领取</th>
+            <th class="text-right py-2">剩余市值</th>
+            <th class="text-right py-2">本金增减</th>
+          </tr>
+        </thead>
+        <tbody id="t5_table"></tbody>
+      </table>
+    </div>
+
+    <!-- T8 Card -->
+    <div class="lux-card p-6" style="border-top:4px solid #C9A84C">
+      <div class="flex items-baseline justify-between mb-4">
+        <div>
+          <div class="text-2xl font-extrabold text-navy">T8 · 8% 年化</div>
+          <p class="text-xs text-gray-500 mt-1">高现金流 · 适合主动消耗本金</p>
+        </div>
+        <div class="text-right">
+          <div class="text-[10px] text-gray-400 tracking-wider">月度派息</div>
+          <div class="text-3xl font-extrabold en" id="t8_monthly" style="color:#C9A84C">$667</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <div class="rounded-lg p-3 text-center" style="background:#FFFBF0">
+          <div class="text-[10px] text-gray-500 tracking-wider mb-1">年度合计</div>
+          <div class="text-lg font-bold en" id="t8_annual" style="color:#92400E">$8,000</div>
+        </div>
+        <div class="rounded-lg p-3 text-center" style="background:#FFFBF0">
+          <div class="text-[10px] text-gray-500 tracking-wider mb-1">ACB→0 年数</div>
+          <div class="text-lg font-bold en" id="t8_acbYear" style="color:#92400E">--</div>
+        </div>
+      </div>
+      <h4 class="text-xs font-bold text-gray-500 tracking-wider mb-2 uppercase">本金与现金流演变 · 20年模拟</h4>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-[10px] text-gray-400 tracking-wider uppercase border-b border-gray-200">
+            <th class="text-left py-2">年份</th>
+            <th class="text-right py-2">每月派息</th>
+            <th class="text-right py-2">累计领取</th>
+            <th class="text-right py-2">剩余市值</th>
+            <th class="text-right py-2">本金增减</th>
+          </tr>
+        </thead>
+        <tbody id="t8_table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Side-by-side chart -->
+  <div class="lux-card p-6 mb-6">
+    <div class="flex items-end justify-between mb-3 flex-wrap gap-2">
+      <div>
+        <h3 class="t-section text-navy">本金市值演变曲线（20年）</h3>
+        <p class="t-caption mt-0.5">T5 与 T8 在<span id="growthLbl" class="font-semibold">12.1% 历史回报</span>情景下剩余市值对比 · Investment: <span id="acbAmtLbl">$100,000</span></p>
+      </div>
+    </div>
+    <div style="height:340px"><canvas id="chartCompare"></canvas></div>
+  </div>
+
+  <!-- Insight box -->
+  <div class="lux-card p-5 mb-6" style="background:linear-gradient(135deg,#F0F4F8,#FFFBF0);border-left:4px solid #C9A84C">
+    <div class="flex items-start gap-3">
+      <div class="text-2xl">💡</div>
+      <div>
+        <h4 class="font-bold text-navy text-sm mb-1">如何选择 T5 还是 T8？</h4>
+        <p class="text-sm text-gray-700 leading-relaxed">
+          <strong>T5（5%）</strong>更适合<strong>保守、长期持有、不愿过度消耗本金</strong>的客户——基金温和增长即可覆盖派息，本金可在20年以上保持稳定。
+          <strong>T8（8%）</strong>更适合<strong>已退休、需要较高生活费现金流、不介意本金逐步递减</strong>的客户——ACB 归零时间会随实际回报率变化，归零后转为低税率资本利得。
+          建议与顾问根据具体现金流需求和持有年限制定最优方案。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Section 3: T-Class Core Mechanism ═══ -->
+  <div class="section-divider"><span>T-Class 核心机制 · How It Works</span></div>
+  <div class="text-center mb-7">
+    <h2 class="t-display text-navy mb-1" style="color:#0A1628">T-Class 的四大税务智慧</h2>
+    <p class="t-caption">Four Pillars of T-Class Tax Efficiency</p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(201,168,76,.12);color:#9A7B2E">💰</div>
+      <h3 class="font-bold text-navy text-base mb-1">本金返还 ROC</h3>
+      <p class="text-xs text-gray-400 mb-3 en">Return of Capital</p>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        月度派息主体为 ROC——返还您原已纳税的本金，<strong>不构成当期应税收入</strong>，无 T5 利息税。
+      </p>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(16,185,129,.12);color:#079455">📉</div>
+      <h3 class="font-bold text-navy text-base mb-1">ACB 递减</h3>
+      <p class="text-xs text-gray-400 mb-3 en">Adjusted Cost Base ↓</p>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        每次 ROC 派息<strong>降低您的调整后成本基础（ACB）</strong>。即"将税务事件推迟到未来"，而非永远免税。
+      </p>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(59,130,246,.12);color:#1D4ED8">⏳</div>
+      <h3 class="font-bold text-navy text-base mb-1">资本利得递延</h3>
+      <p class="text-xs text-gray-400 mb-3 en">Capital Gains Deferral</p>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        当 ACB 降至零，后续派息按<strong>资本利得</strong>计税（50% 计入应税所得），远低于利息收入税率。
+      </p>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(139,92,246,.12);color:#6D28D9">📅</div>
+      <h3 class="font-bold text-navy text-base mb-1">月度稳定派息</h3>
+      <p class="text-xs text-gray-400 mb-3 en">Monthly Distributions</p>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        每月固定日期派息至您的指定账户，<strong>替代债券利息</strong>，为退休客户提供可预期的生活费现金流。
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══ Section 5: Tax Comparison Chart ═══ -->
+  <div class="section-divider"><span>税务对比 · Tax Savings Analysis</span></div>
+  <div class="lux-card p-6 mb-6">
+    <div class="flex items-end justify-between mb-3 flex-wrap gap-2">
+      <div>
+        <h3 class="t-section text-navy">GIC vs T-Class · 累计税务对比</h3>
+        <p class="t-caption mt-0.5">10 / 20 / 30 年累计应缴税额 · Per <span id="taxAmtLbl">$100,000</span> investment</p>
+      </div>
+      <span class="t-caption italic">Tax bracket: <span id="taxBracketLbl">Ontario Top</span></span>
+    </div>
+    <div style="height:300px"><canvas id="chartTax"></canvas></div>
+    <p class="text-xs text-gray-500 mt-3 italic">
+      ★ T-Class 税务模型假设：ACB 用尽前 100% ROC，无当期税；ACB 归零后按资本利得税率（边际税率 × 50%）计税。
+      实际派息成分可能含合格股息、利息或资本利得分配，请以 T3/T5 税表为准。
+    </p>
+  </div>
+
+  <!-- ═══ Section 6: Use Cases ═══ -->
+  <div class="section-divider"><span>适用客户场景 · Ideal Use Cases</span></div>
+  <div class="text-center mb-7">
+    <h2 class="t-display text-navy mb-1" style="color:#0A1628">谁最适合 Fidelity T-Class？</h2>
+    <p class="t-caption">Four client profiles where T-Class delivers the most value</p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(59,130,246,.12);color:#1D4ED8">🏖️</div>
+      <h3 class="font-bold text-navy text-base mb-2">退休客户</h3>
+      <p class="text-xs text-gray-400 mb-2 en">Retirees</p>
+      <p class="text-sm text-gray-600 leading-relaxed">补充 CPP / OAS / RRIF 提款，提供税务高效的月度生活费现金流。</p>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(217,45,32,.12);color:#B91C1C">📈</div>
+      <h3 class="font-bold text-navy text-base mb-2">高税阶客户</h3>
+      <p class="text-xs text-gray-400 mb-2 en">High Tax Bracket</p>
+      <p class="text-sm text-gray-600 leading-relaxed">边际税率 40%+ 的专业人士/企业主，递延税务事件至退休低税阶。</p>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(7,148,85,.12);color:#047857">💵</div>
+      <h3 class="font-bold text-navy text-base mb-2">现金流需求客户</h3>
+      <p class="text-xs text-gray-400 mb-2 en">Income Seekers</p>
+      <p class="text-sm text-gray-600 leading-relaxed">需要稳定月度现金流但不愿持有低收益债券，T-Class 提供股票配置 + 现金流。</p>
+    </div>
+    <div class="concept-card">
+      <div class="concept-icon" style="background:rgba(201,168,76,.12);color:#9A7B2E">🏛️</div>
+      <h3 class="font-bold text-navy text-base mb-2">遗产规划客户</h3>
+      <p class="text-xs text-gray-400 mb-2 en">Estate Planning</p>
+      <p class="text-sm text-gray-600 leading-relaxed">通过有规划地降低 ACB，配合企业账户/家族信托结构进行长期税务管理。</p>
+    </div>
+  </div>
+
+  <!-- ═══ Section 7: Risks & Disclosures ═══ -->
+  <div class="section-divider"><span>风险与税务提示 · Risks &amp; Disclosures</span></div>
+  <div class="text-center mb-7">
+    <h2 class="t-display text-navy mb-1" style="color:#0A1628">投资前必读</h2>
+    <p class="t-caption">Important Risk Disclosures · Please Read Before Investing</p>
+  </div>
+
+  <details class="accordion" open>
+    <summary>
+      <span class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#FEF3C7;color:#92400E">⚠</span>
+        ROC 不等于"回报"· Return of Capital Is Not "Yield"
+      </span>
+    </summary>
+    <div class="content">
+      <p><strong>中文：</strong>T-Class 的月度派息中 ROC 部分本质是返还您自己投入的本金，<strong>并非投资产生的收益</strong>。
+      若基金市场表现不足以支撑分配率，长期持有可能导致基金净值与本金双双下降。</p>
+      <p class="mt-2"><strong>English:</strong> The ROC portion of T-Class distributions returns your own invested capital — it is not investment yield.
+      If the fund's underlying growth fails to keep pace with the distribution rate, both the ACB and market value will decline over time.</p>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>
+      <span class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#DBEAFE;color:#1E40AF">📊</span>
+        组合需有足够增长支撑分配 · Distribution Rate Must Match Fund Growth
+      </span>
+    </summary>
+    <div class="content">
+      <p>T8（8%）分配率长期高于 Fidelity Class 基金的历史平均回报（约 6–8%），适合<strong>积极型客户</strong>或<strong>退休客户</strong>主动消耗本金。</p>
+      <p class="mt-2">T5（5%）相对保守，多数 Class 基金长期可以覆盖该分配率，<strong>本金侵蚀风险较低</strong>。</p>
+      <p class="mt-2">建议先与顾问就预期持有年限、需要的现金流水平、可接受的本金消耗速度进行充分沟通。</p>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>
+      <span class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#FEE2E2;color:#B91C1C">📋</span>
+        T-Class 仅适用非注册账户 · Non-Registered Accounts Only
+      </span>
+    </summary>
+    <div class="content">
+      <p>T-Class 的税务优势<strong>仅在非注册账户（Non-Registered / 个人/企业/家族信托账户）</strong>中显现。</p>
+      <p class="mt-2">在 TFSA / RRSP / RRIF 中持有 T-Class 无税务意义，且 ACB 追踪可能增加报税复杂度，<strong>不推荐</strong>。</p>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>
+      <span class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#E0E7FF;color:#3730A3">📑</span>
+        税表报告与 ACB 追踪 · Tax Reporting &amp; ACB Tracking
+      </span>
+    </summary>
+    <div class="content">
+      <p>Fidelity 每年向投资者及 CRA 发送 <strong>T5 税表</strong>（注：T5 税表与 T5 series 名称偶合，前者是税表，后者是分配系列），列明当年分配的 ROC、资本利得、合格股息等成分。</p>
+      <p class="mt-2">基金公司会自动追踪 ACB，但若同一基金通过多个经销商持有，<strong>需自行汇总计算综合 ACB</strong>。建议由专业税务顾问协助。</p>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>
+      <span class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background:#F1F5F9;color:#475569">📚</span>
+        数据来源与方法论 · Data Sources &amp; Methodology
+      </span>
+    </summary>
+    <div class="content">
+      <ul class="space-y-2 list-disc pl-5">
+        <li><strong>T5/T8 派息率：</strong>Fidelity Investments Canada 公开披露的目标年化派息率（5% / 8%）。实际派息率每年由基金公司调整。</li>
+        <li><strong>税率：</strong>2026 联邦+省综合边际税率（含利息收入、资本利得 50% 计入）。</li>
+        <li><strong>ACB 模型：</strong>简化假设——初期分配 100% 计为 ROC，ACB 用尽后改为 100% 资本利得分配。
+          实际 ROC/资本利得/利息/股息成分由基金公司当年确定。</li>
+        <li><strong>基金 MER：</strong>来自 Fidelity 官方 Fund Facts，T5/T8 系列 MER 与 Series F 一致。</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ═══ Section 8: Advisor Contact ═══ -->
+  <div class="section-divider"><span>您的专属顾问 · Your Advisor</span></div>
+  <section class="mt-0">
+    <div class="lux-card-dark p-8" style="background:linear-gradient(135deg,#0A1628 0%,#1A2D4D 100%)">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+        <div class="lg:col-span-1 text-center lg:text-left">
+          <img src="triton-logo.png" alt="Triton Wealth" style="height:80px;width:auto;margin:0 auto;" class="lg:mx-0" onerror="this.style.display='none'" />
+          <div class="text-gold tracking-widest text-xs mt-3" style="color:#C9A84C">TRITON WEALTH MANAGEMENT</div>
+          <div class="text-white/60 text-xs mt-1">富瑞财富管理 · 私人财富顾问</div>
+        </div>
+        <div class="lg:col-span-2">
+          <div class="text-xs tracking-[0.3em] mb-2" style="color:#C9A84C">YOUR DEDICATED ADVISOR</div>
+          <h3 class="serif text-2xl font-bold mb-1">如对本 T-Class 策略有疑问，请联系</h3>
+          <p class="text-white/60 text-sm mb-5">Jeffrey Yuan 可为您安排详细的税务方案设计与产品适配评估</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.15)">
+              <div class="text-[10px] tracking-widest mb-1" style="color:#C9A84C">姓名 NAME</div>
+              <div class="font-semibold text-base text-white">Jeffrey Yuan</div>
+              <div class="text-xs text-white/50 mt-1">Independent Broker</div>
+            </div>
+            <div class="p-4 rounded-xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.15)">
+              <div class="text-[10px] tracking-widest mb-1" style="color:#C9A84C">电话 PHONE</div>
+              <div class="font-semibold text-base text-white en">778-837-6688</div>
+              <div class="text-xs text-white/50 mt-1">Mon–Fri 9:00–18:00 PST</div>
+            </div>
+            <div class="p-4 rounded-xl" style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.15)">
+              <div class="text-[10px] tracking-widest mb-1" style="color:#C9A84C">邮箱 EMAIL</div>
+              <div class="font-semibold text-sm text-white en break-all">Jeffrey.Yuan@TritonWealth.ca</div>
+              <div class="text-xs text-white/50 mt-1">回复时间 24h 内</div>
+            </div>
+          </div>
+
+          <div class="gold-stripe w-full mt-6 mb-4" style="background:linear-gradient(90deg,transparent,#C9A84C,transparent);height:1px;"></div>
+          <p class="text-center text-white/35 text-xs italic">
+            "Protecting and growing generational wealth — one family at a time."
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="mt-10 text-center text-xs text-gray-500 leading-relaxed">
+    <div class="gold-stripe w-32 mx-auto mb-5"></div>
+    <p>© 2026 Triton Wealth Management Corporation · 富瑞财富管理 · www.tritonwealth.ca</p>
+    <p class="mt-1">报告生成日期：2026年5月 | Fidelity T-Class 数据来源：Fidelity Investments Canada</p>
+    <p class="mt-2 text-gray-400 italic max-w-2xl mx-auto">
+      本材料仅供参考，不构成投资、税务或法律建议。投资涉及风险，过往业绩不代表未来表现。
+      具体产品适用性请咨询 Jeffrey Yuan 及您的税务/法律顾问。
+    </p>
+  </footer>
+
+</main>
+
+<!-- ════════════════════ PDF LAYOUT (hidden; built by JS) ════════════════════ -->
+<div id="pdf-body"></div>
+
+<!-- ════════════════════ DATA & LOGIC ════════════════════ -->
+<script>
+// ════════════════════════════════════════════════════════════════════
+// FIDELITY DATA
+// ════════════════════════════════════════════════════════════════════
+
+// 5Y annualized returns sourced from fidelity.ca (verified as of Apr 30, 2026)
+const FUND_DATA = {
+  ucg: { name: 'Fidelity Canadian Growth Company Class', nameEN: 'Cdn Growth Co.', mer: 2.98, role: '加股成长',   color: '#0A1628', y5: 17.25 },
+  ucl: { name: 'Fidelity Insights Class',                  nameEN: 'Insights Class', mer: 2.85, role: '全球精选',   color: '#3B82F6', y5: 15.14 },
+  ugq: { name: 'Fidelity Global Growth and Value Class',   nameEN: 'Global G&V',     mer: 2.97, role: '价值+成长',  color: '#C9A84C', y5: 12.08 },
+  ugb: { name: 'Fidelity Global Balanced Class Portfolio', nameEN: 'Global Balanced',mer: 2.86, role: '稳定器',     color: '#10B981', y5:  7.93 },
+  ufs: { name: 'Fidelity U.S. Focused Stock Class',        nameEN: 'U.S. Focused',   mer: 2.87, role: '美股精选',   color: '#8B5CF6', y5: 14.98 },
+  ugi: { name: 'Fidelity Global Innovators® Class',        nameEN: 'Global Innov.',  mer: 2.93, role: '创新主题',   color: '#EF4444', y5: 19.35 },
+};
+
+// Compute portfolio-weighted 5Y annualized return
+function computeWeightedReturn(holdings) {
+  const total = holdings.reduce((s, h) => s + h.alloc, 0);
+  const weighted = holdings.reduce((s, h) => s + h.alloc * (FUND_DATA[h.key].y5 || 0), 0);
+  return total > 0 ? +(weighted / total).toFixed(2) : 0;
+}
+
+const PORTFOLIOS = {
+  balanced: {
+    name: '均衡型 T-Class', nameEN: 'Balanced T-Class',
+    riskLevel: 3,
+    tagline: '稳定派息 · 控制波动 · 长期保值',
+    desc: {
+      objective: '以全球均衡基金为核心，搭配精选成长基金，争取在派息率之上有适度增长，长期维持本金。',
+      horizon: '7+ 年',
+      suitable: '退休或临近退休客户、希望可预期月度现金流、不愿承受高波动的中等风险承受度客户。',
+    },
+    holdings: [
+      { key: 'ugb', alloc: 35 },
+      { key: 'ucl', alloc: 30 },
+      { key: 'ugq', alloc: 25 },
+      { key: 'ucg', alloc: 10 },
+    ],
+  },
+  growth: {
+    name: '增长型 T-Class', nameEN: 'Growth T-Class',
+    riskLevel: 4,
+    tagline: '高增长支撑 · 派息+成长',
+    desc: {
+      objective: '重仓加股/美股/全球创新成长基金，争取以历史高个位数至两位数回报支撑 T8 派息，长期维持或扩展本金。',
+      horizon: '10+ 年',
+      suitable: '能承受较大波动、希望既要月度现金流又要长期资本增长的中高风险客户。',
+    },
+    holdings: [
+      { key: 'ucg', alloc: 30 },
+      { key: 'ugi', alloc: 25 },
+      { key: 'ufs', alloc: 25 },
+      { key: 'ugq', alloc: 20 },
+    ],
+  },
+};
+
+// Canadian 2026 marginal tax rates (federal + provincial combined, approximate).
+// Best-effort online refresh can replace this object when a hosted JSON file is available.
+const TAX_DATA_FALLBACK = {
+  2026: {
+    year: 2026,
+    status: 'Built-in fallback',
+    sourceNote: 'Built-in 2026 fallback based on CRA federal rates plus Alberta, BC and Ontario published marginal rate tables. Capital gains use a simplified 50% inclusion rate.',
+    sourceUrls: [
+      'https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html',
+      'https://www.alberta.ca/personal-income-tax',
+      'https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/tax-rates',
+      'https://data.ontario.ca/dataset/personal-income-tax-rates-and-credits'
+    ],
+    provinces: {
+      ON: {
+        label: 'Ontario',
+        brackets: [
+          { id:'ON_01',  label:'Ontario · Bracket 1', labelEN:'Ontario 1',   range:'Up to $53,891',        interest:0.1905, capGain:0.0953 },
+          { id:'ON_02',  label:'Ontario · Bracket 2', labelEN:'Ontario 2',   range:'$53,891-$58,523',      interest:0.2315, capGain:0.1158 },
+          { id:'ON_MID', label:'Ontario · Mid',       labelEN:'Ontario Mid', range:'$58,523-$107,785',     interest:0.2965, capGain:0.1483 },
+          { id:'ON_04',  label:'Ontario · Bracket 4', labelEN:'Ontario 4',   range:'$107,785-$117,045',    interest:0.3166, capGain:0.1583 },
+          { id:'ON_05',  label:'Ontario · Bracket 5', labelEN:'Ontario 5',   range:'$117,045-$150,000',    interest:0.3716, capGain:0.1858 },
+          { id:'ON_06',  label:'Ontario · Bracket 6', labelEN:'Ontario 6',   range:'$150,000-$181,440',    interest:0.4341, capGain:0.2171 },
+          { id:'ON_07',  label:'Ontario · Bracket 7', labelEN:'Ontario 7',   range:'$181,440-$220,000',    interest:0.4829, capGain:0.2415 },
+          { id:'ON_HIGH',label:'Ontario · High',      labelEN:'Ontario High',range:'$220,000-$258,482',    interest:0.4953, capGain:0.2477 },
+          { id:'ON_TOP', label:'Ontario · Top',       labelEN:'Ontario Top', range:'>$258,482',            interest:0.5353, capGain:0.2677 },
+        ]
+      },
+      BC: {
+        label: 'British Columbia',
+        brackets: [
+          { id:'BC_01',  label:'BC · Bracket 1', labelEN:'BC 1',    range:'Up to $50,363',        interest:0.1960, capGain:0.0980 },
+          { id:'BC_02',  label:'BC · Bracket 2', labelEN:'BC 2',    range:'$50,363-$58,523',      interest:0.2170, capGain:0.1085 },
+          { id:'BC_MID', label:'BC · Mid',       labelEN:'BC Mid',  range:'$58,523-$100,728',     interest:0.2820, capGain:0.1410 },
+          { id:'BC_04',  label:'BC · Bracket 4', labelEN:'BC 4',    range:'$100,728-$115,648',    interest:0.3100, capGain:0.1550 },
+          { id:'BC_05',  label:'BC · Bracket 5', labelEN:'BC 5',    range:'$115,648-$117,045',    interest:0.3279, capGain:0.1640 },
+          { id:'BC_UPPER',label:'BC · Upper',    labelEN:'BC Upper',range:'$117,045-$140,430',    interest:0.3829, capGain:0.1915 },
+          { id:'BC_07',  label:'BC · Bracket 7', labelEN:'BC 7',    range:'$140,430-$181,440',    interest:0.4070, capGain:0.2035 },
+          { id:'BC_08',  label:'BC · Bracket 8', labelEN:'BC 8',    range:'$181,440-$190,405',    interest:0.4370, capGain:0.2185 },
+          { id:'BC_HIGH',label:'BC · High',      labelEN:'BC High', range:'$190,405-$258,482',    interest:0.4580, capGain:0.2290 },
+          { id:'BC_10',  label:'BC · Bracket 10',labelEN:'BC 10',   range:'$258,482-$265,545',    interest:0.4980, capGain:0.2490 },
+          { id:'BC_TOP', label:'BC · Top',       labelEN:'BC Top',  range:'>$265,545',            interest:0.5350, capGain:0.2675 },
+        ]
+      },
+      AB: {
+        label: 'Alberta',
+        brackets: [
+          { id:'AB_01',  label:'Alberta · Bracket 1', labelEN:'Alberta 1',    range:'Up to $58,523',        interest:0.2200, capGain:0.1100 },
+          { id:'AB_02',  label:'Alberta · Bracket 2', labelEN:'Alberta 2',    range:'$58,523-$61,200',      interest:0.2850, capGain:0.1425 },
+          { id:'AB_MID', label:'Alberta · Mid',       labelEN:'Alberta Mid',  range:'$61,200-$117,045',     interest:0.3050, capGain:0.1525 },
+          { id:'AB_04',  label:'Alberta · Bracket 4', labelEN:'Alberta 4',    range:'$117,045-$154,259',    interest:0.3600, capGain:0.1800 },
+          { id:'AB_05',  label:'Alberta · Bracket 5', labelEN:'Alberta 5',    range:'$154,259-$181,440',    interest:0.3800, capGain:0.1900 },
+          { id:'AB_06',  label:'Alberta · Bracket 6', labelEN:'Alberta 6',    range:'$181,440-$185,111',    interest:0.4100, capGain:0.2050 },
+          { id:'AB_HIGH',label:'Alberta · High',      labelEN:'Alberta High', range:'$185,111-$246,813',    interest:0.4200, capGain:0.2100 },
+          { id:'AB_08',  label:'Alberta · Bracket 8', labelEN:'Alberta 8',    range:'$246,813-$258,482',    interest:0.4300, capGain:0.2150 },
+          { id:'AB_09',  label:'Alberta · Bracket 9', labelEN:'Alberta 9',    range:'$258,482-$370,220',    interest:0.4700, capGain:0.2350 },
+          { id:'AB_TOP', label:'Alberta · Top',       labelEN:'Alberta Top',  range:'>$370,220',            interest:0.4800, capGain:0.2400 },
+        ]
+      },
+    }
+  }
+};
+
+let TAX_DATA = TAX_DATA_FALLBACK[2026];
+
+// ════════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════════
+let state = {
+  tClass: 'T8',           // 'T5' or 'T8'
+  portfolio: 'balanced',  // 'balanced' or 'growth'
+  amount: 100000,         // calculator amount
+  province: 'BC',
+  taxBracketId: 'BC_TOP',
+  taxDataStatus: '2026 · Built-in fallback',
+  // Editable historical-return assumptions per portfolio (defaults = Fidelity 5Y weighted)
+  returnRate: { balanced: 0, growth: 0 },   // initialized in boot() from computeWeightedReturn
+};
+
+let CH = { portfolio:null, tax:null, compare:null };
+
+const GOLD = '#C9A84C';
+const NAVY = '#0A1628';
+const POS = '#10B981';
+const NEG = '#EF4444';
+
+const rateOf = (tClass) => tClass === 'T5' ? 0.05 : 0.08;
+const fmt$ = (v) => '$' + Math.round(v).toLocaleString();
+const fmt$K = (v) => '$' + (v/1000).toFixed(0) + 'K';
+const fmtYears = (v) => !isFinite(v) ? '>60年' : v.toFixed(1) + '年';
+
+// ════════════════════════════════════════════════════════════════════
+// TOGGLES & UPDATERS
+// ════════════════════════════════════════════════════════════════════
+
+function setTClass(t) {
+  state.tClass = t;
+  ['navT5','navT8','calcT5','calcT8'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (id.endsWith(t)) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+  refreshAllCalcs();
+}
+
+function setPortfolio(p) {
+  state.portfolio = p;
+  ['balanced','growth'].forEach(k => {
+    const btn = document.getElementById('ptab-'+k);
+    if (k === p) {
+      btn.classList.add('active');
+      btn.style.background = 'rgba(201,168,76,.12)';
+      btn.style.color = '#9A7B2E';
+    } else {
+      btn.classList.remove('active');
+      btn.style.background = 'transparent';
+      btn.style.color = '#6B7280';
+    }
+  });
+  renderPortfolio();
+  initPortfolioChart();
+  refreshComparison();   // sync return-rate input + redraw tables/chart
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PORTFOLIO RENDER
+// ════════════════════════════════════════════════════════════════════
+function renderPortfolio() {
+  const p = PORTFOLIOS[state.portfolio];
+
+  document.getElementById('pfBadge').textContent = p.name;
+  document.getElementById('pfBadgeEN').textContent = p.nameEN;
+
+  // stars
+  const stars = [1,2,3,4,5].map(i=>`<div class="rdot" style="${i<=p.riskLevel?`background:${GOLD};color:#fff`:'background:#E5E7EB;color:#9CA3AF'}">${i}</div>`).join('');
+  document.getElementById('pfStars').innerHTML = stars;
+
+  // description
+  document.getElementById('pfDesc').innerHTML = `
+    <div><strong class="text-navy">投资目标：</strong><span class="text-gray-600">${p.desc.objective}</span></div>
+    <div><strong class="text-navy">建议投资期：</strong><span class="text-gray-600">${p.desc.horizon}</span></div>
+    <div><strong class="text-navy">适合客户：</strong><span class="text-gray-600">${p.desc.suitable}</span></div>
+  `;
+
+  // holdings table
+  const rows = p.holdings.map(h => {
+    const f = FUND_DATA[h.key];
+    return `<tr class="border-b border-gray-100">
+      <td class="py-3 px-3">
+        <div class="flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${f.color}"></div>
+          <span class="font-medium text-navy text-[11px] en">${f.name}</span>
+        </div>
+      </td>
+      <td class="text-right py-3 px-2"><span class="font-extrabold text-sm data-cell" style="color:${GOLD}">${h.alloc}%</span></td>
+      <td class="text-right py-3 px-2 text-xs text-gray-600 en">${f.mer.toFixed(2)}%</td>
+      <td class="py-3 px-2"><span class="badge text-white text-[10px]" style="background:${GOLD}">${f.role}</span></td>
+    </tr>`;
+  }).join('');
+  document.querySelector('#pfTable tbody').innerHTML = rows;
+}
+
+// ════════════════════════════════════════════════════════════════════
+// INPUT HANDLERS — direct typing + slider + preset chips
+// ════════════════════════════════════════════════════════════════════
+const MIN_AMT = 10000;
+const MAX_AMT = 10000000;
+
+function parseAmountFromInput() {
+  const raw = document.getElementById('calcInput').value.replace(/[^0-9.]/g,'');
+  let v = parseFloat(raw) || 0;
+  if (v < MIN_AMT) v = MIN_AMT;
+  if (v > MAX_AMT) v = MAX_AMT;
+  return Math.round(v);
+}
+
+function formatAmtInput(v) {
+  return Math.round(v).toLocaleString();
+}
+
+function handleInputChange() {
+  // Live as user types — don't clamp yet, just sync slider
+  const raw = document.getElementById('calcInput').value.replace(/[^0-9.]/g,'');
+  const v = parseFloat(raw) || 0;
+  if (v >= MIN_AMT && v <= MAX_AMT) {
+    state.amount = Math.round(v);
+    document.getElementById('calcSlider').value = state.amount;
+    updateSliderTrack();
+    refreshAllCalcs();
+  }
+}
+
+function commitInputChange() {
+  // On blur/change — clamp and reformat
+  state.amount = parseAmountFromInput();
+  document.getElementById('calcInput').value = formatAmtInput(state.amount);
+  document.getElementById('calcSlider').value = state.amount;
+  updateSliderTrack();
+  refreshAllCalcs();
+}
+
+function syncSliderToInput() {
+  state.amount = parseInt(document.getElementById('calcSlider').value);
+  document.getElementById('calcInput').value = formatAmtInput(state.amount);
+  updateSliderTrack();
+  refreshAllCalcs();
+}
+
+function setAmount(v) {
+  state.amount = v;
+  document.getElementById('calcInput').value = formatAmtInput(v);
+  document.getElementById('calcSlider').value = v;
+  updateSliderTrack();
+  // highlight active preset chip
+  document.querySelectorAll('.preset-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.textContent.includes(
+      v >= 1000000 ? '$' + (v/1000000) + 'M' : '$' + (v/1000) + 'K'
+    ));
+  });
+  refreshAllCalcs();
+}
+
+function updateSliderTrack() {
+  const pct = ((state.amount - MIN_AMT) / (MAX_AMT - MIN_AMT)) * 100;
+  document.getElementById('calcSlider').style.setProperty('--pct', pct + '%');
+}
+
+function taxDataForCurrentYear() {
+  const y = new Date().getFullYear();
+  return TAX_DATA_FALLBACK[y] || TAX_DATA_FALLBACK[2026];
+}
+
+function validateTaxData(data) {
+  return data && data.year && data.provinces &&
+    ['ON','BC','AB'].every(p => Array.isArray(data.provinces[p]?.brackets) && data.provinces[p].brackets.length);
+}
+
+async function loadTaxBrackets() {
+  const fallback = taxDataForCurrentYear();
+  TAX_DATA = fallback;
+  state.taxDataStatus = `${fallback.year} · Built-in fallback`;
+
+  const year = new Date().getFullYear();
+  const candidates = [`tax_brackets_${year}.json`, 'tax_brackets.json'];
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (!validateTaxData(data)) continue;
+      TAX_DATA = data;
+      state.taxDataStatus = `${data.year} · Online updated`;
+      break;
+    } catch (e) {
+      // Local file:// and CORS often block live updates; fallback stays available.
+    }
+  }
+
+  populateTaxProvinceUI();
+  populateTaxBracketUI();
+  updateTaxStatusUI();
+}
+
+function getProvinceData() {
+  return TAX_DATA.provinces[state.province] || TAX_DATA.provinces.ON;
+}
+
+function getSelectedTaxBracket() {
+  const province = getProvinceData();
+  return province.brackets.find(b => b.id === state.taxBracketId) || province.brackets[province.brackets.length - 1];
+}
+
+function populateTaxProvinceUI() {
+  const el = document.getElementById('calcProvince');
+  if (!el) return;
+  el.innerHTML = ['BC','AB','ON'].map(code => {
+    const province = TAX_DATA.provinces[code];
+    return `<option value="${code}" ${code === state.province ? 'selected' : ''}>${province.label}</option>`;
+  }).join('');
+}
+
+function populateTaxBracketUI() {
+  const el = document.getElementById('calcTaxBracket');
+  if (!el) return;
+  const province = getProvinceData();
+  if (!province.brackets.some(b => b.id === state.taxBracketId)) {
+    state.taxBracketId = province.brackets[province.brackets.length - 1].id;
+  }
+  el.innerHTML = province.brackets.map(b =>
+    `<option value="${b.id}" ${b.id === state.taxBracketId ? 'selected' : ''}>${b.labelEN} · ${b.range} · ${(b.interest*100).toFixed(2)}%</option>`
+  ).join('');
+}
+
+function updateTaxStatusUI() {
+  const statusEl = document.getElementById('taxDataStatus');
+  const noteEl = document.getElementById('taxSourceNote');
+  if (statusEl) statusEl.textContent = `Tax data: ${state.taxDataStatus}`;
+  if (noteEl) noteEl.textContent = `${TAX_DATA.sourceNote || 'Tax data source loaded.'}`;
+}
+
+function renderTaxBracketTable() {
+  const wrap = document.getElementById('taxBracketTable');
+  const title = document.getElementById('taxTableProvince');
+  if (!wrap) return;
+  const province = getProvinceData();
+  if (title) title.textContent = `${province.label} · ${TAX_DATA.year}`;
+  wrap.innerHTML = `
+    <div class="grid grid-cols-4 gap-2 px-3 pb-1 text-[10px] text-white/35 en">
+      <span>Bracket</span><span>Income range</span><span class="text-right">Interest</span><span class="text-right">Cap. gains</span>
+    </div>` + province.brackets.map(b => {
+    const active = b.id === state.taxBracketId;
+    return `
+      <div class="grid grid-cols-4 gap-2 items-center rounded-lg px-3 py-2" style="background:${active?'rgba(201,168,76,.12)':'rgba(255,255,255,.03)'};border:1px solid ${active?'rgba(201,168,76,.45)':'rgba(255,255,255,.06)'}">
+        <div class="text-xs font-bold text-white en">${b.labelEN}</div>
+        <div class="text-xs text-white/55 en">${b.range}</div>
+        <div class="text-xs text-white/80 en text-right">${(b.interest*100).toFixed(2)}%</div>
+        <div class="text-xs text-white/55 en text-right">${(b.capGain*100).toFixed(2)}%</div>
+      </div>`;
+  }).join('');
+}
+
+function onProvinceChange() {
+  state.province = document.getElementById('calcProvince').value;
+  const province = getProvinceData();
+  state.taxBracketId = province.brackets[province.brackets.length - 1].id;
+  populateTaxBracketUI();
+  refreshAllCalcs();
+}
+
+function updateTaxBracket() {
+  state.taxBracketId = document.getElementById('calcTaxBracket').value;
+  refreshAllCalcs();
+}
+
+// Legacy entry kept for any older inline handlers.
+function updateCalc() {
+  updateTaxBracket();
+}
+
+// ════════════════════════════════════════════════════════════════════
+// MAIN CALCULATOR REFRESH
+// ════════════════════════════════════════════════════════════════════
+function refreshAllCalcs() {
+  const r = rateOf(state.tClass);
+  const prov = getSelectedTaxBracket();
+  const growth = (state.returnRate[state.portfolio] || 0) / 100;
+
+  const monthly = state.amount * r / 12;
+  const annual  = state.amount * r;
+  const taxSavedY1 = annual * prov.interest;
+  const acbYearsValue = estimateAcbDepletionYear(state.amount, r, growth);
+  const acbYears = fmtYears(acbYearsValue);
+
+  const cum10 = annual * 10;
+  const gicTax10 = cum10 * prov.interest;
+  const yearsTaxable10 = Math.max(0, 10 - acbYearsValue);
+  const tcTax10 = yearsTaxable10 * annual * prov.capGain;
+  const deferredTax10 = Math.max(0, gicTax10 - tcTax10);
+
+  document.getElementById('oMonthly').textContent  = Math.round(monthly).toLocaleString();
+  document.getElementById('oAnnual').textContent   = Math.round(annual).toLocaleString();
+  document.getElementById('oTaxSaved').textContent = Math.round(taxSavedY1).toLocaleString();
+  document.getElementById('oAcbYear').textContent  = acbYears;
+  document.getElementById('o10y').textContent      = fmt$(cum10);
+  document.getElementById('o10yGicTax').textContent= fmt$(gicTax10);
+  document.getElementById('o10yTcTax').textContent = fmt$(deferredTax10);
+
+  document.getElementById('taxAmtLbl').textContent = fmt$(state.amount);
+  document.getElementById('taxBracketLbl').textContent = `${prov.labelEN} · ${prov.range}`;
+  document.getElementById('acbAmtLbl').textContent = fmt$(state.amount);
+  renderTaxBracketTable();
+  updateTaxStatusUI();
+
+  ['rcMonthly','rcAnnual','rcTaxSaved','rcAcbYear'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('pulse-flash');
+    void el.offsetWidth;
+    el.classList.add('pulse-flash');
+  });
+
+  refreshComparison();
+  initTaxChart();
+}
+
+// ════════════════════════════════════════════════════════════════════
+// T5 vs T8 SIDE-BY-SIDE COMPARISON
+// ════════════════════════════════════════════════════════════════════
+
+/**
+ * Year-by-year simulation given initial amount, rate, growth.
+ * Returns array of { year, monthly, annual, cum, value, acb }
+ */
+function simulate(amount, rate, growth, years = 30) {
+  const out = [];
+  let val = amount, acb = amount, cum = 0;
+  out.push({ year: 0, monthly: (val*rate)/12, annual: val*rate, cum: 0, value: val, acb: acb });
+  for (let y = 1; y <= years; y++) {
+    const dist = val * rate;
+    cum += dist;
+    val = Math.max(0, val * (1 + growth) - dist);
+    acb = Math.max(0, acb - dist);
+    out.push({
+      year: y,
+      monthly: (val * rate) / 12,
+      annual: val * rate,
+      cum: cum,
+      value: val,
+      acb: acb,
+    });
+  }
+  return out;
+}
+
+function estimateAcbDepletionYear(amount, rate, growth, maxYears = 60) {
+  let val = amount, acb = amount;
+  for (let y = 1; y <= maxYears; y++) {
+    const dist = val * rate;
+    const prevAcb = acb;
+    acb = Math.max(0, acb - dist);
+    if (acb <= 0) {
+      const portion = dist > 0 ? prevAcb / dist : 1;
+      return (y - 1) + Math.max(0, Math.min(1, portion));
+    }
+    val = Math.max(0, val * (1 + growth) - dist);
+    if (val <= 0 && acb > 0) return Infinity;
+  }
+  return Infinity;
+}
+
+// Set the historical-return assumption (in %) for the active portfolio.
+function onReturnRateChange() {
+  const raw = parseFloat(document.getElementById('returnRateInput').value);
+  if (isNaN(raw)) return;
+  state.returnRate[state.portfolio] = raw;
+  refreshComparison();
+}
+
+function resetReturnRate() {
+  const def = PORTFOLIOS[state.portfolio].historicalReturn;
+  state.returnRate[state.portfolio] = def;
+  document.getElementById('returnRateInput').value = def.toFixed(1);
+  refreshComparison();
+}
+
+// Sync UI to the active portfolio's return rate (called on portfolio switch & boot)
+function syncReturnRateUI() {
+  const r = state.returnRate[state.portfolio];
+  const inputEl = document.getElementById('returnRateInput');
+  if (inputEl) inputEl.value = r.toFixed(1);
+  const lblEl = document.getElementById('curPortfolioLbl');
+  if (lblEl) lblEl.textContent = PORTFOLIOS[state.portfolio].name;
+  const growthLblEl = document.getElementById('growthLbl');
+  if (growthLblEl) growthLblEl.textContent = `${r.toFixed(1)}% 历史回报`;
+}
+
+// Re-render the entire comparison block (tables + chart) for the active portfolio
+function refreshComparison() {
+  syncReturnRateUI();
+  renderComparison();
+  initCompareChart();
+}
+
+function renderComparison() {
+  const milestones = [1, 5, 10, 15, 20];
+  const growth = (state.returnRate[state.portfolio] || 0) / 100;
+
+  const renderTable = (rate, tbodyId, accentColor) => {
+    const sim = simulate(state.amount, rate, growth, 20);
+    const rows = milestones.map(y => {
+      const row = sim[y];
+      const pctChange = (row.value - state.amount) / state.amount * 100;
+      const pctColor = pctChange >= 0 ? '#047857' : '#B91C1C';
+      const pctSign  = pctChange >= 0 ? '+' : '';
+      const valColor = pctChange < -25 ? '#B91C1C' : '#111827';
+      return `<tr class="border-b border-gray-100">
+        <td class="py-2 text-sm font-bold" style="color:${accentColor}">Y${y}</td>
+        <td class="text-right py-2 text-sm en data-cell font-semibold">${fmt$(row.monthly)}</td>
+        <td class="text-right py-2 text-sm en data-cell text-gray-500">${fmt$(row.cum)}</td>
+        <td class="text-right py-2 text-sm en data-cell font-semibold" style="color:${valColor}">${fmt$(row.value)}</td>
+        <td class="text-right py-2 text-xs en data-cell font-bold" style="color:${pctColor}">${pctSign}${pctChange.toFixed(1)}%</td>
+      </tr>`;
+    }).join('');
+    document.getElementById(tbodyId).innerHTML = rows;
+  };
+
+  // T5 hero numbers (Year 1)
+  const t5sim = simulate(state.amount, 0.05, growth, 20);
+  document.getElementById('t5_monthly').textContent  = fmt$(t5sim[1].monthly);
+  document.getElementById('t5_annual').textContent   = fmt$(t5sim[1].annual);
+  document.getElementById('t5_acbYear').textContent  = fmtYears(estimateAcbDepletionYear(state.amount, 0.05, growth));
+  renderTable(0.05, 't5_table', '#1D4ED8');
+
+  // T8 hero numbers (Year 1)
+  const t8sim = simulate(state.amount, 0.08, growth, 20);
+  document.getElementById('t8_monthly').textContent  = fmt$(t8sim[1].monthly);
+  document.getElementById('t8_annual').textContent   = fmt$(t8sim[1].annual);
+  document.getElementById('t8_acbYear').textContent  = fmtYears(estimateAcbDepletionYear(state.amount, 0.08, growth));
+  renderTable(0.08, 't8_table', '#92400E');
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CHARTS
+// ════════════════════════════════════════════════════════════════════
+function initCharts() {
+  initPortfolioChart();
+  initTaxChart();
+  initCompareChart();
+}
+
+function initPortfolioChart() {
+  if (CH.portfolio) { CH.portfolio.destroy(); CH.portfolio = null; }
+  const canvas = document.getElementById('chartPortfolio');
+  if (!canvas) return;
+
+  const p = PORTFOLIOS[state.portfolio];
+  const labels = p.holdings.map(h => FUND_DATA[h.key].nameEN);
+  const data   = p.holdings.map(h => h.alloc);
+  const colors = p.holdings.map(h => FUND_DATA[h.key].color);
+
+  CH.portfolio = new Chart(canvas, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 3, borderColor: '#fff', hoverOffset: 12 }]},
+    options: {
+      responsive: true, maintainAspectRatio: true, cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 10, family: 'Inter' }, padding: 10, usePointStyle: true, boxWidth: 8 }},
+        tooltip: { padding: 10, backgroundColor: '#0A1628', titleColor: '#C9A84C',
+                   callbacks: { label: c => ` ${c.label}: ${c.parsed}%` }}
+      }
+    }
+  });
+}
+
+function initTaxChart() {
+  if (CH.tax) { CH.tax.destroy(); CH.tax = null; }
+  const canvas = document.getElementById('chartTax');
+  if (!canvas) return;
+
+  const r = rateOf(state.tClass);
+  const prov = getSelectedTaxBracket();
+  const growth = (state.returnRate[state.portfolio] || 0) / 100;
+  const annual = state.amount * r;
+  const acbYears = estimateAcbDepletionYear(state.amount, r, growth);
+
+  const periods = [10, 20, 30];
+  const gicTax = periods.map(y => y * annual * prov.interest);
+  const tcTax = periods.map(y => {
+    // Tax = 0 until acbYears, then capGain rate on remaining annual distributions
+    if (y <= acbYears) return 0;
+    const yearsTaxable = y - acbYears;
+    return yearsTaxable * annual * prov.capGain;
+  });
+  const saved = periods.map((y, i) => gicTax[i] - tcTax[i]);
+
+  CH.tax = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: periods.map(y => y + ' 年 / years'),
+      datasets: [
+        { label: 'GIC · 利息收入应税',    data: gicTax, backgroundColor: '#EF4444', borderRadius: 5 },
+        { label: 'T-Class · 累计应税',    data: tcTax,  backgroundColor: '#C9A84C', borderRadius: 5 },
+        { label: '净节税 Net Saved',     data: saved,  backgroundColor: '#10B981', borderRadius: 5 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11, family: 'Inter' }, padding: 14, usePointStyle: true }},
+        tooltip: { padding: 12, backgroundColor: '#0A1628', titleColor: '#C9A84C',
+                   callbacks: { label: c => ` ${c.dataset.label}: $${Math.round(c.parsed.y).toLocaleString()}` }}
+      },
+      scales: {
+        y: { ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K', font: { size: 10, family: 'Inter' }}, grid: { color: '#F1F5F9' }},
+        x: { ticks: { font: { size: 11, family: 'Inter' }}, grid: { display: false }}
+      }
+    }
+  });
+}
+
+function initCompareChart() {
+  if (CH.compare) { CH.compare.destroy(); CH.compare = null; }
+  const canvas = document.getElementById('chartCompare');
+  if (!canvas) return;
+
+  const growth = (state.returnRate[state.portfolio] || 0) / 100;
+  const years = Array.from({length: 21}, (_, i) => i);
+  const t5sim = simulate(state.amount, 0.05, growth, 20);
+  const t8sim = simulate(state.amount, 0.08, growth, 20);
+
+  // Plugin: draw $ value label at the end of each non-dashed line
+  const endLabelPlugin = {
+    id: 'endLabel',
+    afterDatasetsDraw(chart) {
+      const { ctx, data, scales: { x, y } } = chart;
+      data.datasets.forEach(ds => {
+        if (!ds.borderColor || ds.borderDash) return;            // skip reference line
+        const lastIdx = ds.data.length - 1;
+        const val = ds.data[lastIdx];
+        if (val == null) return;
+        const xPx = x.getPixelForValue(lastIdx);
+        const yPx = y.getPixelForValue(val);
+        const label = val >= 1e6
+          ? '$' + (val/1e6).toFixed(2) + 'M'
+          : '$' + (val/1000).toFixed(0) + 'K';
+        ctx.save();
+        // Dot
+        ctx.beginPath();
+        ctx.arc(xPx, yPx, 4, 0, Math.PI * 2);
+        ctx.fillStyle = ds.borderColor;
+        ctx.fill();
+        // Label background pill
+        ctx.font = 'bold 11px Inter, sans-serif';
+        const padX = 6, padY = 3;
+        const txtW = ctx.measureText(label).width;
+        const pillX = xPx + 8, pillY = yPx - 9;
+        ctx.fillStyle = '#fff';
+        ctx.strokeStyle = ds.borderColor;
+        ctx.lineWidth = 1.5;
+        const r = 8;
+        ctx.beginPath();
+        ctx.moveTo(pillX + r, pillY);
+        ctx.lineTo(pillX + txtW + padX*2 - r, pillY);
+        ctx.quadraticCurveTo(pillX + txtW + padX*2, pillY, pillX + txtW + padX*2, pillY + r);
+        ctx.lineTo(pillX + txtW + padX*2, pillY + 18 - r);
+        ctx.quadraticCurveTo(pillX + txtW + padX*2, pillY + 18, pillX + txtW + padX*2 - r, pillY + 18);
+        ctx.lineTo(pillX + r, pillY + 18);
+        ctx.quadraticCurveTo(pillX, pillY + 18, pillX, pillY + 18 - r);
+        ctx.lineTo(pillX, pillY + r);
+        ctx.quadraticCurveTo(pillX, pillY, pillX + r, pillY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // Label text
+        ctx.fillStyle = ds.borderColor;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, pillX + padX, pillY + 9);
+        ctx.restore();
+      });
+    }
+  };
+
+  CH.compare = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: years.map(y => 'Y' + y),
+      datasets: [
+        { label: 'T5 剩余市值 (5% 派息)', data: t5sim.map(r => r.value), borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,.08)', borderWidth: 3, tension: .25, pointRadius: 0, fill: true },
+        { label: 'T8 剩余市值 (8% 派息)', data: t8sim.map(r => r.value), borderColor: '#C9A84C', backgroundColor: 'rgba(201,168,76,.08)', borderWidth: 3, tension: .25, pointRadius: 0, fill: true },
+        { label: '原始投资本金 (基准)',   data: years.map(() => state.amount), borderColor: '#94A3B8', borderWidth: 1.5, borderDash: [4,4], tension: 0, pointRadius: 0, fill: false },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      layout: { padding: { right: 70 } },   // room for end labels
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11, family: 'Inter' }, padding: 14, usePointStyle: true, pointStyleWidth: 12 }},
+        tooltip: {
+          padding: 12, backgroundColor: '#0A1628', titleColor: '#C9A84C',
+          callbacks: {
+            label: c => ` ${c.dataset.label}: $${Math.round(c.parsed.y).toLocaleString()}`,
+            afterBody: items => {
+              const y = items[0].dataIndex;
+              const t5 = t5sim[y], t8 = t8sim[y];
+              return [
+                '',
+                `T5: 月派 $${Math.round(t5.monthly).toLocaleString()} · 累计领 $${Math.round(t5.cum).toLocaleString()}`,
+                `T8: 月派 $${Math.round(t8.monthly).toLocaleString()} · 累计领 $${Math.round(t8.cum).toLocaleString()}`,
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        y: { ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K', font: { size: 10, family: 'Inter' }}, grid: { color: '#F1F5F9' }, beginAtZero: true },
+        x: { ticks: { font: { size: 9, family: 'Inter' }, maxRotation: 0 }, grid: { display: false }}
+      }
+    },
+    plugins: [endLabelPlugin]
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PDF LAYOUT BUILDER (Letter Portrait, 6 pages)
+// ════════════════════════════════════════════════════════════════════
+function buildPDFLayout() {
+  const r = rateOf(state.tClass);
+  const p = PORTFOLIOS[state.portfolio];
+  const prov = getSelectedTaxBracket();
+  const provinceData = getProvinceData();
+  const amt = state.amount;
+  const histReturn = state.returnRate[state.portfolio] || PORTFOLIOS[state.portfolio].historicalReturn || 0;
+  const histReturnRaw = histReturn / 100;
+  const acbYearsValue = estimateAcbDepletionYear(amt, r, histReturnRaw);
+
+  const G = '#B99A45';
+  const NV = '#0A1628';
+  const BG = '#F7F8FA';
+  const POS_D = '#079455';
+  const NEG_D = '#D92D20';
+  const BORD = '#DDE3EA';
+  const TX1 = '#172033';
+  const TX2 = '#667085';
+  const TOTAL = 6;
+
+  // Capture chart images
+  const charts = {};
+  document.querySelectorAll('canvas').forEach(c => {
+    try { charts[c.id] = c.toDataURL('image/png', 1.0); } catch(e) { charts[c.id] = ''; }
+  });
+  const chartImg = (id, h='200px') => charts[id]
+    ? `<img src="${charts[id]}" style="width:100%;height:${h};object-fit:contain;display:block" alt="">`
+    : `<div style="height:${h};background:#F1F5F9;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:9px;border-radius:4px">[Chart unavailable]</div>`;
+
+  const monthly = amt * r / 12;
+  const annual = amt * r;
+  const taxSavedY1 = annual * prov.interest;
+  const acbYears = fmtYears(acbYearsValue);
+  const cum10 = annual * 10;
+  const gicTax10 = cum10 * prov.interest;
+  const yearsTaxable10 = Math.max(0, 10 - acbYearsValue);
+  const tcTax10 = yearsTaxable10 * annual * prov.capGain;
+  const deferredTax10 = Math.max(0, gicTax10 - tcTax10);
+
+  // ── Shared report-style header/footer ──
+  const pageHdr = (sub, num) => `
+    <header style="height:68px;padding:20px 46px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;background:#fff">
+      <div style="display:flex;align-items:center;gap:13px">
+        <img src="LOGO PNG 竖版.png" style="height:40px;width:auto;object-fit:contain" onerror="this.style.display='none'">
+        <div style="height:28px;width:1px;background:${BORD}"></div>
+        <div>
+          <div style="font-family:Inter,sans-serif;font-size:9px;font-weight:800;letter-spacing:1.8px;color:${G}">TRITON WEALTH</div>
+          <div style="font-size:8.5px;color:${TX2};margin-top:3px">Fidelity T-Class Strategy · ${state.tClass}</div>
+        </div>
+      </div>
+      <div style="text-align:right;font-family:Inter,sans-serif;font-size:8.5px;color:${TX2}">
+        <div style="font-weight:800;color:${NV}">CONFIDENTIAL</div>
+        <div style="margin-top:2px">Prepared May 2026</div>
+      </div>
+    </header>
+    <div style="height:1px;background:${BORD};margin:0 46px;flex-shrink:0"></div>`;
+
+  const pageFooter = (num) => `
+    <div style="position:absolute;left:46px;right:46px;bottom:18px;height:16px;display:flex;align-items:flex-end;justify-content:space-between;font-family:Inter,sans-serif;font-size:7.5px;color:${TX2};background:#fff">
+      <div>© 2026 Triton Wealth Management Corporation · Confidential client report</div>
+      <div style="font-weight:800;color:${NV}">Page ${num} of ${TOTAL}</div>
+    </div>`;
+
+  const sectLbl = (en, cn) => `
+    <div>
+      <div style="font-size:8px;color:${G};letter-spacing:2.4px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:1.2mm">${en}</div>
+      <div style="font-size:20px;font-weight:800;color:${TX1};font-family:'Noto Sans SC','Microsoft YaHei',sans-serif;letter-spacing:0;line-height:1.22">${cn}</div>
+    </div>`;
+
+  const stars = n => [1,2,3,4,5].map(i=>`<span style="width:11px;height:11px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:6.5px;font-weight:700;margin:0 1px;background:${i<=n?G:'#E5E7EB'};color:${i<=n?'#fff':'#9CA3AF'}">${i}</span>`).join('');
+
+  // ════ PAGE 1: COVER ════
+  const p1 = `
+  <div class="pdf-page pdf-dark" style="display:flex;flex-direction:column;padding:0">
+    <div style="background:#071426;padding:6mm 14mm;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <img src="triton-logo.png" style="height:36px;width:auto" onerror="this.style.display='none'">
+      <div style="text-align:right">
+        <div style="color:${G};font-size:7.5px;letter-spacing:3px;font-family:Inter;font-weight:700">CONFIDENTIAL · FIDELITY T-CLASS PROPOSAL</div>
+        <div style="color:#2D3F55;font-size:6.5px;font-family:Inter;margin-top:1.5px">报告生成 May 2026</div>
+      </div>
+    </div>
+    <div style="height:2px;background:linear-gradient(90deg,transparent,${G},transparent);flex-shrink:0"></div>
+
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14mm 18mm;overflow:hidden">
+      <div style="background:${G}22;border:1px solid ${G}99;color:${G};font-size:9px;padding:3px 14px;border-radius:100px;letter-spacing:2.5px;margin-bottom:7mm;font-family:Inter;font-weight:700">
+        FIDELITY T-CLASS · ${state.tClass} SERIES
+      </div>
+      <h1 style="font-size:30px;color:#fff;font-weight:800;text-align:center;line-height:1.22;margin:0 0 4mm;font-family:'Noto Sans SC','Microsoft YaHei',sans-serif;letter-spacing:0">
+        每月稳定<span style="color:${G}">现金流</span><br>税务智能<span style="color:${G}">递延</span>
+      </h1>
+      <p style="color:#8BA0BB;font-size:13px;text-align:center;margin:0 0 8mm;letter-spacing:0.3px;font-family:Inter;line-height:1.5">
+        Monthly Cash Flow · Tax-Smart Deferral<br>via Return of Capital
+      </p>
+      <div style="width:50mm;height:1px;background:linear-gradient(90deg,transparent,${G},transparent);margin-bottom:10mm"></div>
+
+      <!-- 4 KPI grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4mm;width:100%;max-width:150mm;margin-bottom:8mm">
+        <div style="background:rgba(201,168,76,.09);border:1px solid rgba(201,168,76,.5);border-radius:8px;padding:6mm;text-align:center">
+          <div style="font-size:8px;color:${G};letter-spacing:2px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:3mm">目标年化派息</div>
+          <div style="font-size:36px;font-weight:800;color:${G};font-family:Inter;line-height:1;letter-spacing:-1.5px;margin-bottom:1.5mm">${(r*100).toFixed(1)}%</div>
+          <div style="font-size:7px;color:#64748B;font-family:Inter">Target Annual Distribution</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6mm;text-align:center">
+          <div style="font-size:8px;color:${G};letter-spacing:2px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:3mm">每月现金流</div>
+          <div style="font-size:28px;font-weight:800;color:#fff;font-family:Inter;line-height:1;margin-bottom:1.5mm">${fmt$(monthly)}</div>
+          <div style="font-size:7px;color:#64748B;font-family:Inter">Per ${fmt$(amt)} invested</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6mm;text-align:center">
+          <div style="font-size:8px;color:${G};letter-spacing:2px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:3mm">首期 ROC 占比</div>
+          <div style="font-size:28px;font-weight:800;color:#10B981;font-family:Inter;line-height:1;margin-bottom:1.5mm">100%</div>
+          <div style="font-size:7px;color:#64748B;font-family:Inter">Initial Return of Capital</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6mm;text-align:center">
+          <div style="font-size:8px;color:${G};letter-spacing:2px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:3mm">税务递延年数</div>
+          <div style="font-size:28px;font-weight:800;color:#fff;font-family:Inter;line-height:1;margin-bottom:1.5mm">${acbYears}</div>
+          <div style="font-size:7px;color:#64748B;font-family:Inter">Until ACB depletion at ${histReturn.toFixed(1)}% growth</div>
+        </div>
+      </div>
+
+      <p style="color:#3D5270;font-size:7.5px;text-align:center;font-family:Inter;line-height:1.6;margin:0;max-width:130mm">
+        <strong style="color:${G}">Important:</strong> T-Class distributions may include return of capital and can reduce adjusted cost base.<br>
+        This material is for client discussion only and does not constitute tax, legal, or investment advice.
+      </p>
+    </div>
+
+    <div style="background:#071426;padding:4mm 14mm;border-top:1px solid rgba(201,168,76,.12);flex-shrink:0">
+      <p style="color:#3D5270;font-size:6.5px;text-align:center;font-family:Inter;line-height:1.6;margin:0">
+        Past performance does not guarantee future results. This material is for informational purposes only and does not constitute investment, tax, or legal advice.
+      </p>
+      <p style="color:#2A3D56;font-size:6px;text-align:center;font-family:Inter;margin:2mm 0 0">
+        © 2026 Triton Wealth Management Corporation · 富瑞财富管理 · www.tritonwealth.ca · Page 1 of ${TOTAL}
+      </p>
+    </div>
+  </div>`;
+
+  // ════ PAGE 2: T-CLASS MECHANISM + USE CASES ════
+  const concept = (icon, iconBg, iconColor, cn, en, body) => `
+    <div style="background:#fff;border:1px solid ${BORD};border-radius:8px;padding:7mm">
+      <div style="display:inline-flex;width:17mm;height:17mm;border-radius:8px;align-items:center;justify-content:center;font-size:20px;background:${iconBg};color:${iconColor};margin-bottom:4mm">${icon}</div>
+      <div style="font-size:13px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif;margin-bottom:1mm">${cn}</div>
+      <div style="font-size:8px;color:${TX2};font-family:Inter;margin-bottom:2.5mm">${en}</div>
+      <div style="font-size:9.5px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.62">${body}</div>
+    </div>`;
+
+  const useCase = (icon, iconBg, iconColor, cn, en, body) => `
+    <div style="background:#fff;border:1px solid ${BORD};border-radius:8px;padding:5mm">
+      <div style="display:flex;align-items:center;gap:3mm;margin-bottom:2.5mm">
+        <div style="width:12mm;height:12mm;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;background:${iconBg};color:${iconColor}">${icon}</div>
+        <div>
+          <div style="font-size:11px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif">${cn}</div>
+          <div style="font-size:8px;color:${TX2};font-family:Inter">${en}</div>
+        </div>
+      </div>
+      <div style="font-size:8.8px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.55">${body}</div>
+    </div>`;
+
+  const p2 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${pageHdr('T-CLASS 核心机制与适用场景 · How It Works & Use Cases')}
+    <div style="padding:8mm 16mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+
+      <div style="margin-bottom:5mm">
+        ${sectLbl('FOUR PILLARS · 四大税务智慧', 'T-Class 如何工作')}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-bottom:7mm">
+        ${concept('💰','rgba(201,168,76,.12)','#9A7B2E','本金返还 ROC','Return of Capital','月度派息主体为 ROC——返还您原已纳税的本金，不构成当期应税收入，无 T5 利息税。')}
+        ${concept('📉','rgba(16,185,129,.12)','#079455','ACB 递减','Adjusted Cost Base ↓','每次 ROC 派息降低调整后成本基础（ACB）。这是"将税务事件推迟到未来"，而非永远免税。')}
+        ${concept('⏳','rgba(59,130,246,.12)','#1D4ED8','资本利得递延','Capital Gains Deferral','当 ACB 降至零，后续派息按资本利得计税（50% 计入应税所得），远低于利息收入税率。')}
+        ${concept('📅','rgba(139,92,246,.12)','#6D28D9','月度稳定派息','Monthly Distributions','每月固定日期派息至指定账户，替代债券利息，为退休客户提供可预期的生活费现金流。')}
+      </div>
+
+      <div style="margin-bottom:4mm">
+        ${sectLbl('IDEAL CLIENT PROFILES · 适用客户画像', '谁最适合 Fidelity T-Class')}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4mm">
+        ${useCase('🏖️','rgba(59,130,246,.12)','#1D4ED8','退休客户','Retirees','补充 CPP / OAS / RRIF 提款，提供税务高效的月度生活费现金流。')}
+        ${useCase('📈','rgba(217,45,32,.12)','#B91C1C','高税阶客户','High Tax Bracket','边际税率 40%+ 的专业人士/企业主，递延税务事件至退休低税阶。')}
+        ${useCase('💵','rgba(7,148,85,.12)','#047857','现金流需求客户','Income Seekers','需要稳定月度现金流但不愿持有低收益债券，T-Class 提供股票配置 + 现金流。')}
+        ${useCase('🏛️','rgba(201,168,76,.12)','#9A7B2E','遗产规划客户','Estate Planning','通过有规划地降低 ACB，配合企业账户/家族信托进行长期税务管理。')}
+      </div>
+    </div>
+    ${pageFooter(2)}
+  </div>`;
+
+  // ════ PAGE 3: TWO PORTFOLIOS ════
+  const portfolioCard = (pkey) => {
+    const pf = PORTFOLIOS[pkey];
+    const isActive = state.portfolio === pkey;
+    return `
+      <div style="background:#fff;border:1px solid ${BORD};border-top:3px solid ${isActive?G:'#94A3B8'};border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:5mm 6mm;background:${isActive?'#FFFBF0':'#F8FAFC'};border-bottom:1px solid ${BORD}">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div>
+              <div style="font-size:14px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif">${pf.name}</div>
+              <div style="font-size:8.5px;color:${TX2};font-family:Inter;margin-top:1mm">${pf.nameEN} · ${pf.tagline}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:3px">${stars(pf.riskLevel)}</div>
+          </div>
+        </div>
+        <div style="padding:5mm 6mm;flex:1">
+          <div style="font-size:9px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.62;margin-bottom:3mm"><strong style="color:${TX1}">投资目标：</strong>${pf.desc.objective}</div>
+          <div style="font-size:9px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.62;margin-bottom:4mm"><strong style="color:${TX1}">适合：</strong>${pf.desc.suitable}</div>
+          <div style="font-size:8px;color:${G};letter-spacing:1.5px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">持仓配置 Holdings</div>
+          ${pf.holdings.map(h => {
+            const f = FUND_DATA[h.key];
+            return `<div style="display:flex;align-items:center;gap:3mm;padding:2.1mm 0;border-bottom:1px solid ${BORD}">
+              <div style="width:7px;height:7px;border-radius:50%;background:${f.color};flex-shrink:0"></div>
+              <div style="flex:1">
+                <div style="font-size:9px;color:${TX1};font-family:Inter;font-weight:600">${f.name}</div>
+                <div style="font-size:7.5px;color:${TX2};font-family:Inter;margin-top:.5mm">MER ${f.mer.toFixed(2)}% · ${f.role}</div>
+              </div>
+              <div style="font-size:14px;font-weight:800;color:${G};font-family:Inter">${h.alloc}%</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  };
+
+  const p3 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${pageHdr('两个 T-Class 组合 · Portfolio Options')}
+    <div style="padding:8mm 16mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="margin-bottom:5mm">
+        ${sectLbl('PORTFOLIO OPTIONS · 两个 T-CLASS 组合', '均衡 · 增长 · 各司其职')}
+        <p style="font-size:9.5px;color:${TX2};font-family:'Noto Sans SC',sans-serif;margin-top:2mm">所有持仓均为 Fidelity Corporate Class 基金，支持 T5 与 T8 series。当前展示组合：<strong style="color:${TX1}">${p.name}</strong></p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5mm;flex:1">
+        ${portfolioCard('balanced')}
+        ${portfolioCard('growth')}
+      </div>
+
+      <div style="margin-top:4mm;padding:4mm 5mm;background:#F0F4F8;border-left:3px solid ${G};border-radius:4px;font-size:9px;color:${TX1};font-family:'Noto Sans SC',sans-serif;line-height:1.6">
+        <strong>组合配比说明 · Allocation Note：</strong>
+        以上配比为顾问建议基础版本，实际持仓比例可根据您的现金流需求、风险偏好、税务情况进行个性化调整。
+        <span style="color:${TX2};font-family:Inter">Allocations are advisory baseline; final composition may be customized.</span>
+      </div>
+    </div>
+    ${pageFooter(3)}
+  </div>`;
+
+  // ════ PAGE 4: CASHFLOW EXAMPLE + TAX COMPARISON ════
+  const p4 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${pageHdr('现金流示例与税务对比 · Cash Flow & Tax Comparison')}
+    <div style="padding:8mm 16mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="margin-bottom:5mm">
+        ${sectLbl(`${fmt$(amt)} EXAMPLE · ${state.tClass} SERIES`, `现金流模拟与税务节省`)}
+        <p style="font-size:9px;color:${TX2};font-family:'Noto Sans SC',sans-serif;margin-top:2mm;line-height:1.45">税阶假设：${provinceData.label} · ${prov.labelEN} · ${prov.range}（${(prov.interest*100).toFixed(2)}% 普通收入/利息税率 / ${(prov.capGain*100).toFixed(2)}% 资本利得等效税率） · Tax data ${state.taxDataStatus}</p>
+      </div>
+
+      <!-- Key result grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4mm;margin-bottom:6mm">
+        <div style="background:#fff;border:1px solid rgba(201,168,76,.4);border-radius:7px;padding:5mm 4mm;text-align:center">
+          <div style="font-size:8px;color:${G};letter-spacing:1.4px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">月度现金流</div>
+          <div style="font-size:24px;font-weight:800;color:${TX1};font-family:Inter">${fmt$(monthly)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid ${BORD};border-radius:7px;padding:5mm 4mm;text-align:center">
+          <div style="font-size:8px;color:${TX2};letter-spacing:1.4px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">年度合计</div>
+          <div style="font-size:24px;font-weight:800;color:${TX1};font-family:Inter">${fmt$(annual)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid rgba(7,148,85,.3);border-radius:7px;padding:5mm 4mm;text-align:center">
+          <div style="font-size:8px;color:${POS_D};letter-spacing:1.4px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">Y1 税务节省</div>
+          <div style="font-size:24px;font-weight:800;color:${POS_D};font-family:Inter">${fmt$(taxSavedY1)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid ${BORD};border-radius:7px;padding:5mm 4mm;text-align:center">
+          <div style="font-size:8px;color:${TX2};letter-spacing:1.4px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2.5mm">ACB→0 年数</div>
+          <div style="font-size:24px;font-weight:800;color:${TX1};font-family:Inter">${acbYears}</div>
+        </div>
+      </div>
+
+      <!-- Tax comparison chart -->
+      <div style="background:#fff;border:1px solid ${BORD};border-radius:7px;padding:5mm;flex:1;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3mm">
+          <div>
+            <div style="font-size:12px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif">10/20/30 年累计税务对比</div>
+            <div style="font-size:8px;color:${TX2};font-family:Inter;margin-top:0.8mm">GIC 利息收入 vs T-Class ROC + 后续资本利得</div>
+          </div>
+          <span style="font-size:7.5px;color:#94A3B8;font-style:italic;font-family:Inter">Simplified — actual distribution mix may vary</span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden">${chartImg('chartTax','210px')}</div>
+      </div>
+
+      <!-- Insight box -->
+      <div style="margin-top:4mm;padding:4mm 5mm;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:5px;font-size:9px;color:${TX1};font-family:'Noto Sans SC',sans-serif;line-height:1.6">
+        <strong style="color:${POS_D}">💡 关键洞察：</strong>
+        在 ${provinceData.label} ${prov.range} 税阶下，相同 ${fmt$(amt)} 投资、同样 ${fmt$(annual)}/年现金流，
+        <strong>T-Class 10 年内约 ${fmt$(deferredTax10)} 税额被递延</strong>（相比 GIC 利息全额应税）。这不是免税；未来 ACB 归零、赎回或处置时，可能以资本利得等形式纳税。
+      </div>
+      <div style="font-size:7.5px;color:${TX2};font-family:Inter;margin-top:2mm;line-height:1.45">T-Class tax benefit is primarily tax deferral, not tax elimination. ${TAX_DATA.sourceNote || ''}</div>
+    </div>
+    ${pageFooter(4)}
+  </div>`;
+
+  // ════ PAGE 5: T5 vs T8 SIDE-BY-SIDE (historical return scenario, 20-year horizon) ════
+  const t5sim = simulate(amt, 0.05, histReturnRaw, 20);
+  const t8sim = simulate(amt, 0.08, histReturnRaw, 20);
+  const milestones = [1, 5, 10, 15, 20];
+
+  const tableRows = (sim, accentColor) => milestones.map(y => {
+    const r = sim[y];
+    const pctChange = (r.value - amt) / amt * 100;
+    const pctColor = pctChange >= 0 ? POS_D : NEG_D;
+    const pctSign  = pctChange >= 0 ? '+' : '';
+    const valColor = pctChange < -25 ? NEG_D : TX1;
+    return `<tr style="border-bottom:1px solid ${BORD}">
+      <td style="padding:2.2mm 3mm;font-size:9px;font-weight:800;color:${accentColor};font-family:Inter">Y${y}</td>
+      <td style="padding:2.2mm 3mm;text-align:right;font-size:9px;font-family:Inter;color:${TX1};font-weight:700">${fmt$(r.monthly)}</td>
+      <td style="padding:2.2mm 3mm;text-align:right;font-size:8.5px;font-family:Inter;color:${TX2}">${fmt$(r.cum)}</td>
+      <td style="padding:2.2mm 3mm;text-align:right;font-size:9px;font-family:Inter;font-weight:800;color:${valColor}">${fmt$(r.value)}</td>
+      <td style="padding:2.2mm 3mm;text-align:right;font-size:8.5px;font-family:Inter;font-weight:800;color:${pctColor}">${pctSign}${pctChange.toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
+
+  const growthLbl = `${histReturn.toFixed(1)}% 历史回报情景`;
+
+  const p5 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG}">
+    ${pageHdr('T5 vs T8 · 30年现金流与本金对比')}
+    <div style="padding:7mm 14mm;flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="margin-bottom:4mm">
+        ${sectLbl('T5 VS T8 SIDE-BY-SIDE · 20年现金流模拟', '"我每月能拿多少？多少年后还剩多少？"')}
+        <p style="font-size:9px;color:${TX2};font-family:'Noto Sans SC',sans-serif;margin-top:1.8mm;line-height:1.45">
+          ${fmt$(amt)} 初始投资 · ${p.name} (${p.nameEN}) · 假设年化回报：<strong style="color:${TX1}">${growthLbl}</strong>
+          · 基于 Fidelity 公开 5Y 加权数据
+        </p>
+      </div>
+
+      <!-- T5 vs T8 cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4.5mm;margin-bottom:5mm">
+        <!-- T5 -->
+        <div style="background:#fff;border:1px solid ${BORD};border-top:3px solid #3B82F6;border-radius:6px;overflow:hidden">
+          <div style="padding:4mm 5mm;background:#EFF6FF;border-bottom:1px solid ${BORD};display:flex;justify-content:space-between;align-items:baseline">
+            <div>
+              <div style="font-size:13px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif">T5 · 5% 年化</div>
+              <div style="font-size:8px;color:${TX2};font-family:Inter;margin-top:0.7mm">保守派息 · 本金侵蚀风险低</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:7.5px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px">月度派息</div>
+              <div style="font-size:22px;font-weight:800;color:#1D4ED8;font-family:Inter;line-height:1">${fmt$(amt*0.05/12)}</div>
+            </div>
+          </div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#F8FAFC">
+                <th style="padding:2mm 3mm;text-align:left;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">年份</th>
+                <th style="padding:2mm 3mm;text-align:right;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">每月派息</th>
+                <th style="padding:2mm 3mm;text-align:right;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">累计领取</th>
+                <th style="padding:2mm 3mm;text-align:right;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">剩余市值</th>
+                <th style="padding:2mm 3mm;text-align:right;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">本金±%</th>
+              </tr>
+            </thead>
+            <tbody>${tableRows(t5sim, '#1D4ED8')}</tbody>
+          </table>
+        </div>
+
+        <!-- T8 -->
+        <div style="background:#fff;border:1px solid ${BORD};border-top:3px solid ${G};border-radius:6px;overflow:hidden">
+          <div style="padding:4mm 5mm;background:#FFFBF0;border-bottom:1px solid ${BORD};display:flex;justify-content:space-between;align-items:baseline">
+            <div>
+              <div style="font-size:13px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif">T8 · 8% 年化</div>
+              <div style="font-size:8px;color:${TX2};font-family:Inter;margin-top:0.7mm">高现金流 · 适合主动消耗本金</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:7.5px;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:1px">月度派息</div>
+              <div style="font-size:22px;font-weight:800;color:#92400E;font-family:Inter;line-height:1">${fmt$(amt*0.08/12)}</div>
+            </div>
+          </div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#F8FAFC">
+                <th style="padding:2mm 3mm;text-align:left;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">年份</th>
+                <th style="padding:2mm 3mm;text-align:right;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">每月派息</th>
+                <th style="padding:2mm 3mm;text-align:right;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">累计领取</th>
+                <th style="padding:2mm 3mm;text-align:right;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">剩余市值</th>
+                <th style="padding:2mm 3mm;text-align:right;font-size:7.2px;font-weight:700;color:${TX2};font-family:Inter;text-transform:uppercase;letter-spacing:0.5px">本金±%</th>
+              </tr>
+            </thead>
+            <tbody>${tableRows(t8sim, '#92400E')}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Comparison chart -->
+      <div style="background:#fff;border:1px solid ${BORD};border-radius:7px;padding:5mm;flex:1;display:flex;flex-direction:column">
+        <div style="font-size:12px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif;margin-bottom:2mm">剩余市值演变曲线 · Remaining Principal Curve</div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden">${chartImg('chartCompare','145px')}</div>
+      </div>
+
+      <div style="margin-top:4mm;padding:4mm 5mm;background:linear-gradient(135deg,#F0F4F8,#FFFBF0);border-left:3px solid ${G};border-radius:4px;font-size:9px;color:${TX1};font-family:'Noto Sans SC',sans-serif;line-height:1.6">
+        <strong>💡 如何选择 T5 还是 T8？</strong>
+        <strong>T5</strong> 适合保守、长期持有、不愿过度消耗本金的客户——基金温和增长即可覆盖派息，本金可在20年以上保持稳定。
+        <strong>T8</strong> 适合已退休、需要较高生活费现金流、不介意本金逐步递减的客户——ACB 归零时间会随实际回报率变化，归零后转为低税率资本利得。
+      </div>
+    </div>
+    ${pageFooter(5)}
+  </div>`;
+
+  // ════ PAGE 6: RISKS + ADVISOR CONTACT ════
+  const p6 = `
+  <div class="pdf-page" style="display:flex;flex-direction:column;background:${BG};padding:0">
+    ${pageHdr('风险提示与顾问联系 · Disclosures & Advisor')}
+
+    <!-- Top: Risk grid (light bg) -->
+    <div style="padding:8mm 16mm 5mm;flex:1;overflow:hidden">
+      <div style="margin-bottom:5mm">
+        ${sectLbl('IMPORTANT DISCLOSURES · 重要提示', '投资前必读')}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4mm">
+        <div style="background:#fff;border:1px solid ${BORD};border-left:3px solid #F59E0B;border-radius:6px;padding:5mm">
+          <div style="font-size:11px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif;margin-bottom:2mm">⚠ ROC 不等于"回报"</div>
+          <div style="font-size:8.7px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.6">月度派息中 ROC 部分本质是返还您自己投入的本金，并非投资产生的收益。若基金市场表现不足以支撑分配率，长期持有可能导致基金净值与本金双双下降。</div>
+        </div>
+        <div style="background:#fff;border:1px solid ${BORD};border-left:3px solid #3B82F6;border-radius:6px;padding:5mm">
+          <div style="font-size:11px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif;margin-bottom:2mm">📊 派息率需匹配基金增长</div>
+          <div style="font-size:8.7px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.6">T8 (8%) 长期高于 Class 基金历史均回报；T5 (5%) 较保守，本金侵蚀风险低。建议先与顾问就持有年限与可接受本金消耗速度沟通。</div>
+        </div>
+        <div style="background:#fff;border:1px solid ${BORD};border-left:3px solid ${NEG_D};border-radius:6px;padding:5mm">
+          <div style="font-size:11px;font-weight:800;color:${TX1};font-family:'Noto Sans SC',sans-serif;margin-bottom:2mm">📋 仅适用非注册账户</div>
+          <div style="font-size:8.7px;color:#475569;font-family:'Noto Sans SC',sans-serif;line-height:1.6">T-Class 税务优势仅在非注册账户中显现。TFSA / RRSP / RRIF 中持有 T-Class 无税务意义，且 ACB 追踪可能增加报税复杂度，不推荐。</div>
+        </div>
+      </div>
+
+      <div style="margin-top:5mm;padding:4mm 5mm;background:#F8FAFC;border:1px solid ${BORD};border-radius:5px;font-size:8.5px;color:${TX2};font-family:'Noto Sans SC',sans-serif;line-height:1.6">
+        <strong style="color:${TX1}">税表报告 Tax Reporting：</strong>
+        Fidelity 每年向投资者及 CRA 发送 T5 税表（注：此 T5 税表与 T5 series 名称偶合），列明当年分配的 ROC、资本利得、合格股息等成分。
+        若同一基金通过多个经销商持有，需自行汇总计算综合 ACB——建议由专业税务顾问协助。
+      </div>
+    </div>
+
+    <!-- Bottom: Advisor card -->
+    <div style="background:#fff;border-top:1px solid ${BORD};padding:8mm 16mm 5mm;flex-shrink:0;-webkit-print-color-adjust:exact">
+      <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:9mm;align-items:center;border:1px solid ${BORD};border-top:4px solid ${G};border-radius:8px;padding:8mm;background:#fff">
+        <div style="text-align:center;border-right:1px solid ${BORD};padding-right:9mm">
+          <img src="triton-logo.png" style="height:48px;width:auto;margin-bottom:4mm" onerror="this.style.display='none'">
+          <div style="color:${G};font-size:8px;letter-spacing:2.4px;font-family:Inter;font-weight:700">TRITON WEALTH MANAGEMENT</div>
+          <div style="color:${TX2};font-size:8px;font-family:'Noto Sans SC',sans-serif;margin-top:1.5mm">富瑞财富管理</div>
+          <p style="color:${TX2};font-size:8px;font-style:italic;text-align:center;margin:4mm 0 0;line-height:1.5">
+            "Protecting and growing generational wealth — one family at a time."
+          </p>
+        </div>
+        <div>
+          <div style="font-size:8px;color:${G};letter-spacing:2.4px;font-family:Inter;font-weight:700;text-transform:uppercase;margin-bottom:2mm">YOUR DEDICATED ADVISOR</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:1mm">
+            <span style="font-size:24px;font-weight:800;color:${NV};font-family:Inter;letter-spacing:-0.3px">Jeffrey Yuan</span>
+            <span style="background:#FFFBEB;color:${G};border:1px solid rgba(185,154,69,.45);font-size:7.5px;padding:2px 9px;border-radius:100px;font-family:Inter;font-weight:700;letter-spacing:0.5px">INDEPENDENT BROKER</span>
+          </div>
+          <div style="color:${TX2};font-size:8.5px;font-family:'Noto Sans SC',sans-serif;margin-bottom:5mm">独立持牌经纪 · 私人财富顾问</div>
+
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:2.4mm 5mm;font-size:10px;font-family:Inter">
+            <div style="color:${G};font-weight:700;letter-spacing:1.5px;font-size:7.5px;text-transform:uppercase">PHONE</div>
+            <div style="color:${NV};font-weight:600">778-837-6688 <span style="color:${TX2};font-size:8px">· Mon-Fri 9-18 PST</span></div>
+
+            <div style="color:${G};font-weight:700;letter-spacing:1.5px;font-size:7.5px;text-transform:uppercase">EMAIL</div>
+            <div style="color:${NV};font-weight:600;word-break:break-all">Jeffrey.Yuan@TritonWealth.ca</div>
+
+            <div style="color:${G};font-weight:700;letter-spacing:1.5px;font-size:7.5px;text-transform:uppercase">WEB</div>
+            <div style="color:${NV};font-weight:600">www.tritonwealth.ca</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:4mm;color:${TX2};font-size:7.5px;text-align:right;font-family:Inter;line-height:1.6">
+        <strong style="color:${NV}">Page 6 of ${TOTAL}</strong>
+      </div>
+    </div>
+  </div>`;
+
+  return p1 + p2 + p3 + p4 + p5 + p6;
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PDF EXPORT
+// ════════════════════════════════════════════════════════════════════
+function exportPDF() {
+  const btn = document.querySelector('nav.no-print [onclick="exportPDF()"]');
+  const originalText = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = '⏳ 准备中...'; btn.disabled = true; }
+
+  setTimeout(() => {
+    try {
+      document.getElementById('pdf-body').innerHTML = buildPDFLayout();
+      setTimeout(() => {
+        try {
+          if (btn) { btn.textContent = originalText || '⬇ 导出PDF'; btn.disabled = false; }
+          window.print();
+        } finally {
+          if (btn) { btn.textContent = originalText || '⬇ 导出PDF'; btn.disabled = false; }
+        }
+      }, 200);
+    } catch (err) {
+      console.error('PDF export failed', err);
+      if (btn) { btn.textContent = originalText || '⬇ 导出PDF'; btn.disabled = false; }
+      alert('PDF 生成失败，请刷新页面后再试。');
+    }
+  }, 250);
+}
+
+window.addEventListener('message', event => {
+  if (event.data && event.data.type === 'TRITON_EXPORT_PDF') exportPDF();
+});
+
+window.addEventListener('beforeprint', () => {
+  if (!document.getElementById('pdf-body').innerHTML.trim()) {
+    document.getElementById('pdf-body').innerHTML = buildPDFLayout();
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════════════
+async function boot() {
+  // Compute portfolio-weighted historical returns from real Fidelity 5Y data
+  Object.keys(PORTFOLIOS).forEach(k => {
+    PORTFOLIOS[k].historicalReturn = computeWeightedReturn(PORTFOLIOS[k].holdings);
+    state.returnRate[k] = PORTFOLIOS[k].historicalReturn;
+  });
+  await loadTaxBrackets();
+
+  renderPortfolio();
+  // Initialize input + slider sync
+  document.getElementById('calcInput').value = formatAmtInput(state.amount);
+  document.getElementById('calcSlider').value = state.amount;
+  updateSliderTrack();
+  refreshAllCalcs();        // computes all numbers (calls refreshComparison)
+  initPortfolioChart();     // donut once
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden-fade');
+  }, 600);
+}
+window.addEventListener('DOMContentLoaded', boot);
+</script>
+
+</body>
+</html>
