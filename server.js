@@ -7,12 +7,16 @@ const HOST = process.env.TRITON_HOST || '127.0.0.1';
 const PORT = Number(process.env.TRITON_PORT || 8790);
 const ROOT = __dirname;
 const AUTH_FILE = path.join(ROOT, '.triton-auth.json');
+const REMEMBER_FILE = path.join(ROOT, '.triton-remembered-devices.json');
 const PORTFOLIO_DATA_FILE = path.join(ROOT, 'portfolio_data.json');
 const DEFAULT_PASSWORD_HASH = process.env.TRITON_PASSWORD_HASH || '';
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const REMEMBER_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const PORTFOLIO_STALE_DAYS = Number(process.env.TRITON_PORTFOLIO_STALE_DAYS || 45);
 
 const sessions = new Map();
+const SESSION_COOKIE = 'triton_proposal_session';
+const REMEMBER_COOKIE = 'triton_proposal_remember';
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -45,6 +49,35 @@ function writePasswordHash(passwordHash) {
   fs.writeFileSync(AUTH_FILE, JSON.stringify({ passwordHash, updatedAt: new Date().toISOString() }, null, 2));
 }
 
+function readRememberedDevices() {
+  try {
+    return JSON.parse(fs.readFileSync(REMEMBER_FILE, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function writeRememberedDevices(devices) {
+  fs.writeFileSync(REMEMBER_FILE, JSON.stringify(devices, null, 2));
+}
+
+function rememberTokenHash(token) {
+  return sha256(String(token || ''));
+}
+
+function cleanupRememberedDevices(devices) {
+  const now = Date.now();
+  let changed = false;
+  Object.entries(devices).forEach(([hash, record]) => {
+    if (!record?.expiresAt || new Date(record.expiresAt).getTime() <= now) {
+      delete devices[hash];
+      changed = true;
+    }
+  });
+  if (changed) writeRememberedDevices(devices);
+  return devices;
+}
+
 function parseCookies(req) {
   const cookies = {};
   const header = req.headers.cookie || '';
@@ -56,15 +89,21 @@ function parseCookies(req) {
 }
 
 function isAuthenticated(req) {
-  const token = parseCookies(req).triton_proposal_session;
-  if (!token) return false;
+  const cookies = parseCookies(req);
+  const token = cookies[SESSION_COOKIE];
 
-  const expiresAt = sessions.get(token);
-  if (!expiresAt || expiresAt <= Date.now()) {
+  if (token) {
+    const expiresAt = sessions.get(token);
+    if (expiresAt && expiresAt > Date.now()) return true;
     sessions.delete(token);
-    return false;
   }
-  return true;
+
+  const rememberToken = cookies[REMEMBER_COOKIE];
+  if (!rememberToken) return false;
+
+  const devices = cleanupRememberedDevices(readRememberedDevices());
+  const record = devices[rememberTokenHash(rememberToken)];
+  return Boolean(record && new Date(record.expiresAt).getTime() > Date.now());
 }
 
 function send(res, status, body, headers = {}) {
@@ -222,8 +261,23 @@ async function handleApi(req, res, url) {
 
     const token = crypto.randomBytes(32).toString('hex');
     sessions.set(token, Date.now() + SESSION_TTL_MS);
+    const cookieHeaders = [
+      `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=86400; HttpOnly; Secure; SameSite=Lax`
+    ];
+
+    if (body.rememberDevice === true) {
+      const rememberToken = crypto.randomBytes(32).toString('hex');
+      const devices = cleanupRememberedDevices(readRememberedDevices());
+      devices[rememberTokenHash(rememberToken)] = {
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + REMEMBER_TTL_MS).toISOString()
+      };
+      writeRememberedDevices(devices);
+      cookieHeaders.push(`${REMEMBER_COOKIE}=${encodeURIComponent(rememberToken)}; Path=/; Max-Age=${Math.floor(REMEMBER_TTL_MS / 1000)}; HttpOnly; Secure; SameSite=Lax`);
+    }
+
     sendJson(res, 200, { ok: true }, {
-      'set-cookie': `triton_proposal_session=${encodeURIComponent(token)}; Path=/; Max-Age=86400; HttpOnly; Secure; SameSite=Lax`
+      'set-cookie': cookieHeaders
     });
     return true;
   }
@@ -248,15 +302,26 @@ async function handleApi(req, res, url) {
     }
 
     writePasswordHash(sha256(newPassword));
+    writeRememberedDevices({});
     sendJson(res, 200, { ok: true });
     return true;
   }
 
   if (url.pathname === '/api/logout' && req.method === 'POST') {
-    const token = parseCookies(req).triton_proposal_session;
+    const cookies = parseCookies(req);
+    const token = cookies[SESSION_COOKIE];
     if (token) sessions.delete(token);
+    const rememberToken = cookies[REMEMBER_COOKIE];
+    if (rememberToken) {
+      const devices = readRememberedDevices();
+      delete devices[rememberTokenHash(rememberToken)];
+      writeRememberedDevices(devices);
+    }
     sendJson(res, 200, { ok: true }, {
-      'set-cookie': 'triton_proposal_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax'
+      'set-cookie': [
+        `${SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`,
+        `${REMEMBER_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`
+      ]
     });
     return true;
   }

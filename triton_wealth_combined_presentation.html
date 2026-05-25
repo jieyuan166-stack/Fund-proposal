@@ -7,18 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="auth.v2.js" defer></script>
-  <script>
-    (function () {
-      const isMobileViewport = window.matchMedia('(max-width: 980px)').matches;
-      const isTopLevel = window.top === window.self;
-      if (!isMobileViewport || !isTopLevel) return;
-
-      const target = location.hash === '#tclass'
-        ? 'fidelity_tclass_strategy.html'
-        : 'triton_portfolio_presentation.html';
-      window.location.replace(target);
-    })();
-  </script>
   <style>
     :root {
       --navy: #0A1628;
@@ -243,6 +231,10 @@
       line-height: 1.5;
     }
 
+    .mobile-launcher {
+      display: none;
+    }
+
     @media (max-width: 980px) {
       body { overflow: auto; }
       .shell { min-height: 100vh; height: auto; }
@@ -271,8 +263,44 @@
         flex-wrap: wrap;
       }
       .stage {
-        height: calc(100vh - 220px);
-        min-height: 620px;
+        display: none;
+      }
+      .mobile-launcher {
+        display: grid;
+        gap: 12px;
+        padding: 14px;
+        background: var(--paper);
+      }
+      .mobile-card {
+        display: block;
+        padding: 18px;
+        border: 1px solid rgba(10,22,40,.08);
+        border-left: 4px solid var(--gold);
+        background: #fff;
+        color: var(--navy);
+        text-decoration: none;
+        box-shadow: 0 8px 24px rgba(10,22,40,.08);
+      }
+      .mobile-card small {
+        display: block;
+        color: #8A6F25;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .mobile-card strong {
+        display: block;
+        font-size: 17px;
+        line-height: 1.25;
+        margin-bottom: 6px;
+      }
+      .mobile-card span {
+        display: block;
+        color: #64748B;
+        font-size: 13px;
+        line-height: 1.55;
       }
       .mobile-note { display: block; }
     }
@@ -313,8 +341,21 @@
     </header>
 
     <div class="mobile-note">
-      移动端建议横屏展示；两个方案仍可在下方同一页面内切换和导出。
+      移动端请选择一个方案单独打开；独立页面可正常上下滑动。
     </div>
+
+    <section class="mobile-launcher" aria-label="移动端方案选择">
+      <a class="mobile-card" href="triton_portfolio_presentation.html">
+        <small>Proposal</small>
+        <strong>分隔基金投资组合</strong>
+        <span>查看稳健型、均衡型、进取型组合与税务对比。</span>
+      </a>
+      <a class="mobile-card" href="fidelity_tclass_strategy.html">
+        <small>Strategy</small>
+        <strong>Fidelity T-Class 现金流</strong>
+        <span>查看 T5 / T8 月度现金流、税务递延与本金演变。</span>
+      </a>
+    </section>
 
     <main class="stage">
       <iframe
@@ -349,6 +390,10 @@
     let activeView = location.hash === '#tclass' ? 'tclass' : 'portfolio';
 
     function setActiveView(view) {
+      if (window.matchMedia('(max-width: 980px)').matches) {
+        window.location.href = views[view].file;
+        return;
+      }
       activeView = view;
       Object.entries(views).forEach(([key, meta]) => {
         const on = key === view;

@@ -70,6 +70,23 @@
       box-shadow: 0 0 0 3px rgba(201,168,76,.16);
     }
 
+    .triton-auth-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-top: 13px;
+      color: #cbd7e6;
+      font-size: 13px;
+      line-height: 1.45;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .triton-auth-check input {
+      margin-top: 2px;
+      accent-color: #c9a84c;
+    }
+
     .triton-auth-button {
       width: 100%;
       height: 44px;
@@ -173,6 +190,7 @@
         ${isChange ? '<label class="triton-auth-label" for="triton-old-password">当前密码</label><input class="triton-auth-input" id="triton-old-password" type="password" autocomplete="current-password">' : ''}
         <label class="triton-auth-label" for="triton-password">${isChange ? '新密码' : '密码'}</label>
         <input class="triton-auth-input" id="triton-password" type="password" autocomplete="${isChange ? 'new-password' : 'current-password'}" autofocus>
+        ${isChange ? '' : '<label class="triton-auth-check"><input id="triton-remember-device" type="checkbox" checked><span>这是常用设备，30 天内免登录</span></label>'}
         ${isChange ? '<label class="triton-auth-label" for="triton-confirm-password">确认新密码</label><input class="triton-auth-input" id="triton-confirm-password" type="password" autocomplete="new-password">' : ''}
         <button class="triton-auth-button" type="button" id="triton-submit">${isChange ? '保存新密码' : '登录'}</button>
         <div class="triton-auth-links">
@@ -197,7 +215,8 @@
 
     async function submitLogin() {
       error.textContent = '';
-      const { response } = await postJson('/api/login', { password: password.value });
+      const rememberDevice = Boolean(overlay.querySelector('#triton-remember-device')?.checked);
+      const { response } = await postJson('/api/login', { password: password.value, rememberDevice });
       if (!response.ok) {
         error.textContent = '密码不正确，请重试。';
         password.select();

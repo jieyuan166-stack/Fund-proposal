@@ -1,5 +1,6 @@
 .DS_Store
 .triton-auth.json
+.triton-remembered-devices.json
 deploy/cloudflared/*.json
 *.log
 node_modules/
