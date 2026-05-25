@@ -344,8 +344,8 @@
         display:flex !important;
         box-sizing:border-box;
         width:100%;
-        gap:8px;
-        padding:10px 12px;
+        gap:7px;
+        padding:8px 10px;
         background:#F7F8FA;
         position:sticky;
         top:0;
@@ -362,7 +362,7 @@
         padding:9px 8px;
         color:#0A1628;
         background:#fff;
-        font-size:12px;
+        font-size:10.5px;
         font-weight:800;
         line-height:1.15;
         overflow:hidden;
@@ -375,11 +375,9 @@
         color:#8A6F25;
       }
       nav.no-print {
-        flex-direction:column;
         align-items:stretch;
         justify-content:flex-start;
-        gap:9px;
-        padding:10px 12px;
+        padding:8px 10px;
       }
       nav.no-print > div:first-child {
         width:100%;
@@ -387,7 +385,7 @@
         gap:8px;
       }
       nav.no-print > div:first-child img {
-        height:30px !important;
+        height:28px !important;
         flex:0 0 auto;
       }
       nav.no-print > div:first-child .border-l {
@@ -396,7 +394,7 @@
         margin-left:0;
       }
       nav.no-print > div:first-child .font-bold {
-        font-size:10px;
+        font-size:9.5px;
         line-height:1.05;
         white-space:nowrap;
       }
@@ -406,31 +404,40 @@
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap;
-        font-size:6.5px;
+        font-size:5.8px;
         line-height:1.2;
-        letter-spacing:.07em;
+        letter-spacing:.04em;
       }
       nav.no-print > div:last-child {
-        width:100%;
-        display:block !important;
+        display:none !important;
       }
-      nav.no-print > div:last-child .tclass-toggle {
-        box-sizing:border-box;
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        width:100%;
+      section.hero-bg > div {
+        padding:24px 16px 38px !important;
       }
-      nav.no-print > div:last-child .tclass-toggle button {
-        width:100%;
-        min-width:0;
-        padding:8px 6px;
-        font-size:11px;
-        line-height:1;
+      section.hero-bg .text-center {
+        margin-bottom:24px;
+      }
+      section.hero-bg .text-center > div.inline-block {
+        max-width:100%;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        font-size:8px !important;
+        letter-spacing:.14em !important;
+      }
+      section.hero-bg h1 {
+        font-size:17px !important;
+        line-height:1.16 !important;
+        letter-spacing:0 !important;
         white-space:nowrap;
       }
-      nav.no-print > div:last-child > span,
-      nav.no-print > div:last-child > button {
-        display:none !important;
+      section.hero-bg p.text-blue-200 {
+        max-width:100%;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        font-size:11px !important;
+        line-height:1.35 !important;
       }
     }
 
