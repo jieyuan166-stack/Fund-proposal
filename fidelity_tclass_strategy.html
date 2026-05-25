@@ -335,8 +335,43 @@
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
 
+    @media (max-width: 767px) {
+      .mobile-switch {
+        display:flex !important;
+        gap:8px;
+        padding:10px 12px;
+        background:#F7F8FA;
+        position:sticky;
+        top:0;
+        z-index:60;
+        border-bottom:1px solid #E2E8F0;
+      }
+      .mobile-switch a {
+        flex:1;
+        text-align:center;
+        text-decoration:none;
+        border:1px solid rgba(10,22,40,.12);
+        border-radius:8px;
+        padding:9px 8px;
+        color:#0A1628;
+        background:#fff;
+        font-size:12px;
+        font-weight:800;
+        line-height:1.15;
+      }
+      .mobile-switch a.active {
+        border-color:#C9A84C;
+        background:#FFF8E1;
+        color:#8A6F25;
+      }
+      nav > div:first-child .font-bold { font-size:11px; line-height:1.08; }
+      nav > div:first-child .tracking-widest { font-size:7px; line-height:1.2; max-width:112px; display:block; letter-spacing:.08em; }
+      nav > div:last-child button { font-size:10px; padding:7px 9px; line-height:1; }
+    }
+
     body.embedded-shell nav.no-print,
-    body.embedded-shell #loading-screen {
+    body.embedded-shell #loading-screen,
+    body.embedded-shell .mobile-switch {
       display: none !important;
     }
     body.embedded-shell .hero-bg:first-of-type > div {
@@ -352,6 +387,11 @@
     document.body.classList.add('embedded-shell');
   }
 </script>
+
+<div class="mobile-switch no-print" style="display:none">
+  <a href="triton_portfolio_presentation.html">分隔基金</a>
+  <a class="active" href="fidelity_tclass_strategy.html">Fidelity</a>
+</div>
 
 <!-- ════════════════════ LOADING SCREEN ════════════════════ -->
 <div id="loading-screen">

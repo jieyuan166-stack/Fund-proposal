@@ -351,14 +351,42 @@
     .matrix-muted { color:#64748B; }
 
     @media (max-width: 767px) {
+      .mobile-switch {
+        display:flex !important;
+        gap:8px;
+        padding:10px 12px;
+        background:#F7F8FA;
+        position:sticky;
+        top:0;
+        z-index:60;
+        border-bottom:1px solid #E2E8F0;
+      }
+      .mobile-switch a {
+        flex:1;
+        text-align:center;
+        text-decoration:none;
+        border:1px solid rgba(10,22,40,.12);
+        border-radius:8px;
+        padding:9px 8px;
+        color:#0A1628;
+        background:#fff;
+        font-size:12px;
+        font-weight:800;
+        line-height:1.15;
+      }
+      .mobile-switch a.active {
+        border-color:#C9A84C;
+        background:#FFF8E1;
+        color:#8A6F25;
+      }
       nav {
         align-items:flex-start !important; gap:10px; padding:12px 16px !important;
       }
       nav > div:first-child { min-width:0; gap:8px !important; }
       nav > div:first-child img { height:34px !important; }
       nav > div:first-child .border-l { padding-left:8px !important; margin-left:0 !important; }
-      nav > div:first-child .font-bold { font-size:12px; line-height:1.1; }
-      nav > div:first-child .tracking-widest { font-size:8px; line-height:1.25; max-width:120px; display:block; }
+      nav > div:first-child .font-bold { font-size:11px; line-height:1.08; }
+      nav > div:first-child .tracking-widest { font-size:7px; line-height:1.2; max-width:112px; display:block; letter-spacing:.08em; }
       nav > div:last-child { flex-direction:column; gap:6px !important; align-items:flex-end; flex-shrink:0; }
       nav > div:last-child span { font-size:9px; padding:3px 8px; }
       nav > div:last-child button { font-size:10px; padding:7px 10px; line-height:1; white-space:nowrap; }
@@ -369,7 +397,8 @@
     }
 
     body.embedded-shell nav.no-print,
-    body.embedded-shell #loading-screen {
+    body.embedded-shell #loading-screen,
+    body.embedded-shell .mobile-switch {
       display: none !important;
     }
     body.embedded-shell .hero-bg:first-of-type > div {
@@ -385,6 +414,11 @@
     document.body.classList.add('embedded-shell');
   }
 </script>
+
+<div class="mobile-switch no-print" style="display:none">
+  <a class="active" href="triton_portfolio_presentation.html">分隔基金</a>
+  <a href="fidelity_tclass_strategy.html">Fidelity</a>
+</div>
 
 <!-- ════════════════════ LOADING SCREEN ════════════════════ -->
 <div id="loading-screen">
