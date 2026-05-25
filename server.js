@@ -7,8 +7,10 @@ const HOST = process.env.TRITON_HOST || '127.0.0.1';
 const PORT = Number(process.env.TRITON_PORT || 8790);
 const ROOT = __dirname;
 const AUTH_FILE = path.join(ROOT, '.triton-auth.json');
+const PORTFOLIO_DATA_FILE = path.join(ROOT, 'portfolio_data.json');
 const DEFAULT_PASSWORD_HASH = process.env.TRITON_PASSWORD_HASH || '';
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const PORTFOLIO_STALE_DAYS = Number(process.env.TRITON_PORTFOLIO_STALE_DAYS || 45);
 
 const sessions = new Map();
 
@@ -73,8 +75,42 @@ function send(res, status, body, headers = {}) {
 function sendJson(res, status, payload, headers = {}) {
   send(res, status, JSON.stringify(payload), {
     'content-type': 'application/json; charset=utf-8',
+    'cache-control': 'no-store',
     ...headers
   });
+}
+
+function readJsonFile(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+function portfolioFreshness(data) {
+  const lastUpdated = data?.lastUpdated ? new Date(data.lastUpdated) : null;
+  const ageDays = lastUpdated && !Number.isNaN(lastUpdated.getTime())
+    ? Math.max(0, Math.floor((Date.now() - lastUpdated.getTime()) / 86400000))
+    : null;
+  const stale = ageDays === null || ageDays > PORTFOLIO_STALE_DAYS;
+
+  return {
+    checkedAt: new Date().toISOString(),
+    lastUpdated: data?.lastUpdated || null,
+    asOfLabel: data?.asOfLabel || null,
+    ageDays,
+    stale,
+    staleAfterDays: PORTFOLIO_STALE_DAYS,
+    updateMode: 'cache-free static source',
+    note: stale
+      ? 'Portfolio performance data is older than the configured freshness window. Connect an authorized live data feed before treating this as current.'
+      : 'Portfolio data is within the configured freshness window.'
+  };
+}
+
+function portfolioPayload() {
+  const data = readJsonFile(PORTFOLIO_DATA_FILE);
+  return {
+    ...data,
+    freshness: portfolioFreshness(data)
+  };
 }
 
 function readBody(req) {
@@ -128,7 +164,7 @@ function serveFile(req, res) {
     res.writeHead(200, {
       'content-type': mimeTypes[ext] || 'application/octet-stream',
       'content-length': stat.size,
-      'cache-control': ext === '.html' || ext === '.js' ? 'no-store' : 'public, max-age=14400'
+      'cache-control': ext === '.html' || ext === '.js' || ext === '.json' ? 'no-store' : 'public, max-age=14400'
     });
     fs.createReadStream(filePath).pipe(res);
   });
@@ -153,6 +189,27 @@ function loginShell(res) {
 async function handleApi(req, res, url) {
   if (url.pathname === '/api/auth-status' && req.method === 'GET') {
     sendJson(res, 200, { authenticated: isAuthenticated(req) });
+    return true;
+  }
+
+  if (url.pathname === '/api/portfolio-data' && req.method === 'GET') {
+    if (!isAuthenticated(req)) {
+      sendJson(res, 401, { ok: false, error: 'NOT_AUTHENTICATED' });
+      return true;
+    }
+    sendJson(res, 200, portfolioPayload());
+    return true;
+  }
+
+  if (url.pathname === '/api/data-health' && req.method === 'GET') {
+    if (!isAuthenticated(req)) {
+      sendJson(res, 401, { ok: false, error: 'NOT_AUTHENTICATED' });
+      return true;
+    }
+    sendJson(res, 200, {
+      portfolio: portfolioFreshness(readJsonFile(PORTFOLIO_DATA_FILE)),
+      serverTime: new Date().toISOString()
+    });
     return true;
   }
 

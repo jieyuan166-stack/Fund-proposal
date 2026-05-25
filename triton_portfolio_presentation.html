@@ -392,7 +392,7 @@
   <div class="text-white text-sm tracking-widest mb-1" style="opacity:.7">TRITON WEALTH MANAGEMENT</div>
   <div class="text-gold text-xs tracking-widest mb-8" style="color:#C9A84C;opacity:.6">PRIVATE WEALTH ADVISORY</div>
   <div class="loader-bar"></div>
-  <div class="text-white text-xs mt-4 en" style="opacity:.5">正在加载实时市场数据 · Loading market data...</div>
+  <div class="text-white text-xs mt-4 en" style="opacity:.5">正在加载最新可用数据 · Loading latest available data...</div>
 </div>
 
 <!-- ════════════════════ STICKY NAV ════════════════════ -->
@@ -408,6 +408,7 @@
     <div class="hidden md:flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg" style="background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.2)">
       <span class="text-gray-400">数据更新：</span>
       <span id="last-updated-display" class="font-medium num text-gold" style="color:#C9A84C">--</span>
+      <span id="data-freshness-display" class="font-medium" style="color:#C9A84C">checking</span>
       <button onclick="refreshData()" id="refresh-btn" class="ml-1 text-gold hover:text-white transition-colors" title="刷新数据" style="color:#C9A84C">🔄</button>
     </div>
     <span class="text-xs border border-gold text-gold px-3 py-1 rounded-full font-medium" style="border-color:#C9A84C;color:#C9A84C">CONFIDENTIAL</span>
@@ -758,7 +759,7 @@
   <footer class="mt-10 text-center text-xs text-gray-500 leading-relaxed">
     <div class="gold-stripe w-32 mx-auto mb-5"></div>
     <p>© 2026 Triton Wealth Management Corporation · 富瑞财富管理 · www.tritonwealth.ca</p>
-    <p class="mt-1">报告生成日期：<span id="report-date">2026年5月</span> | 数据截至：<span id="footer-asof">--</span></p>
+    <p class="mt-1">报告生成日期：<span id="report-date">--</span> | 数据截至：<span id="footer-asof">--</span> | <span id="footer-freshness">--</span></p>
   </footer>
 
 </main>
@@ -776,7 +777,7 @@ const DATA_CONFIG = {
   dataSources: {
     bloomberg:   { endpoint: '', apiKey: '' },
     morningstar: { endpoint: '', apiKey: '' },
-    custom:      { endpoint: './portfolio_data.json' }
+    custom:      { endpoint: '/api/portfolio-data' }
   }
 };
 
@@ -863,6 +864,9 @@ const ASSET_PALETTE  = ['#3B82F6','#C9A84C','#10B981','#8B5CF6'];
 const SECTOR_PALETTE = ['#3B82F6','#10B981','#C9A84C','#8B5CF6','#EF4444','#14B8A6','#F59E0B','#F472B6','#64748B'];
 const GEO_PALETTE    = ['#EF4444','#3B82F6','#10B981','#F59E0B','#8B5CF6'];
 const TAB_COLORS = { a:'#3B82F6', b:'#10B981', c:'#C9A84C' };
+function reportDateLabel(locale='zh-CN') {
+  return new Date().toLocaleDateString(locale, { year:'numeric', month:'long', day:'numeric' });
+}
 const SEG_TAX_DATA_FALLBACK = {
   2026: {
     year: 2026,
@@ -944,6 +948,26 @@ async function loadData(forceRefresh=false) {
     ts.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit'}) + ' ' +
     ts.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
   document.getElementById('footer-asof').textContent = APP_DATA.asOfLabel || '--';
+  document.getElementById('report-date').textContent =
+    new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric' });
+
+  const freshness = APP_DATA.freshness;
+  const freshnessText = freshness
+    ? (freshness.stale ? `STALE ${freshness.ageDays ?? '?'}d` : `fresh ${freshness.ageDays ?? 0}d`)
+    : 'source unknown';
+  const freshnessColor = freshness?.stale ? '#EF4444' : '#10B981';
+  const freshnessEl = document.getElementById('data-freshness-display');
+  if (freshnessEl) {
+    freshnessEl.textContent = freshnessText;
+    freshnessEl.style.color = freshnessColor;
+    freshnessEl.title = freshness?.note || 'Data freshness status unavailable';
+  }
+  const footerFreshness = document.getElementById('footer-freshness');
+  if (footerFreshness) {
+    footerFreshness.textContent = freshness?.stale
+      ? `数据已超过 ${freshness.staleAfterDays} 天 freshness window`
+      : `数据新鲜度：${freshnessText}`;
+  }
 
   setTimeout(()=>{ if(refreshBtn) refreshBtn.classList.remove('refresh-spin'); }, 600);
 }
@@ -2100,7 +2124,7 @@ function buildLegacyPDFLayout() {
 
         <div style="color:#2D3F55;font-size:7px;font-family:Inter;line-height:1.55;text-align:center;border-top:1px solid rgba(201,168,76,.12);padding-top:3mm">
           © 2026 Triton Wealth Management Corporation · 富瑞财富管理 · CONFIDENTIAL<br>
-          报告生成 Generated: May 2026 · 数据截至 Data as of: ${APP_DATA.asOfLabel}
+          报告生成 Generated: ${reportDateLabel('en-CA')} · 数据截至 Data as of: ${APP_DATA.asOfLabel}
         </div>
       </div>
     </div>

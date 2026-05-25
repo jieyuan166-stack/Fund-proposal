@@ -7,6 +7,9 @@ Static Triton Wealth proposal site with a small Node.js password gate.
 - Default local port: `127.0.0.1:8790`
 - Password hash is loaded from `.triton-auth.json` or `TRITON_PASSWORD_HASH`.
 - `.triton-auth.json` is intentionally not committed because this repository is public.
+- Portfolio data is served through `/api/portfolio-data` with `Cache-Control: no-store`.
+- `/api/data-health` reports data age and flags portfolio performance data as stale after 45 days by default.
+- Fund performance numbers remain official-source dependent. Do not present static fund returns as real-time unless an authorized live data feed is connected.
 
 ## Start
 

@@ -931,7 +931,7 @@
   <footer class="mt-10 text-center text-xs text-gray-500 leading-relaxed">
     <div class="gold-stripe w-32 mx-auto mb-5"></div>
     <p>© 2026 Triton Wealth Management Corporation · 富瑞财富管理 · www.tritonwealth.ca</p>
-    <p class="mt-1">报告生成日期：2026年5月 | Fidelity T-Class 数据来源：Fidelity Investments Canada</p>
+    <p class="mt-1">报告生成日期：<span id="tclass-report-date">--</span> | Fidelity T-Class 数据来源：Fidelity Investments Canada</p>
     <p class="mt-2 text-gray-400 italic max-w-2xl mx-auto">
       本材料仅供参考，不构成投资、税务或法律建议。投资涉及风险，过往业绩不代表未来表现。
       具体产品适用性请咨询 Jeffrey Yuan 及您的税务/法律顾问。
@@ -1000,6 +1000,10 @@ const PORTFOLIOS = {
     ],
   },
 };
+
+function reportDateLabel(locale='zh-CN') {
+  return new Date().toLocaleDateString(locale, { year:'numeric', month:'long', day:'numeric' });
+}
 
 // Canadian 2026 marginal tax rates (federal + provincial combined, approximate).
 // Best-effort online refresh can replace this object when a hosted JSON file is available.
@@ -1740,7 +1744,7 @@ function buildPDFLayout() {
       </div>
       <div style="text-align:right;font-family:Inter,sans-serif;font-size:8.5px;color:${TX2}">
         <div style="font-weight:800;color:${NV}">CONFIDENTIAL</div>
-        <div style="margin-top:2px">Prepared May 2026</div>
+        <div style="margin-top:2px">Prepared ${reportDateLabel('en-CA')}</div>
       </div>
     </header>
     <div style="height:1px;background:${BORD};margin:0 46px;flex-shrink:0"></div>`;
@@ -1766,7 +1770,7 @@ function buildPDFLayout() {
       <img src="triton-logo.png" style="height:36px;width:auto" onerror="this.style.display='none'">
       <div style="text-align:right">
         <div style="color:${G};font-size:7.5px;letter-spacing:3px;font-family:Inter;font-weight:700">CONFIDENTIAL · FIDELITY T-CLASS PROPOSAL</div>
-        <div style="color:#2D3F55;font-size:6.5px;font-family:Inter;margin-top:1.5px">报告生成 May 2026</div>
+        <div style="color:#2D3F55;font-size:6.5px;font-family:Inter;margin-top:1.5px">报告生成 ${reportDateLabel('en-CA')}</div>
       </div>
     </div>
     <div style="height:2px;background:linear-gradient(90deg,transparent,${G},transparent);flex-shrink:0"></div>
@@ -2208,6 +2212,9 @@ async function boot() {
     state.returnRate[k] = PORTFOLIOS[k].historicalReturn;
   });
   await loadTaxBrackets();
+
+  const reportDate = document.getElementById('tclass-report-date');
+  if (reportDate) reportDate.textContent = reportDateLabel();
 
   renderPortfolio();
   // Initialize input + slider sync
