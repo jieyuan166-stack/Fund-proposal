@@ -3,4 +3,5 @@
 .triton-remembered-devices.json
 deploy/cloudflared/*.json
 *.log
+backups/
 node_modules/

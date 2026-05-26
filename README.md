@@ -9,7 +9,8 @@ Static Triton Wealth proposal site with a small Node.js password gate.
 - `.triton-auth.json` is intentionally not committed because this repository is public.
 - Portfolio data is served through `/api/portfolio-data` with `Cache-Control: no-store`.
 - `/api/data-health` reports data age and flags portfolio performance data as stale after 45 days by default.
-- Fund performance numbers remain official-source dependent. Do not present static fund returns as real-time unless an authorized live data feed is connected.
+- Portfolio performance is updated on the NAS by `scripts/update-portfolio-data.sh`, which downloads Equitable/Fundata FundSummary PDFs, parses the official return tables, backs up the prior JSON, and rewrites `portfolio_data.json`.
+- Fund returns are historical official-source returns. Do not present them as future projections.
 
 ## Start
 
@@ -35,3 +36,23 @@ docker compose up -d
 
 The `proposal`, `cloudflared`, and `cloudflared-backup` containers use `restart: always`.
 The two Cloudflared containers register two independent connectors for the same tunnel, so one tunnel container can restart while the other continues serving traffic.
+
+## NAS Monthly Portfolio Data Update
+
+The NAS owns monthly data refreshes. The Mac is not required.
+
+Manual run on the NAS:
+
+```bash
+cd "/volume1/docker/Triton Fund proposal"
+sh scripts/update-portfolio-data.sh
+```
+
+Recommended NAS crontab entry:
+
+```cron
+15 7 8 * * cd "/volume1/docker/Triton Fund proposal" && sh scripts/update-portfolio-data.sh
+```
+
+Logs are written to `logs/portfolio-update.*.log`.
+Backups are written to `backups/portfolio-data/`.
