@@ -5,7 +5,7 @@
     "primary": "Equitable Life Fundata FundSummary PDFs",
     "url": "https://equitablelife.fundata.com",
     "note": "Fund returns are parsed from Equitable/Fundata FundSummary PDFs. Returns are net of MER when stated by source; guarantee fees are not included. Portfolio returns are allocation-weighted from fund-level returns.",
-    "lastAutomatedUpdate": "2026-05-26T23:51:59.864Z",
+    "lastAutomatedUpdate": "2026-05-27T00:00:06.673Z",
     "updateMode": "NAS monthly cron; official PDFs parsed with pdftotext"
   },
   "benchmarks": {

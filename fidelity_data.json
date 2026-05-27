@@ -1,0 +1,109 @@
+{
+  "lastUpdated": "2026-04-30T16:00:00-04:00",
+  "asOfLabel": "2026年4月30日",
+  "dataSource": {
+    "primary": "Fidelity Investments Canada fund pages",
+    "url": "https://www.fidelity.ca",
+    "lastAutomatedUpdate": "2026-05-27T00:00:10.497Z",
+    "updateMode": "NAS monthly cron; official Fidelity pages parsed from Standard period returns",
+    "note": "Fund returns are historical standard period returns from Fidelity Canada fund pages. T5/T8 distribution rates are product distribution targets and are not investment return forecasts."
+  },
+  "funds": {
+    "ucg": {
+      "name": "Fidelity Canadian Growth Company Class",
+      "nameEN": "Cdn Growth Co.",
+      "mer": 2.23,
+      "role": "加股成长",
+      "color": "#0A1628",
+      "y1": 57.28,
+      "y3": 33.21,
+      "y5": 17.25,
+      "source": {
+        "primary": "Fidelity Investments Canada",
+        "url": "https://www.fidelity.ca/en/products/funds/ucg/",
+        "asOf": "30-Apr-2026",
+        "merAsOf": "30-Nov-2025"
+      }
+    },
+    "ucl": {
+      "name": "Fidelity Insights Class",
+      "nameEN": "Insights Class",
+      "mer": 2.22,
+      "role": "全球精选",
+      "color": "#3B82F6",
+      "y1": 29.6,
+      "y3": 25.71,
+      "y5": 15.14,
+      "source": {
+        "primary": "Fidelity Investments Canada",
+        "url": "https://www.fidelity.ca/en/products/funds/ugg/",
+        "asOf": "30-Apr-2026",
+        "merAsOf": "30-Nov-2025"
+      }
+    },
+    "ugq": {
+      "name": "Fidelity Global Growth and Value Class",
+      "nameEN": "Global G&V",
+      "mer": 2.24,
+      "role": "价值+成长",
+      "color": "#C9A84C",
+      "y1": 24.37,
+      "y3": 19.11,
+      "y5": 12.08,
+      "source": {
+        "primary": "Fidelity Investments Canada",
+        "url": "https://www.fidelity.ca/en/products/funds/ugq/",
+        "asOf": "30-Apr-2026",
+        "merAsOf": "30-Nov-2025"
+      }
+    },
+    "ugb": {
+      "name": "Fidelity Global Balanced Class Portfolio",
+      "nameEN": "Global Balanced",
+      "mer": 2.19,
+      "role": "稳定器",
+      "color": "#10B981",
+      "y1": 20.61,
+      "y3": 13.81,
+      "y5": 7.93,
+      "source": {
+        "primary": "Fidelity Investments Canada",
+        "url": "https://www.fidelity.ca/en/products/funds/ugbp/",
+        "asOf": "30-Apr-2026",
+        "merAsOf": "30-Nov-2025"
+      }
+    },
+    "ufs": {
+      "name": "Fidelity U.S. Focused Stock Class",
+      "nameEN": "U.S. Focused",
+      "mer": 2.24,
+      "role": "美股精选",
+      "color": "#8B5CF6",
+      "y1": 46.36,
+      "y3": 26.87,
+      "y5": 14.98,
+      "source": {
+        "primary": "Fidelity Investments Canada",
+        "url": "https://www.fidelity.ca/en/products/funds/uga/",
+        "asOf": "30-Apr-2026",
+        "merAsOf": "30-Nov-2025"
+      }
+    },
+    "ugi": {
+      "name": "Fidelity Global Innovators® Class",
+      "nameEN": "Global Innov.",
+      "mer": 2.23,
+      "role": "创新主题",
+      "color": "#EF4444",
+      "y1": 67.34,
+      "y3": 43.49,
+      "y5": 19.35,
+      "source": {
+        "primary": "Fidelity Investments Canada",
+        "url": "https://www.fidelity.ca/en/products/funds/uet/",
+        "asOf": "30-Apr-2026",
+        "merAsOf": "30-Nov-2025"
+      }
+    }
+  }
+}

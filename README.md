@@ -9,7 +9,9 @@ Static Triton Wealth proposal site with a small Node.js password gate.
 - `.triton-auth.json` is intentionally not committed because this repository is public.
 - Portfolio data is served through `/api/portfolio-data` with `Cache-Control: no-store`.
 - `/api/data-health` reports data age and flags portfolio performance data as stale after 45 days by default.
-- Portfolio performance is updated on the NAS by `scripts/update-portfolio-data.sh`, which downloads Equitable/Fundata FundSummary PDFs, parses the official return tables, backs up the prior JSON, and rewrites `portfolio_data.json`.
+- Seg fund portfolio performance is updated on the NAS by `scripts/update-portfolio-data.sh`, which downloads Equitable/Fundata FundSummary PDFs, parses the official return tables, backs up the prior JSON, and rewrites `portfolio_data.json`.
+- Fidelity T-Class fund data is updated on the NAS by `scripts/update-fidelity-data.sh`, which downloads Fidelity Canada fund pages, parses the official Standard period returns and MER, backs up the prior JSON, and rewrites `fidelity_data.json`.
+- `scripts/update-all-data.sh` runs both data refreshes and is the monthly NAS cron target.
 - Fund returns are historical official-source returns. Do not present them as future projections.
 
 ## Start
@@ -45,14 +47,14 @@ Manual run on the NAS:
 
 ```bash
 cd "/volume1/docker/Triton Fund proposal"
-sh scripts/update-portfolio-data.sh
+sh scripts/update-all-data.sh
 ```
 
 Recommended NAS crontab entry:
 
 ```cron
-15 7 8 * * cd "/volume1/docker/Triton Fund proposal" && sh scripts/update-portfolio-data.sh
+15 7 8 * * cd "/volume1/docker/Triton Fund proposal" && sh scripts/update-all-data.sh
 ```
 
-Logs are written to `logs/portfolio-update.*.log`.
-Backups are written to `backups/portfolio-data/`.
+Logs are written to `logs/portfolio-update.*.log` and `logs/fidelity-update.*.log`.
+Backups are written to `backups/portfolio-data/` and `backups/fidelity-data/`.

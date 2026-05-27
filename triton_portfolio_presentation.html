@@ -764,7 +764,8 @@
           <li><strong>资产/行业/地区配置：</strong>基于 Fund Facts 及底层指数构成（Vanguard / Invesco / Fidelity）的合理估算</li>
           <li><strong>加权历史回报：</strong>Σ(基金配置% × 基金真实历史回报)；数据缺失基金按可用权重归一化</li>
           <li><strong>波动率 / 最大回撤 / 夏普比率：</strong>基于组合构成及历史基金波动估算，非精确测算</li>
-          <li>数据每小时自动刷新（如配置 API 接入）；当前为 JSON 静态数据模式</li>
+          <li><strong>数据截至：</strong><span id="method-asof">--</span>；NAS 每月自动抓取官方 FundSummary PDF 并更新 JSON，页面每小时重新读取最新 JSON。</li>
+          <li><strong>抓取日志：</strong>NAS 保存每次抓取日志与更新前备份；如官方数据未更新或抓取失败，网站不会伪造新日期。</li>
         </ul>
       </div>
     </details>
@@ -1027,6 +1028,8 @@ async function loadData(forceRefresh=false) {
     ts.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit'}) + ' ' +
     ts.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
   document.getElementById('footer-asof').textContent = APP_DATA.asOfLabel || '--';
+  const methodAsOf = document.getElementById('method-asof');
+  if (methodAsOf) methodAsOf.textContent = APP_DATA.asOfLabel || '--';
   document.getElementById('report-date').textContent =
     new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric' });
 

@@ -989,10 +989,11 @@
     <div class="content">
       <ul class="space-y-2 list-disc pl-5">
         <li><strong>T5/T8 派息率：</strong>Fidelity Investments Canada 公开披露的目标年化派息率（5% / 8%）。实际派息率每年由基金公司调整。</li>
+        <li><strong>数据截至：</strong><span id="tclass-method-asof">--</span>；基金历史回报来自 Fidelity Canada 官方基金页面的 Standard period returns。</li>
         <li><strong>税率：</strong>2026 联邦+省综合边际税率（含利息收入、资本利得 50% 计入）。</li>
         <li><strong>ACB 模型：</strong>简化假设——初期分配 100% 计为 ROC，ACB 用尽后改为 100% 资本利得分配。
           实际 ROC/资本利得/利息/股息成分由基金公司当年确定。</li>
-        <li><strong>基金 MER：</strong>来自 Fidelity 官方 Fund Facts，T5/T8 系列 MER 与 Series F 一致。</li>
+        <li><strong>基金 MER：</strong>来自 Fidelity 官方页面；MER 日期按 Fidelity 页面披露。</li>
       </ul>
     </div>
   </details>
@@ -1043,7 +1044,14 @@
   <footer class="mt-10 text-center text-xs text-gray-500 leading-relaxed">
     <div class="gold-stripe w-32 mx-auto mb-5"></div>
     <p>© 2026 Triton Wealth Management Corporation · 富瑞财富管理 · www.tritonwealth.ca</p>
-    <p class="mt-1">报告生成日期：<span id="tclass-report-date">--</span> | Fidelity T-Class 数据来源：Fidelity Investments Canada</p>
+    <p class="mt-1">
+      报告生成日期：<span id="tclass-report-date">--</span> |
+      数据截至：<span id="tclass-data-asof">--</span> |
+      来源：<span id="tclass-data-source">Fidelity Investments Canada</span>
+    </p>
+    <p class="mt-1 text-gray-400">
+      数据抓取：<span id="tclass-data-updated">--</span> · 历史回报为 Fidelity Canada 标准期间回报；T5/T8 派息率不是投资回报预测。
+    </p>
     <p class="mt-2 text-gray-400 italic max-w-2xl mx-auto">
       本材料仅供参考，不构成投资、税务或法律建议。投资涉及风险，过往业绩不代表未来表现。
       具体产品适用性请咨询 Jeffrey Yuan 及您的税务/法律顾问。
@@ -1061,15 +1069,61 @@
 // FIDELITY DATA
 // ════════════════════════════════════════════════════════════════════
 
-// 5Y annualized returns sourced from fidelity.ca (verified as of Apr 30, 2026)
-const FUND_DATA = {
-  ucg: { name: 'Fidelity Canadian Growth Company Class', nameEN: 'Cdn Growth Co.', mer: 2.98, role: '加股成长',   color: '#0A1628', y5: 17.25 },
-  ucl: { name: 'Fidelity Insights Class',                  nameEN: 'Insights Class', mer: 2.85, role: '全球精选',   color: '#3B82F6', y5: 15.14 },
-  ugq: { name: 'Fidelity Global Growth and Value Class',   nameEN: 'Global G&V',     mer: 2.97, role: '价值+成长',  color: '#C9A84C', y5: 12.08 },
-  ugb: { name: 'Fidelity Global Balanced Class Portfolio', nameEN: 'Global Balanced',mer: 2.86, role: '稳定器',     color: '#10B981', y5:  7.93 },
-  ufs: { name: 'Fidelity U.S. Focused Stock Class',        nameEN: 'U.S. Focused',   mer: 2.87, role: '美股精选',   color: '#8B5CF6', y5: 14.98 },
-  ugi: { name: 'Fidelity Global Innovators® Class',        nameEN: 'Global Innov.',  mer: 2.93, role: '创新主题',   color: '#EF4444', y5: 19.35 },
+// Fidelity data is refreshed on the NAS from official Fidelity Canada fund pages.
+let FIDELITY_DATA_META = {
+  asOfLabel: '2026年4月30日',
+  lastUpdated: '2026-04-30T16:00:00-04:00',
+  dataSource: {
+    primary: 'Fidelity Investments Canada fund pages',
+    url: 'https://www.fidelity.ca',
+    updateMode: 'built-in fallback',
+    lastAutomatedUpdate: null
+  }
 };
+const FUND_DATA = {
+  ucg: { name: 'Fidelity Canadian Growth Company Class', nameEN: 'Cdn Growth Co.', mer: 2.23, role: '加股成长',   color: '#0A1628', y1:57.28, y3:33.21, y5:17.25 },
+  ucl: { name: 'Fidelity Insights Class',                  nameEN: 'Insights Class', mer: 2.22, role: '全球精选',   color: '#3B82F6', y1:29.60, y3:25.71, y5:15.14 },
+  ugq: { name: 'Fidelity Global Growth and Value Class',   nameEN: 'Global G&V',     mer: 2.24, role: '价值+成长',  color: '#C9A84C', y1:24.37, y3:19.11, y5:12.08 },
+  ugb: { name: 'Fidelity Global Balanced Class Portfolio', nameEN: 'Global Balanced',mer: 2.19, role: '稳定器',     color: '#10B981', y1:20.61, y3:13.81, y5: 7.93 },
+  ufs: { name: 'Fidelity U.S. Focused Stock Class',        nameEN: 'U.S. Focused',   mer: 2.24, role: '美股精选',   color: '#8B5CF6', y1:46.36, y3:26.87, y5:14.98 },
+  ugi: { name: 'Fidelity Global Innovators® Class',        nameEN: 'Global Innov.',  mer: 2.23, role: '创新主题',   color: '#EF4444', y1:67.34, y3:43.49, y5:19.35 },
+};
+
+async function loadFidelityFundData() {
+  try {
+    const res = await fetch('/fidelity_data.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data?.funds || !data?.asOfLabel) throw new Error('Invalid Fidelity data payload');
+    Object.entries(data.funds).forEach(([key, fund]) => {
+      if (!FUND_DATA[key]) return;
+      Object.assign(FUND_DATA[key], fund);
+    });
+    FIDELITY_DATA_META = {
+      asOfLabel: data.asOfLabel,
+      lastUpdated: data.lastUpdated,
+      dataSource: data.dataSource || FIDELITY_DATA_META.dataSource
+    };
+  } catch (error) {
+    console.warn('Fidelity data fetch failed, using built-in fallback:', error.message);
+  }
+}
+
+function renderFidelityDataStatus() {
+  const asOf = document.getElementById('tclass-data-asof');
+  const source = document.getElementById('tclass-data-source');
+  const updated = document.getElementById('tclass-data-updated');
+  const methodAsOf = document.getElementById('tclass-method-asof');
+  if (asOf) asOf.textContent = FIDELITY_DATA_META.asOfLabel || '--';
+  if (methodAsOf) methodAsOf.textContent = FIDELITY_DATA_META.asOfLabel || '--';
+  if (source) source.textContent = FIDELITY_DATA_META.dataSource?.primary || 'Fidelity Investments Canada';
+  if (updated) {
+    const stamp = FIDELITY_DATA_META.dataSource?.lastAutomatedUpdate;
+    updated.textContent = stamp
+      ? new Date(stamp).toLocaleString('zh-CN', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false })
+      : FIDELITY_DATA_META.dataSource?.updateMode || 'built-in fallback';
+  }
+}
 
 // Compute portfolio-weighted 5Y annualized return
 function computeWeightedReturn(holdings) {
@@ -1857,13 +1911,14 @@ function buildPDFLayout() {
       <div style="text-align:right;font-family:Inter,sans-serif;font-size:8.5px;color:${TX2}">
         <div style="font-weight:800;color:${NV}">CONFIDENTIAL</div>
         <div style="margin-top:2px">Prepared ${reportDateLabel('en-CA')}</div>
+        <div style="margin-top:2px">Data as of ${FIDELITY_DATA_META.asOfLabel}</div>
       </div>
     </header>
     <div style="height:1px;background:${BORD};margin:0 46px;flex-shrink:0"></div>`;
 
   const pageFooter = (num) => `
     <div style="position:absolute;left:46px;right:46px;bottom:18px;height:16px;display:flex;align-items:flex-end;justify-content:space-between;font-family:Inter,sans-serif;font-size:7.5px;color:${TX2};background:#fff">
-      <div>© 2026 Triton Wealth Management Corporation · Confidential client report</div>
+      <div>© 2026 Triton Wealth Management Corporation · Data as of ${FIDELITY_DATA_META.asOfLabel} · Source: Fidelity Canada</div>
       <div style="font-weight:800;color:${NV}">Page ${num} of ${TOTAL}</div>
     </div>`;
 
@@ -1882,7 +1937,7 @@ function buildPDFLayout() {
       <img src="triton-logo.png" style="height:36px;width:auto" onerror="this.style.display='none'">
       <div style="text-align:right">
         <div style="color:${G};font-size:7.5px;letter-spacing:3px;font-family:Inter;font-weight:700">CONFIDENTIAL · FIDELITY T-CLASS PROPOSAL</div>
-        <div style="color:#2D3F55;font-size:6.5px;font-family:Inter;margin-top:1.5px">报告生成 ${reportDateLabel('en-CA')}</div>
+        <div style="color:#2D3F55;font-size:6.5px;font-family:Inter;margin-top:1.5px">Generated ${reportDateLabel('en-CA')} · Data as of ${FIDELITY_DATA_META.asOfLabel}</div>
       </div>
     </div>
     <div style="height:2px;background:linear-gradient(90deg,transparent,${G},transparent);flex-shrink:0"></div>
@@ -2318,6 +2373,7 @@ window.addEventListener('beforeprint', () => {
 // BOOT
 // ════════════════════════════════════════════════════════════════════
 async function boot() {
+  await loadFidelityFundData();
   // Compute portfolio-weighted historical returns from real Fidelity 5Y data
   Object.keys(PORTFOLIOS).forEach(k => {
     PORTFOLIOS[k].historicalReturn = computeWeightedReturn(PORTFOLIOS[k].holdings);
@@ -2327,6 +2383,7 @@ async function boot() {
 
   const reportDate = document.getElementById('tclass-report-date');
   if (reportDate) reportDate.textContent = reportDateLabel();
+  renderFidelityDataStatus();
 
   renderPortfolio();
   // Initialize input + slider sync
