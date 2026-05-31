@@ -58,6 +58,7 @@
   .head-meta small{display:block;font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800;margin-bottom:7px;}
   .head-meta strong{display:block;font-family:'Inter',sans-serif;font-size:20px;line-height:1;font-weight:900;color:#fff;}
   .head-meta span{display:block;margin-top:5px;font-size:11px;color:#8CA1BA;}
+  .mobile-tax-year{display:none;}
 
   /* ---------- section ---------- */
   .sec{margin-top:34px;}
@@ -177,6 +178,8 @@
     .head p{font-size:13.5px;overflow-wrap:anywhere;}
     .head-inner{grid-template-columns:1fr;}
     .head-logo{display:none;}
+    .mobile-tax-year{display:inline-flex;align-items:center;gap:7px;margin:0 0 13px;padding:6px 9px;border:1px solid rgba(201,168,76,.42);border-radius:999px;background:rgba(255,255,255,.055);color:var(--gold);font-family:'Inter',sans-serif;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
+    .mobile-tax-year strong{color:#fff;font-size:10px;letter-spacing:0;}
     .ins{grid-template-columns:1fr;}
     .outs{grid-template-columns:1fr;}
     .flows{grid-template-columns:1fr;}
@@ -224,6 +227,7 @@
     <div class="head-inner">
       <div>
         <div class="brand">Triton Wealth · Tax Strategy</div>
+        <div class="mobile-tax-year">Tax data <strong id="mobileTaxYear">--</strong></div>
         <h1>投资借款抵税计算器<span>Investment Loan Tax Savings Calculator</span></h1>
         <p>了解合资格的投资借款利息<b>如何可能降低应税收入、减少应缴税款，并降低税后借款成本</b>。<br>
         <span>See how eligible investment loan interest may reduce taxable income and lower after-tax borrowing cost.</span></p>
@@ -391,6 +395,7 @@ $("taxSource").textContent = DATA.source || "--";
 $("taxYear").textContent = DATA.year || "--";
 $("taxFetched").textContent = DATA.fetched || "--";
 $("heroTaxYear").textContent = DATA.year || "--";
+$("mobileTaxYear").textContent = DATA.year || "--";
 
 /* 渲染单列资金流：标题 + 若干行（label / value / op / 是否减项）+ 合计 */
 function renderFlow(el, head, rows, totalLabel, totalVal, isAfter){
