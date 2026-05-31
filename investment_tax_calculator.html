@@ -54,7 +54,6 @@
   .head h1 span{display:block;margin-top:7px;font-family:'Inter',sans-serif;font-size:clamp(13px,1.6vw,17px);font-weight:700;color:#B8C7DA;letter-spacing:0;}
   .head p{margin:0;color:#C7D4E6;font-size:14.5px;max-width:660px;overflow-wrap:anywhere;}
   .head-logo{justify-self:end;text-align:right;}
-  .head-logo img{height:72px;width:auto;display:inline-block;margin-bottom:18px;opacity:.96;}
   .head-meta{border:1px solid rgba(201,168,76,.38);background:rgba(255,255,255,.035);border-radius:10px;padding:14px 16px;text-align:left;}
   .head-meta small{display:block;font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800;margin-bottom:7px;}
   .head-meta strong{display:block;font-family:'Inter',sans-serif;font-size:20px;line-height:1;font-weight:900;color:#fff;}
@@ -126,6 +125,9 @@
   .card:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(10,22,40,.1);border-color:rgba(201,168,76,.3);}
   .card .cl{font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.35;min-height:34px;}
   .card .cv{font-size:34px;font-weight:800;margin-top:8px;letter-spacing:-.5px;}
+  .cost-pair{display:flex;align-items:baseline;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .cost-pair .cv{margin-top:0;}
+  .rate-pill{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(154,123,46,.28);border-radius:999px;background:#FFFBF0;color:var(--amber);padding:5px 9px;font-family:'Inter',sans-serif;font-size:12px;font-weight:900;letter-spacing:0;white-space:nowrap;}
   .card.navy{border-color:rgba(11,36,71,.18);} .card.navy .cv{color:var(--navy);}
   .card.green{border-color:rgba(14,159,110,.35);background:linear-gradient(180deg,#fff,var(--green-soft));} .card.green .cv{color:var(--green);}
   .card.amber{border-color:rgba(183,121,31,.35);background:linear-gradient(180deg,#fff,var(--amber-soft));} .card.amber .cv{color:var(--amber);}
@@ -226,7 +228,6 @@
         <span>See how eligible investment loan interest may reduce taxable income and lower after-tax borrowing cost.</span></p>
       </div>
       <div class="head-logo">
-        <img src="triton-logo.png" alt="Triton Wealth" onerror="this.style.display='none'">
         <div class="head-meta">
           <small>Tax data</small>
           <strong id="heroTaxYear">--</strong>
@@ -305,7 +306,7 @@
     <div class="hl">
       <div class="card navy"><div class="cl">应税收入降低<br>Taxable Income Reduced By</div><div class="cv num" id="hReduce">—</div></div>
       <div class="card green"><div class="cl">预计节税<br>Estimated Tax Savings</div><div class="cv num" id="hSave">—</div></div>
-      <div class="card amber"><div class="cl">税后利息成本<br>After-Tax Interest Cost</div><div class="cv num" id="hCost">—</div></div>
+      <div class="card amber"><div class="cl">税后利息成本<br>After-Tax Interest Cost</div><div class="cost-pair"><div class="cv num" id="hCost">—</div><span class="rate-pill num" id="hCostPct">—</span></div></div>
     </div>
   </div>
 
@@ -426,6 +427,7 @@ function recalc(){
   const reduction = incBefore - incAfter;             // ≈ 可抵扣利息
   const savings   = reduction * m;                    // 预计节税
   const afterTaxIntCost = interest - savings;         // 税后利息成本
+  const afterTaxRate = L > 0 ? (afterTaxIntCost / L) * 100 : 0; // 实际税后利率
 
   // 第 4 步（仅模式 A）：净投资收入与税后净结果
   const taxOnNet  = Math.max(expReturn - deduct, 0) * m;
@@ -468,6 +470,7 @@ function recalc(){
   $("hReduce").textContent = fmt$(reduction);
   $("hSave").textContent   = fmt$(savings);
   $("hCost").textContent   = fmt$(afterTaxIntCost);
+  $("hCostPct").textContent = fmtPct(afterTaxRate);
 
   // ---- 第 4 步：简单年度结果（按模式）----
   if(incl){
@@ -480,7 +483,7 @@ function recalc(){
     $("summary").innerHTML =
       `<div class="srow"><span class="sl">年利息成本 Annual Interest Cost</span><span class="sv num">${fmt$(interest)}</span></div>`+
       `<div class="srow cost"><span class="sl">减：预计节税 Estimated Tax Savings</span><span class="sv num">−${fmt$(savings)}</span></div>`+
-      `<div class="srow total"><span class="sl">税后利息成本 After-Tax Interest Cost</span><span class="sv num ${afterTaxIntCost>=0?'good':'bad'}">${fmt$(afterTaxIntCost)}</span></div>`;
+      `<div class="srow total"><span class="sl">税后利息成本 After-Tax Interest Cost</span><span class="sv num ${afterTaxIntCost>=0?'good':'bad'}">${fmt$(afterTaxIntCost)} · ${fmtPct(afterTaxRate)}</span></div>`;
   }
 
   // ---- 详细计算 ----
@@ -490,6 +493,7 @@ function recalc(){
     ["应税收入降低", fmt$(reduction), true],
     ["预计节税 = 应税收入降低 × m", fmt$(savings), true],
     ["税后利息成本 = 年利息 − 预计节税", fmt$(afterTaxIntCost), true],
+    ["实际税后利率 = 税后利息成本 ÷ 投资借款金额", fmtPct(afterTaxRate), true],
     ["净投资收入 = max(投资收入 − 可抵扣利息, 0)", fmt$(Math.max(expReturn-deduct,0))],
     ["净投资收入税款 = 净投资收入 × m", fmt$(taxOnNet)],
     ["预计税后净结果 = 投资收入 − 年利息 − 净投资收入税款", fmt$(netResult), true]
@@ -499,7 +503,8 @@ function recalc(){
     ["抵扣后应税收入 = O − 可抵扣利息", fmt$(incAfter)],
     ["应税收入降低", fmt$(reduction), true],
     ["预计节税 = 应税收入降低 × m", fmt$(savings), true],
-    ["税后利息成本 = 年利息 − 预计节税", fmt$(afterTaxIntCost), true]
+    ["税后利息成本 = 年利息 − 预计节税", fmt$(afterTaxIntCost), true],
+    ["实际税后利率 = 税后利息成本 ÷ 投资借款金额", fmtPct(afterTaxRate), true]
   ];
   $("detailBody").innerHTML = [
     [`计税模式 Mode`, incl?"A · 投资收入当年计入":"B · 投资收入当年不计入"],
