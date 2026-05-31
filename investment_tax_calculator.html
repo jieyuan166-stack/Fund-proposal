@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>投资借款抵税演示 | Triton Wealth</title>
+<script src="auth.v2.js" defer></script>
+<style>
+  :root{
+    --navy:#0B2447; --navy2:#16335C; --ink:#1B2733; --muted:#6B7785;
+    --green:#0E9F6E; --green-soft:#E6F6EF;
+    --amber:#B7791F; --amber-soft:#FBF1DA;
+    --gold:#C9A227;
+    --bg:#FFFFFF; --section:#F6F8FB; --line:#E5EAF1;
+    --r:16px; --r-lg:22px;
+    --sh:0 4px 16px rgba(11,36,71,.06);
+    --sh-lg:0 16px 44px rgba(11,36,71,.16);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .num{font-variant-numeric:tabular-nums;letter-spacing:-.3px;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 18px 72px;}
+  .mobile-switch{display:none;}
+
+  /* ---------- header ---------- */
+  .head{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+    border-radius:var(--r-lg);padding:36px 32px;box-shadow:var(--sh-lg);position:relative;overflow:hidden;}
+  .head::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;
+    background:radial-gradient(circle,rgba(201,162,39,.20),transparent 70%);}
+  .head .brand{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .head h1{margin:10px 0 6px;font-size:27px;font-weight:800;letter-spacing:-.4px;line-height:1.2;}
+  .head p{margin:0;color:#C7D4E6;font-size:14.5px;max-width:620px;}
+
+  /* ---------- section ---------- */
+  .sec{margin-top:32px;}
+  .sec-h{font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);font-weight:800;margin:0 0 4px;}
+  .sec-t{font-size:21px;font-weight:800;color:var(--navy);margin:0 0 18px;letter-spacing:-.3px;}
+  .sec-t .en{display:block;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:0;margin-top:2px;}
+
+  /* ---------- inputs ---------- */
+  .ins{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .ctrl{display:flex;align-items:center;background:var(--card,#fff);border:1.5px solid var(--line);
+    border-radius:12px;padding:0 12px;transition:.15s;}
+  .ctrl:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.13);}
+  .ctrl .pre{color:var(--muted);font-weight:700;margin-right:4px;}
+  .ctrl input,.ctrl select{border:0;outline:0;background:transparent;width:100%;
+    padding:11px 0;font-size:16px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .ctrl select{cursor:pointer;}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.4;}
+  .chk{display:flex;align-items:center;gap:6px;margin-top:7px;}
+  .chk input{width:15px;height:15px;accent-color:var(--gold);}
+  .chk label{font-size:11.5px;color:var(--muted);font-weight:600;cursor:pointer;}
+
+  /* ---------- result row (auto outputs) ---------- */
+  .outs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;}
+  .out{background:var(--section);border-radius:14px;padding:16px 18px;border:1px solid var(--line);}
+  .out .ol{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  .out .ov{font-size:26px;font-weight:800;color:var(--navy);margin-top:5px;}
+  .out.green .ov{color:var(--green);} .out.amber .ov{color:var(--amber);}
+
+  /* ---------- mode toggle ---------- */
+  .toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .tg{cursor:pointer;border:1.5px solid var(--line);background:#fff;border-radius:14px;
+    padding:13px 14px;font-size:14px;font-weight:800;color:var(--navy);text-align:center;transition:.15s;line-height:1.25;}
+  .tg span{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:3px;}
+  .tg.on{border-color:var(--gold);background:#FFFDF6;box-shadow:0 0 0 3px rgba(201,162,39,.15);}
+  .tg.on span{color:var(--amber);}
+  .tgnote{font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:16px;}
+  .tgnote .en{display:block;margin-top:4px;}
+  .modeexp{font-size:12.5px;color:var(--navy);background:var(--section);border-radius:12px;
+    padding:12px 16px;margin-top:16px;line-height:1.5;}
+
+  /* ---------- flow (main visual) ---------- */
+  .flows{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .flow{border-radius:18px;padding:22px;border:1.5px solid var(--line);background:#fff;box-shadow:var(--sh);}
+  .flow.after{border-color:rgba(14,159,110,.4);background:linear-gradient(180deg,#fff,var(--green-soft));}
+  .flow-h{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:16px;}
+  .flow.after .flow-h{color:var(--green);}
+  .frow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;}
+  .frow .fl{font-size:13px;color:var(--muted);font-weight:600;}
+  .frow .fv{font-size:17px;font-weight:700;color:var(--ink);}
+  .frow.minus .fv{color:var(--amber);}
+  .fop{font-size:13px;font-weight:800;color:var(--muted);text-align:center;padding:2px 0;}
+  .fline{height:1px;background:var(--line);margin:8px 0;}
+  .frow.total{padding-top:10px;}
+  .frow.total .fl{color:var(--navy);font-weight:800;font-size:13px;}
+  .frow.total .fv{font-size:22px;font-weight:800;color:var(--navy);}
+  .flow.after .frow.total .fv{color:var(--green);}
+
+  /* ---------- highlight (3 big numbers) ---------- */
+  .hl{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px;}
+  .card{border-radius:18px;padding:24px 20px;text-align:center;border:1.5px solid var(--line);background:#fff;box-shadow:var(--sh);}
+  .card .cl{font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.35;min-height:34px;}
+  .card .cv{font-size:34px;font-weight:800;margin-top:8px;letter-spacing:-.5px;}
+  .card.navy{border-color:rgba(11,36,71,.18);} .card.navy .cv{color:var(--navy);}
+  .card.green{border-color:rgba(14,159,110,.35);background:linear-gradient(180deg,#fff,var(--green-soft));} .card.green .cv{color:var(--green);}
+  .card.amber{border-color:rgba(183,121,31,.35);background:linear-gradient(180deg,#fff,var(--amber-soft));} .card.amber .cv{color:var(--amber);}
+
+  /* ---------- summary ---------- */
+  .summary{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r-lg);
+    padding:28px 30px;box-shadow:var(--sh-lg);}
+  .srow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1);}
+  .srow .sl{font-size:14px;color:#C7D4E6;font-weight:600;}
+  .srow .sv{font-size:20px;font-weight:700;color:#fff;}
+  .srow.cost .sv{color:#F2C879;}
+  .srow.total{border-bottom:0;padding-top:18px;margin-top:6px;}
+  .srow.total .sl{font-size:16px;color:#fff;font-weight:800;}
+  .srow.total .sv{font-size:34px;font-weight:800;}
+  .srow.total .sv.good{color:#4FE3A6;} .srow.total .sv.bad{color:#F2C879;}
+
+  /* ---------- explain / disclaimer ---------- */
+  .note{background:var(--section);border-left:4px solid var(--gold);border-radius:12px;padding:18px 20px;margin-top:30px;}
+  .note p{margin:0;font-size:13.5px;color:var(--ink);line-height:1.6;}
+  .note .en{display:block;margin-top:8px;font-size:12px;color:var(--muted);}
+  .disc{font-size:12px;color:var(--muted);line-height:1.6;margin-top:18px;padding:14px 16px;background:#FbFcFe;border:1px solid var(--line);border-radius:12px;}
+
+  /* ---------- detail (collapsed) ---------- */
+  details{margin-top:20px;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  summary{cursor:pointer;padding:14px 18px;font-size:13px;font-weight:700;color:var(--navy);
+    background:var(--section);list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  summary::before{content:"▸ ";color:var(--gold);}
+  details[open] summary::before{content:"▾ ";}
+  .detail{width:100%;border-collapse:collapse;font-size:13px;}
+  .detail td{padding:9px 18px;border-top:1px solid var(--line);}
+  .detail td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--navy);}
+  .detail tr.em td{background:#FFFDF6;}
+  .detail tr.em td:last-child{color:var(--green);}
+
+  /* ---------- responsive ---------- */
+  @media(max-width:680px){
+    .mobile-switch{display:flex;gap:7px;position:sticky;top:0;z-index:20;padding:9px 10px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(12px);}
+    .mobile-switch a{flex:1;min-height:34px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:9px;color:var(--navy);background:#fff;text-decoration:none;font-size:12px;font-weight:800;line-height:1.15;text-align:center;}
+    .mobile-switch a.active{border-color:rgba(201,162,39,.55);background:#FFFDF6;color:#8A6F25;}
+    .wrap{padding-top:16px;}
+    .head{padding:28px 22px;} .head h1{font-size:23px;}
+    .ins{grid-template-columns:1fr;}
+    .outs{grid-template-columns:1fr;}
+    .flows{grid-template-columns:1fr;}
+    .hl{grid-template-columns:1fr;}
+    .card .cv{font-size:32px;}
+  }
+  body.embedded-shell .mobile-switch{display:none!important;}
+  body.embedded-shell .wrap{padding-top:18px;}
+  @media print{
+    .mobile-switch{display:none!important;}
+    body{background:#fff;}
+    .wrap{max-width:none;padding:0;}
+    .head,.summary{box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+<nav class="mobile-switch" aria-label="方案切换">
+  <a href="triton_portfolio_presentation.html">分隔基金</a>
+  <a href="fidelity_tclass_strategy.html">Fidelity</a>
+  <a class="active" href="investment_tax_calculator.html">抵税</a>
+</nav>
+<div class="wrap">
+
+  <!-- 1. 标题 -->
+  <div class="head">
+    <div class="brand">Triton Wealth · 财富管理</div>
+    <h1>投资借款抵税计算器<br><span style="font-size:18px;font-weight:700;">Investment Loan Tax Savings Calculator</span></h1>
+    <p>了解合资格的投资借款利息<b>如何可能降低应税收入、减少应缴税款，并降低税后借款成本</b>。<br>
+    <span style="color:#9FB2CC">See how eligible investment loan interest may reduce taxable income and lower after-tax borrowing cost.</span></p>
+  </div>
+
+  <!-- 2. 当前税务情况 -->
+  <div class="sec">
+    <div class="sec-h">第 1 步 · Step 1</div>
+    <div class="sec-t">您当前的税务情况<span class="en">Your Current Tax Situation</span></div>
+    <div class="ins">
+      <div class="field">
+        <label>省份 Province</label>
+        <div class="ctrl"><select id="prov"><option value="AB">Alberta (AB)</option><option value="BC" selected>British Columbia (BC)</option><option value="ON">Ontario (ON)</option></select></div>
+      </div>
+      <div class="field">
+        <label>总应税收入 Total Taxable Income</label>
+        <div class="ctrl"><span class="pre">$</span><input id="otherIncome" type="number" step="1000" value="100000"></div>
+      </div>
+      <div class="field">
+        <label>边际税率 Marginal Tax Rate</label>
+        <div class="ctrl"><input id="mtr" type="number" step="0.01" value="38.29"><span class="pre" style="margin:0 0 0 4px">%</span></div>
+        <div class="chk"><input type="checkbox" id="autoMtr" checked><label for="autoMtr">按省份与收入自动估算 Auto-estimate</label></div>
+      </div>
+    </div>
+    <div class="outs">
+      <div class="out amber"><div class="ol">预计应缴税款 Estimated Tax Payable</div><div class="ov num" id="oTax">—</div></div>
+      <div class="out green"><div class="ol">预计税后收入 Estimated After-Tax Income</div><div class="ov num" id="oAfter">—</div></div>
+    </div>
+  </div>
+
+  <!-- 3. 投资贷款策略 -->
+  <div class="sec">
+    <div class="sec-h">第 2 步 · Step 2</div>
+    <div class="sec-t">投资贷款策略<span class="en">Investment Loan Strategy</span></div>
+    <div class="ins">
+      <div class="field">
+        <label>投资借款金额 Investment Loan Amount</label>
+        <div class="ctrl"><span class="pre">$</span><input id="loan" type="number" step="10000" value="400000"></div>
+      </div>
+      <div class="field">
+        <label>借款利率 Loan Interest Rate</label>
+        <div class="ctrl"><input id="loanRate" type="number" step="0.1" value="5"><span class="pre" style="margin:0 0 0 4px">%</span></div>
+      </div>
+      <div class="field">
+        <label>预期投资回报 Expected Investment Return</label>
+        <div class="ctrl"><input id="ret" type="number" step="0.1" value="6"><span class="pre" style="margin:0 0 0 4px">%</span></div>
+      </div>
+    </div>
+    <div class="outs">
+      <div class="out amber"><div class="ol">年利息成本 Annual Interest Cost</div><div class="ov num" id="oInt">—</div></div>
+      <div class="out green"><div class="ol" id="oIncLbl">预期投资收入（税前）Expected Investment Income</div><div class="ov num" id="oInc">—</div></div>
+    </div>
+  </div>
+
+  <!-- 4. 利息抵扣如何起作用 -->
+  <div class="sec">
+    <div class="sec-h">第 3 步 · Step 3</div>
+    <div class="sec-t">利息抵扣如何起作用<span class="en">How the Interest Deduction Helps</span></div>
+    <div class="toggle">
+      <button type="button" class="tg on" data-mode="A">投资收入当年计入<span>Income included this year</span></button>
+      <button type="button" class="tg" data-mode="B">投资收入当年不计入<span>Income not included this year</span></button>
+    </div>
+    <div class="tgnote">
+      有些投资当年即产生应税收入，另一些则着重长期增长、当年并不实现应税收入。本示意支持两种视角。实际可抵扣性与税务处理取决于 CRA 规则、投资类型及客户个人税务状况。
+      <span class="en">Some investments may generate taxable income in the current year, while others may focus on long-term growth where taxable income is not realized immediately. This illustration allows both views. Actual deductibility and tax treatment depend on CRA rules, investment type, and the client's personal tax situation.</span>
+    </div>
+    <div class="flows">
+      <div class="flow" id="flowWithout"></div>
+      <div class="flow after" id="flowWith"></div>
+    </div>
+    <div class="modeexp" id="modeExp"></div>
+    <div class="hl">
+      <div class="card navy"><div class="cl">应税收入降低<br>Taxable Income Reduced By</div><div class="cv num" id="hReduce">—</div></div>
+      <div class="card green"><div class="cl">预计节税<br>Estimated Tax Savings</div><div class="cv num" id="hSave">—</div></div>
+      <div class="card amber"><div class="cl">税后利息成本<br>After-Tax Interest Cost</div><div class="cv num" id="hCost">—</div></div>
+    </div>
+  </div>
+
+  <!-- 5. 简单年度结果 -->
+  <div class="sec">
+    <div class="sec-h">第 4 步 · Step 4</div>
+    <div class="sec-t">简单年度结果<span class="en">Simple Annual Result</span></div>
+    <div class="summary" id="summary"></div>
+  </div>
+
+  <!-- 详细计算（折叠） -->
+  <details>
+    <summary>查看详细计算 View Detailed Calculation</summary>
+    <table class="detail"><tbody id="detailBody"></tbody></table>
+  </details>
+
+  <!-- 6. 简短说明 -->
+  <div class="note">
+    <p>合资格的投资借款利息<b>可能</b>在其支付或应付的年度抵减应税收入（须符合 CRA 规则）。利息成本<b>并不会消失</b>，但税务抵扣<b>可能</b>降低借款的税后实际成本。
+    <span class="en">Eligible investment loan interest may reduce taxable income in the year it is paid or payable, subject to CRA rules. The interest cost does not disappear, but the tax deduction may reduce the real after-tax cost of borrowing.</span></p>
+  </div>
+
+  <!-- 7. 免责声明 -->
+  <div class="disc">
+    本计算器仅供演示，不构成税务、法律或投资建议。实际可抵扣性取决于 CRA 规则、投资架构及客户个人税务状况。<br>
+    税率来源：<span id="taxSource">--</span>；税率年份：<span id="taxYear">--</span>；数据抓取日期：<span id="taxFetched">--</span>。<br>
+    This calculator is for illustration only and does not constitute tax, legal, or investment advice. Actual deductibility depends on CRA rules, investment structure, and the client's personal tax situation.
+  </div>
+
+</div>
+
+<script>
+"use strict";
+/* TAX_DATA_START — 由 update_rates.py 自动生成，请勿手动修改此块 */
+const TAX_DATA = {
+  year: 2026,
+  source: "taxtips.ca",
+  fetched: "2026-05-31",
+  inclusionRate: 0.5,
+  otherIncome: {
+    AB:[{upTo:58523,rate:22.0},{upTo:61200,rate:28.5},{upTo:117045,rate:30.5},{upTo:154259,rate:36.0},{upTo:181440,rate:38.0},{upTo:185111,rate:41.29},{upTo:246813,rate:42.29},{upTo:258482,rate:43.29},{upTo:370220,rate:47.0},{upTo:null,rate:48.0}],
+    BC:[{upTo:50363,rate:19.6},{upTo:58523,rate:21.7},{upTo:100728,rate:28.2},{upTo:115648,rate:31.0},{upTo:117045,rate:32.79},{upTo:140430,rate:38.29},{upTo:181440,rate:40.7},{upTo:190405,rate:43.99},{upTo:258482,rate:46.09},{upTo:265545,rate:49.8},{upTo:null,rate:53.5}],
+    ON:[{upTo:53891,rate:19.05},{upTo:58523,rate:23.15},{upTo:94907,rate:29.65},{upTo:107785,rate:31.48},{upTo:111814,rate:33.89},{upTo:117045,rate:37.91},{upTo:150000,rate:43.41},{upTo:181440,rate:44.97},{upTo:220000,rate:48.26},{upTo:258482,rate:49.82},{upTo:null,rate:53.53}]
+  },
+  eligibleDividend: {
+    AB:[{upTo:58523,rate:-1.57},{upTo:61200,rate:7.4},{upTo:117045,rate:10.16},{upTo:154259,rate:17.75},{upTo:181440,rate:20.51},{upTo:185111,rate:25.05},{upTo:246813,rate:26.43},{upTo:258482,rate:27.81},{upTo:370220,rate:32.93},{upTo:null,rate:34.31}],
+    BC:[{upTo:50363,rate:-10.24},{upTo:58523,rate:-7.34},{upTo:100728,rate:1.63},{upTo:115648,rate:5.49},{upTo:117045,rate:7.96},{upTo:140430,rate:15.55},{upTo:181440,rate:18.88},{upTo:190405,rate:23.42},{upTo:258482,rate:26.32},{upTo:265545,rate:31.44},{upTo:null,rate:36.54}],
+    ON:[{upTo:53891,rate:-8.24},{upTo:58523,rate:-2.58},{upTo:94907,rate:6.39},{upTo:107785,rate:8.92},{upTo:111814,rate:12.24},{upTo:117045,rate:17.79},{upTo:150000,rate:25.38},{upTo:181440,rate:27.53},{upTo:220000,rate:32.07},{upTo:258482,rate:34.22},{upTo:null,rate:39.34}]
+  }
+};
+/* TAX_DATA_END */
+
+const DATA = structuredClone(TAX_DATA);
+const $ = id => document.getElementById(id);
+const num = id => { const v=parseFloat($(id).value); return isNaN(v)?0:v; };
+const fmt$ = n => (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString("en-US");
+const fmtPct = n => (isFinite(n)?n.toFixed(2):"0.00") + "%";
+
+function progressiveTax(income, brks){
+  income=income||0; if(income<=0) return 0;
+  let tax=0,lower=0;
+  for(const b of brks){
+    const upper=(b.upTo==null)?Infinity:b.upTo;
+    if(income>lower){ const t=Math.min(income,upper)-lower; if(t>0) tax+=t*(b.rate/100); }
+    lower=upper; if(income<=upper) break;
+  }
+  return tax;
+}
+function marginalRateAt(income, brks){
+  income=Math.max(0,income||0);
+  for(const b of brks){ const upper=(b.upTo==null)?Infinity:b.upTo; if(income<upper) return b.rate; }
+  return brks[brks.length-1].rate;
+}
+
+let MODE = "A";   // A=投资收入当年计入；B=投资收入当年不计入
+
+if (new URLSearchParams(location.search).has("embedded")) {
+  document.body.classList.add("embedded-shell");
+}
+$("taxSource").textContent = DATA.source || "--";
+$("taxYear").textContent = DATA.year || "--";
+$("taxFetched").textContent = DATA.fetched || "--";
+
+/* 渲染单列资金流：标题 + 若干行（label / value / op / 是否减项）+ 合计 */
+function renderFlow(el, head, rows, totalLabel, totalVal, isAfter){
+  let html = `<div class="flow-h">${head}</div>`;
+  rows.forEach((row,idx)=>{
+    if(idx>0) html += `<div class="fop">${row.op||"＋"}</div>`;
+    html += `<div class="frow ${row.minus?'minus':''}"><span class="fl">${row.label}</span><span class="fv num">${row.value}</span></div>`;
+  });
+  html += `<div class="fline"></div><div class="frow total"><span class="fl">${totalLabel}</span><span class="fv num">${totalVal}</span></div>`;
+  el.innerHTML = html;
+}
+
+function recalc(){
+  const prov=$("prov").value, brks=DATA.otherIncome[prov];
+  const O   = Math.max(0,num("otherIncome"));         // 总应税收入
+  const L   = Math.max(0,num("loan"));                // 投资借款金额
+  const i   = Math.max(0,num("loanRate"))/100;        // 借款利率
+  const r   = Math.max(0,num("ret"))/100;             // 预期回报率
+  const interest  = L*i;                              // 年利息成本
+  const expReturn = L*r;                              // 预期投资收入/增长
+  const deduct    = interest;                         // 可抵扣利息（全额）
+  const incl      = (MODE==="A");                     // 投资收入是否当年计入
+
+  // 边际税率：自动估算时按所处税阶（A 按 O+投资收入；B 按 O）
+  if($("autoMtr").checked){ $("mtr").value = marginalRateAt(incl ? O+expReturn : O, brks); }
+  const m = Math.max(0,num("mtr"))/100;
+
+  // 第 1 步：当前税务
+  const baselineTax  = progressiveTax(O, brks);
+  const afterTaxInc  = O - baselineTax;
+
+  // 第 3 步：抵扣前后（依模式）
+  const incBefore = incl ? (O + expReturn) : O;
+  const incAfter  = Math.max(incBefore - deduct, 0);
+  const reduction = incBefore - incAfter;             // ≈ 可抵扣利息
+  const savings   = reduction * m;                    // 预计节税
+  const afterTaxIntCost = interest - savings;         // 税后利息成本
+
+  // 第 4 步（仅模式 A）：净投资收入与税后净结果
+  const taxOnNet  = Math.max(expReturn - deduct, 0) * m;
+  const netResult = expReturn - interest - taxOnNet;
+
+  // ---- 第 1、2 步输出 ----
+  $("oTax").textContent   = fmt$(baselineTax);
+  $("oAfter").textContent = fmt$(afterTaxInc);
+  $("oInt").textContent   = fmt$(interest);
+  $("oInc").textContent   = fmt$(expReturn);
+  // 模式 B：预期回报标注为长期增长，当年未必应税
+  $("oIncLbl").textContent = incl
+    ? "预期投资收入（税前）Expected Investment Income"
+    : "预期投资增长 / 回报（当年未必应税）Expected Growth (not necessarily taxable this year)";
+
+  // ---- 第 3 步：双列资金流（按模式只显示对应公式）----
+  if(incl){
+    renderFlow($("flowWithout"), "无利息抵扣 Without Deduction",
+      [{label:"总应税收入 Taxable Income", value:fmt$(O)},
+       {label:"预期投资收入 Investment Income", value:"+"+fmt$(expReturn), op:"＋"}],
+      "抵扣前应税收入 Before Deduction", fmt$(incBefore));
+    renderFlow($("flowWith"), "有合资格利息抵扣 With Deduction",
+      [{label:"总应税收入 Taxable Income", value:fmt$(O)},
+       {label:"预期投资收入 Investment Income", value:"+"+fmt$(expReturn), op:"＋"},
+       {label:"可抵扣利息 Deductible Interest", value:"−"+fmt$(deduct), op:"－", minus:true}],
+      "抵扣后应税收入 After Deduction", fmt$(incAfter), true);
+    $("modeExp").textContent = "投资收入当年计入，合资格贷款利息抵减当年应税金额。The investment income is included in the same year, and the eligible loan interest reduces the taxable amount.";
+  } else {
+    renderFlow($("flowWithout"), "无利息抵扣 Without Deduction",
+      [{label:"总应税收入 Taxable Income", value:fmt$(O)}],
+      "抵扣前应税收入 Before Deduction", fmt$(incBefore));
+    renderFlow($("flowWith"), "有合资格利息抵扣 With Deduction",
+      [{label:"总应税收入 Taxable Income", value:fmt$(O)},
+       {label:"可抵扣利息 Deductible Interest", value:"−"+fmt$(deduct), op:"－", minus:true}],
+      "抵扣后应税收入 After Deduction", fmt$(incAfter), true);
+    $("modeExp").textContent = "若投资当年未产生应税收入，合资格的投资贷款利息仍可能用于降低客户当年的应税收入（须符合 CRA 规则）。If the investment does not generate taxable income in the current year, eligible investment loan interest may still reduce the client's current taxable income, subject to CRA rules.";
+  }
+
+  // ---- 三个关键数字（两模式相同口径）----
+  $("hReduce").textContent = fmt$(reduction);
+  $("hSave").textContent   = fmt$(savings);
+  $("hCost").textContent   = fmt$(afterTaxIntCost);
+
+  // ---- 第 4 步：简单年度结果（按模式）----
+  if(incl){
+    $("summary").innerHTML =
+      `<div class="srow"><span class="sl">预期投资收入（税前）Expected Investment Income</span><span class="sv num">${fmt$(expReturn)}</span></div>`+
+      `<div class="srow cost"><span class="sl">减：年利息成本 Annual Interest Cost</span><span class="sv num">−${fmt$(interest)}</span></div>`+
+      `<div class="srow cost"><span class="sl">减：净投资收入税款 Tax on Net Investment Income</span><span class="sv num">−${fmt$(taxOnNet)}</span></div>`+
+      `<div class="srow total"><span class="sl">预计税后净结果 Estimated Net After-Tax Result</span><span class="sv num ${netResult>=0?'good':'bad'}">${fmt$(netResult)}</span></div>`;
+  } else {
+    $("summary").innerHTML =
+      `<div class="srow"><span class="sl">年利息成本 Annual Interest Cost</span><span class="sv num">${fmt$(interest)}</span></div>`+
+      `<div class="srow cost"><span class="sl">减：预计节税 Estimated Tax Savings</span><span class="sv num">−${fmt$(savings)}</span></div>`+
+      `<div class="srow total"><span class="sl">税后利息成本 After-Tax Interest Cost</span><span class="sv num ${afterTaxIntCost>=0?'good':'bad'}">${fmt$(afterTaxIntCost)}</span></div>`;
+  }
+
+  // ---- 详细计算 ----
+  const rowsA = [
+    ["抵扣前应税收入 = O + 投资收入", fmt$(incBefore)],
+    ["抵扣后应税收入 = O + 投资收入 − 可抵扣利息", fmt$(incAfter)],
+    ["应税收入降低", fmt$(reduction), true],
+    ["预计节税 = 应税收入降低 × m", fmt$(savings), true],
+    ["税后利息成本 = 年利息 − 预计节税", fmt$(afterTaxIntCost), true],
+    ["净投资收入 = max(投资收入 − 可抵扣利息, 0)", fmt$(Math.max(expReturn-deduct,0))],
+    ["净投资收入税款 = 净投资收入 × m", fmt$(taxOnNet)],
+    ["预计税后净结果 = 投资收入 − 年利息 − 净投资收入税款", fmt$(netResult), true]
+  ];
+  const rowsB = [
+    ["抵扣前应税收入 = O（投资收入当年不计入）", fmt$(incBefore)],
+    ["抵扣后应税收入 = O − 可抵扣利息", fmt$(incAfter)],
+    ["应税收入降低", fmt$(reduction), true],
+    ["预计节税 = 应税收入降低 × m", fmt$(savings), true],
+    ["税后利息成本 = 年利息 − 预计节税", fmt$(afterTaxIntCost), true]
+  ];
+  $("detailBody").innerHTML = [
+    [`计税模式 Mode`, incl?"A · 投资收入当年计入":"B · 投资收入当年不计入"],
+    ["总应税收入 O", fmt$(O)],
+    ["投资借款金额 L", fmt$(L)],
+    ["借款利率 i", fmtPct(i*100)],
+    ["预期回报率 r", fmtPct(r*100)],
+    ["年利息成本 = L × i", fmt$(interest)],
+    ["预期投资收入/增长 = L × r", fmt$(expReturn)],
+    ["可抵扣利息（全额）", fmt$(deduct)],
+    ["边际税率 m", fmtPct(m*100)],
+    ...(incl?rowsA:rowsB)
+  ].map(r=>`<tr class="${r[2]?'em':''}"><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("");
+}
+
+["prov","otherIncome","mtr","loan","loanRate","ret"].forEach(id=>{
+  $(id).addEventListener("input", recalc);
+  $(id).addEventListener("change", recalc);
+});
+$("autoMtr").addEventListener("change", ()=>{ $("mtr").readOnly = $("autoMtr").checked; recalc(); });
+document.querySelectorAll(".tg").forEach(btn=>btn.addEventListener("click", ()=>{
+  MODE = btn.dataset.mode;
+  document.querySelectorAll(".tg").forEach(b=>b.classList.toggle("on", b===btn));
+  recalc();
+}));
+
+$("mtr").readOnly = $("autoMtr").checked;
+recalc();
+
+window.exportPDF = () => window.print();
+window.addEventListener("message", event => {
+  if (event.data && event.data.type === "TRITON_EXPORT_PDF") window.print();
+});
+</script>
+</body>
+</html>

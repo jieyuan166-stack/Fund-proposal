@@ -105,7 +105,7 @@
       border: 1px solid rgba(255,255,255,.09);
       border-radius: 10px;
       background: rgba(255,255,255,.055);
-      min-width: 430px;
+      min-width: 590px;
     }
 
     .tab {
@@ -348,6 +348,12 @@
             <span>Fidelity T-Class 现金流</span>
           </div>
         </button>
+        <button class="tab" type="button" data-target="tax" aria-pressed="false">
+          <div>
+            <small>Tax</small>
+            <span>投资借款抵税</span>
+          </div>
+        </button>
       </nav>
 
       <div class="actions">
@@ -372,6 +378,11 @@
         <strong>Fidelity T-Class 现金流</strong>
         <span>查看 T5 / T8 月度现金流、税务递延与本金演变。</span>
       </a>
+      <a class="mobile-card" href="investment_tax_calculator.html">
+        <small>Tax</small>
+        <strong>投资借款抵税计算器</strong>
+        <span>演示投资贷款利息抵扣、节税和税后借款成本。</span>
+      </a>
     </section>
 
     <main class="stage">
@@ -387,6 +398,12 @@
         title="Fidelity T-Class 现金流策略"
         scrolling="yes"
         src="fidelity_tclass_strategy.html?embedded=1"></iframe>
+      <iframe
+        id="frame-tax"
+        class="frame"
+        title="投资借款抵税计算器"
+        scrolling="yes"
+        src="investment_tax_calculator.html?embedded=1"></iframe>
     </main>
   </div>
 
@@ -401,10 +418,15 @@
         frame: document.getElementById('frame-tclass'),
         file: 'fidelity_tclass_strategy.html',
         badge: 'T-CLASS'
+      },
+      tax: {
+        frame: document.getElementById('frame-tax'),
+        file: 'investment_tax_calculator.html',
+        badge: 'TAX'
       }
     };
 
-    let activeView = location.hash === '#tclass' ? 'tclass' : 'portfolio';
+    let activeView = location.hash === '#tclass' ? 'tclass' : location.hash === '#tax' ? 'tax' : 'portfolio';
 
     function setActiveView(view) {
       if (window.matchMedia('(max-width: 980px)').matches) {
@@ -419,7 +441,7 @@
         document.querySelector(`[data-target="${key}"]`).setAttribute('aria-pressed', String(on));
       });
       document.getElementById('activeBadge').textContent = views[view].badge;
-      history.replaceState(null, '', view === 'tclass' ? '#tclass' : '#portfolio');
+      history.replaceState(null, '', view === 'portfolio' ? '#portfolio' : `#${view}`);
     }
 
     document.querySelectorAll('[data-target]').forEach(button => {
@@ -438,6 +460,8 @@
       try {
         if (frame.contentWindow && typeof frame.contentWindow.exportPDF === 'function') {
           frame.contentWindow.exportPDF();
+        } else if (frame.contentWindow && typeof frame.contentWindow.print === 'function') {
+          frame.contentWindow.print();
         } else {
           frame.contentWindow.postMessage({ type: 'TRITON_EXPORT_PDF' }, '*');
         }
@@ -451,7 +475,7 @@
     });
 
     window.addEventListener('hashchange', () => {
-      const next = location.hash === '#tclass' ? 'tclass' : 'portfolio';
+      const next = location.hash === '#tclass' ? 'tclass' : location.hash === '#tax' ? 'tax' : 'portfolio';
       if (next !== activeView) setActiveView(next);
     });
 

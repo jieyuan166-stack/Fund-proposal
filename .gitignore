@@ -3,5 +3,7 @@
 .triton-remembered-devices.json
 deploy/cloudflared/*.json
 *.log
+*.bak
 backups/
 node_modules/
+Triton investment tax/
