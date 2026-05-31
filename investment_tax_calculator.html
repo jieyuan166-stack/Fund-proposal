@@ -145,6 +145,7 @@
   .srow.total .sl{font-size:16px;color:#fff;font-weight:800;}
   .srow.total .sv{font-size:34px;font-weight:800;}
   .srow.total .sv.good{color:#4FE3A6;} .srow.total .sv.bad{color:#F2C879;}
+  .summary-note{position:relative;z-index:1;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);font-size:11.5px;line-height:1.55;color:#8CA1BA;}
 
   /* ---------- explain / disclaimer ---------- */
   .note{background:#fff;border-left:4px solid var(--gold);border-radius:12px;padding:18px 20px;margin-top:30px;box-shadow:var(--sh);}
@@ -310,10 +311,10 @@
     </div>
   </div>
 
-  <!-- 5. 简单年度结果 -->
+  <!-- 5. 税后利差概念 -->
   <div class="sec">
     <div class="sec-h">第 4 步 · Step 4</div>
-    <div class="sec-t">简单年度结果<span class="en">Simple Annual Result</span></div>
+    <div class="sec-t">税后利差概念<span class="en">After-Tax Cost vs. Expected Return</span></div>
     <div class="summary" id="summary"></div>
   </div>
 
@@ -428,10 +429,8 @@ function recalc(){
   const savings   = reduction * m;                    // 预计节税
   const afterTaxIntCost = interest - savings;         // 税后利息成本
   const afterTaxRate = L > 0 ? (afterTaxIntCost / L) * 100 : 0; // 实际税后利率
-
-  // 第 4 步（仅模式 A）：净投资收入与税后净结果
-  const taxOnNet  = Math.max(expReturn - deduct, 0) * m;
-  const netResult = expReturn - interest - taxOnNet;
+  const netSpreadRate = (r * 100) - afterTaxRate;      // 预期回报率 - 税后利率
+  const netSpreadDollar = expReturn - afterTaxIntCost; // 预期回报 - 税后利息成本
 
   // ---- 第 1、2 步输出 ----
   $("oTax").textContent   = fmt$(baselineTax);
@@ -472,19 +471,13 @@ function recalc(){
   $("hCost").textContent   = fmt$(afterTaxIntCost);
   $("hCostPct").textContent = fmtPct(afterTaxRate);
 
-  // ---- 第 4 步：简单年度结果（按模式）----
-  if(incl){
-    $("summary").innerHTML =
-      `<div class="srow"><span class="sl">预期投资收入（税前）Expected Investment Income</span><span class="sv num">${fmt$(expReturn)}</span></div>`+
-      `<div class="srow cost"><span class="sl">减：年利息成本 Annual Interest Cost</span><span class="sv num">−${fmt$(interest)}</span></div>`+
-      `<div class="srow cost"><span class="sl">减：净投资收入税款 Tax on Net Investment Income</span><span class="sv num">−${fmt$(taxOnNet)}</span></div>`+
-      `<div class="srow total"><span class="sl">预计税后净结果 Estimated Net After-Tax Result</span><span class="sv num ${netResult>=0?'good':'bad'}">${fmt$(netResult)}</span></div>`;
-  } else {
-    $("summary").innerHTML =
-      `<div class="srow"><span class="sl">年利息成本 Annual Interest Cost</span><span class="sv num">${fmt$(interest)}</span></div>`+
-      `<div class="srow cost"><span class="sl">减：预计节税 Estimated Tax Savings</span><span class="sv num">−${fmt$(savings)}</span></div>`+
-      `<div class="srow total"><span class="sl">税后利息成本 After-Tax Interest Cost</span><span class="sv num ${afterTaxIntCost>=0?'good':'bad'}">${fmt$(afterTaxIntCost)} · ${fmtPct(afterTaxRate)}</span></div>`;
-  }
+  // ---- 第 4 步：税后融资成本和预期回报的利差概念，不代表当年报税结果 ----
+  $("summary").innerHTML =
+    `<div class="srow"><span class="sl">投资借款金额 Investment Loan Base</span><span class="sv num">${fmt$(L)}</span></div>`+
+    `<div class="srow"><span class="sl">预期投资回报 Expected Return @ ${fmtPct(r*100)}</span><span class="sv num">${fmt$(expReturn)}</span></div>`+
+    `<div class="srow cost"><span class="sl">减：税后利息成本 After-Tax Interest Cost @ ${fmtPct(afterTaxRate)}</span><span class="sv num">−${fmt$(afterTaxIntCost)}</span></div>`+
+    `<div class="srow total"><span class="sl">示意净利差 Illustrative Net Spread</span><span class="sv num ${netSpreadDollar>=0?'good':'bad'}">${fmt$(netSpreadDollar)} · ${fmtPct(netSpreadRate)}</span></div>`+
+    `<div class="summary-note">这个部分只是把“预期回报率”和“税后融资成本率”放在同一个基数上比较，不表示当年已缴税或保证收益。This compares expected return with after-tax borrowing cost on the same loan base; it is not a current-year tax payable result or a guaranteed return.</div>`;
 
   // ---- 详细计算 ----
   const rowsA = [
@@ -493,10 +486,7 @@ function recalc(){
     ["应税收入降低", fmt$(reduction), true],
     ["预计节税 = 应税收入降低 × m", fmt$(savings), true],
     ["税后利息成本 = 年利息 − 预计节税", fmt$(afterTaxIntCost), true],
-    ["实际税后利率 = 税后利息成本 ÷ 投资借款金额", fmtPct(afterTaxRate), true],
-    ["净投资收入 = max(投资收入 − 可抵扣利息, 0)", fmt$(Math.max(expReturn-deduct,0))],
-    ["净投资收入税款 = 净投资收入 × m", fmt$(taxOnNet)],
-    ["预计税后净结果 = 投资收入 − 年利息 − 净投资收入税款", fmt$(netResult), true]
+    ["实际税后利率 = 税后利息成本 ÷ 投资借款金额", fmtPct(afterTaxRate), true]
   ];
   const rowsB = [
     ["抵扣前应税收入 = O（投资收入当年不计入）", fmt$(incBefore)],
@@ -516,6 +506,7 @@ function recalc(){
     ["预期投资收入/增长 = L × r", fmt$(expReturn)],
     ["可抵扣利息（全额）", fmt$(deduct)],
     ["边际税率 m", fmtPct(m*100)],
+    ["预期净利差 = 投资回报 − 税后利息成本", `${fmt$(netSpreadDollar)} · ${fmtPct(netSpreadRate)}`, true],
     ...(incl?rowsA:rowsB)
   ].map(r=>`<tr class="${r[2]?'em':''}"><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("");
 }
