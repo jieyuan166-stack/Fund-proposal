@@ -5,18 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>富瑞财富 · 客户现场方案合集 | Triton Wealth</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
   <script src="auth.v2.js" defer></script>
   <style>
     :root {
-      --navy: #0A1628;
-      --navy-2: #10243D;
-      --gold: #C9A84C;
-      --gold-soft: #E8D5A3;
-      --line: rgba(201,168,76,.24);
-      --text: #E7EEF8;
-      --muted: #8CA1BA;
-      --paper: #F6F8FB;
+      --navy: #0a0e14;
+      --navy-2: #11161f;
+      --gold: #c9a24a;
+      --gold-soft: #e3c074;
+      --line: rgba(201,162,74,.28);
+      --text: #e8e6e0;
+      --muted: #9aa3b0;
+      --paper: #0a0e14;
+      --serif-en: 'Cormorant Garamond', Georgia, serif;
+      --serif-cn: 'Noto Serif SC', Songti SC, serif;
+      --sans-cn: 'Noto Sans SC', system-ui, sans-serif;
     }
 
     * { box-sizing: border-box; }
@@ -24,9 +27,9 @@
     html, body {
       margin: 0;
       min-height: 100%;
-      font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--sans-cn);
       background: var(--paper);
-      color: #172033;
+      color: var(--text);
     }
 
     body {
@@ -38,7 +41,9 @@
       display: flex;
       flex-direction: column;
       background:
-        linear-gradient(135deg, rgba(10,22,40,.98), rgba(16,36,61,.96) 48%, rgba(10,22,40,.98)),
+        radial-gradient(circle at 18% 0%, rgba(201,162,74,.13), transparent 34%),
+        radial-gradient(circle at 80% 12%, rgba(255,255,255,.04), transparent 30%),
+        linear-gradient(135deg, rgba(10,14,20,.99), rgba(17,22,31,.98) 48%, rgba(10,14,20,.99)),
         var(--navy);
     }
 
@@ -103,15 +108,15 @@
       gap: 6px;
       padding: 5px;
       border: 1px solid rgba(255,255,255,.09);
-      border-radius: 10px;
-      background: rgba(255,255,255,.055);
-      min-width: 590px;
+      border-radius: 2px;
+      background: rgba(255,255,255,.035);
+      min-width: 720px;
     }
 
     .tab {
       border: 0;
-      border-radius: 7px;
-      padding: 9px 15px;
+      border-radius: 2px;
+      padding: 9px 14px;
       min-height: 38px;
       color: #C7D2E1;
       background: transparent;
@@ -162,7 +167,7 @@
     .badge {
       border: 1px solid rgba(201,168,76,.45);
       color: var(--gold-soft);
-      border-radius: 999px;
+      border-radius: 2px;
       padding: 7px 10px;
       font-size: 10px;
       font-weight: 800;
@@ -172,7 +177,7 @@
 
     .btn {
       border: 0;
-      border-radius: 8px;
+      border-radius: 2px;
       min-height: 32px;
       padding: 8px 12px;
       cursor: pointer;
@@ -199,7 +204,9 @@
     .stage {
       flex: 1 1 auto;
       min-height: 0;
-      background: var(--paper);
+      background:
+        radial-gradient(circle at 14% 0%, rgba(201,162,74,.12), transparent 34%),
+        linear-gradient(180deg, #0a0e14, #0f141d);
       position: relative;
     }
 
@@ -209,7 +216,7 @@
       width: 100%;
       height: 100%;
       border: 0;
-      background: #fff;
+      background: #0f141d;
       opacity: 0;
       pointer-events: none;
       transition: opacity .18s ease;
@@ -279,21 +286,23 @@
         display: grid;
         gap: 10px;
         padding: 12px;
-        background: var(--paper);
+        background:
+          radial-gradient(circle at 10% 0%, rgba(201,162,74,.13), transparent 36%),
+          linear-gradient(180deg, #0a0e14, #0f141d);
       }
       .mobile-card {
         display: block;
         padding: 15px 16px;
-        border: 1px solid rgba(10,22,40,.08);
+        border: 1px solid rgba(201,162,74,.24);
         border-left: 4px solid var(--gold);
-        background: #fff;
-        color: var(--navy);
+        background: linear-gradient(180deg, #11161f, #0f141d);
+        color: var(--text);
         text-decoration: none;
-        box-shadow: 0 8px 24px rgba(10,22,40,.08);
+        box-shadow: 0 16px 40px rgba(0,0,0,.25);
       }
       .mobile-card small {
         display: block;
-        color: #8A6F25;
+        color: var(--gold-soft);
         font-size: 9px;
         font-weight: 800;
         letter-spacing: .16em;
@@ -302,13 +311,14 @@
       }
       .mobile-card strong {
         display: block;
+        font-family: var(--serif-cn);
         font-size: 14px;
         line-height: 1.2;
         margin-bottom: 6px;
       }
       .mobile-card span {
         display: block;
-        color: #64748B;
+        color: var(--muted);
         font-size: 12px;
         line-height: 1.45;
       }
@@ -316,7 +326,7 @@
         display: block;
         padding: 8px 12px;
         font-size: 11px;
-        color: #5B6678;
+        color: var(--muted);
         background: var(--paper);
         border-top: 0;
       }
@@ -354,6 +364,12 @@
             <span>投资借款抵税</span>
           </div>
         </button>
+        <button class="tab" type="button" data-target="estate" aria-pressed="false">
+          <div>
+            <small>Estate</small>
+            <span>传承税负诊断</span>
+          </div>
+        </button>
       </nav>
 
       <div class="actions">
@@ -383,6 +399,11 @@
         <strong>投资借款抵税计算器</strong>
         <span>演示投资贷款利息抵扣、节税和税后借款成本。</span>
       </a>
+      <a class="mobile-card" href="estate_tax_diagnostic.html">
+        <small>Estate</small>
+        <strong>传承税负诊断</strong>
+        <span>估算企业、房产、注册账户和税务流动性缺口。</span>
+      </a>
     </section>
 
     <main class="stage">
@@ -404,6 +425,12 @@
         title="投资借款抵税计算器"
         scrolling="yes"
         src="investment_tax_calculator.html?embedded=1"></iframe>
+      <iframe
+        id="frame-estate"
+        class="frame"
+        title="传承税负诊断"
+        scrolling="yes"
+        src="estate_tax_diagnostic.html?embedded=1"></iframe>
     </main>
   </div>
 
@@ -423,10 +450,22 @@
         frame: document.getElementById('frame-tax'),
         file: 'investment_tax_calculator.html',
         badge: 'TAX'
+      },
+      estate: {
+        frame: document.getElementById('frame-estate'),
+        file: 'estate_tax_diagnostic.html',
+        badge: 'ESTATE'
       }
     };
 
-    let activeView = location.hash === '#tclass' ? 'tclass' : location.hash === '#tax' ? 'tax' : 'portfolio';
+    function viewFromHash() {
+      return location.hash === '#tclass' ? 'tclass'
+        : location.hash === '#tax' ? 'tax'
+        : location.hash === '#estate' ? 'estate'
+        : 'portfolio';
+    }
+
+    let activeView = viewFromHash();
 
     function setActiveView(view) {
       if (window.matchMedia('(max-width: 980px)').matches) {
@@ -475,7 +514,7 @@
     });
 
     window.addEventListener('hashchange', () => {
-      const next = location.hash === '#tclass' ? 'tclass' : location.hash === '#tax' ? 'tax' : 'portfolio';
+      const next = viewFromHash();
       if (next !== activeView) setActiveView(next);
     });
 

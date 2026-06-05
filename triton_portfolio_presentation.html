@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <script src="auth.v2.js" defer></script>
   <script>
     tailwind.config = { theme:{ extend:{ colors:{ navy:'#0A1628', navy2:'#0F1E33', navy3:'#1A2D4D', gold:'#C9A84C', goldL:'#E8D5A3', goldD:'#9A7B2E' } } } };
@@ -356,20 +356,25 @@
         overflow-x:hidden;
       }
       .mobile-switch {
-        display:flex !important;
+        display:grid !important;
+        grid-template-columns:repeat(4,minmax(0,1fr));
         box-sizing:border-box;
-        width:100%;
+        width:auto;
         gap:7px;
         padding:8px 10px;
         background:#F7F8FA;
-        position:sticky;
+        position:fixed;
         top:0;
+        left:0;
+        right:0;
         z-index:60;
         border-bottom:1px solid #E2E8F0;
       }
+      body:not(.embedded-shell){padding-top:48px;}
+      body.embedded-shell{padding-top:0;}
+      nav.no-print{top:48px!important;}
       .mobile-switch a {
         min-width:0;
-        flex:1;
         text-align:center;
         text-decoration:none;
         border:1px solid rgba(10,22,40,.12);
@@ -450,6 +455,69 @@
       padding-top: 38px !important;
       padding-bottom: 48px !important;
     }
+
+    /* Estate diagnostic visual system */
+    :root {
+      --navy:#0a0e14;
+      --navy-2:#11161f;
+      --navy-3:#161d28;
+      --gold:#c9a24a;
+      --gold-l:#e3c074;
+      --gold-d:#9d7c32;
+      --estate-text:#e8e6e0;
+      --estate-muted:#9aa3b0;
+      --estate-line:rgba(201,162,74,.28);
+      --estate-panel:#11161f;
+      --estate-panel-2:#0f141d;
+      --serif-en:'Cormorant Garamond',Georgia,serif;
+      --serif-cn:'Noto Serif SC','Songti SC',serif;
+      --sans-cn:'Noto Sans SC',system-ui,sans-serif;
+    }
+    body{
+      background:
+        radial-gradient(circle at 18% 0%, rgba(201,162,74,.13), transparent 34%),
+        linear-gradient(180deg,#0a0e14,#0f141d 54%,#0a0e14);
+      color:var(--estate-text);
+      font-family:var(--sans-cn);
+    }
+    .serif,.t-display,.t-section,h1,h2,h3{font-family:var(--serif-cn);letter-spacing:0!important;}
+    .num,.en,.t-label,.t-num-lg,.t-num-sm{font-family:var(--serif-en),var(--sans-cn);}
+    .hero-bg{
+      background:
+        radial-gradient(circle at 18% 0%, rgba(201,162,74,.16), transparent 34%),
+        radial-gradient(circle at 82% 18%, rgba(255,255,255,.04), transparent 32%),
+        linear-gradient(135deg,#0a0e14 0%,#11161f 54%,#0a0e14 100%)!important;
+    }
+    nav.no-print{border-bottom:1px solid var(--estate-line);box-shadow:0 20px 50px rgba(0,0,0,.25);}
+    nav.no-print .rounded-full,nav.no-print button{border-radius:2px!important;}
+    .lux-card,.path-step,.concept-card,.matrix-cell,.comparison-matrix,details.accordion,table,.fund-table,.bg-white{
+      background:linear-gradient(180deg,var(--estate-panel),var(--estate-panel-2))!important;
+      border-color:var(--estate-line)!important;
+      color:var(--estate-text)!important;
+      box-shadow:0 18px 48px rgba(0,0,0,.2)!important;
+      border-radius:2px!important;
+    }
+    .lux-card-dark{background:linear-gradient(180deg,#141b26,#0f141d)!important;border:1px solid var(--estate-line)!important;border-radius:2px!important;}
+    .matrix-head,.path-step-num{background:#0a0e14!important;color:var(--gold-l)!important;}
+    .matrix-gold,.fund-table tbody tr:nth-child(even),.fund-table tfoot tr,.fund-table thead tr{background:rgba(201,162,74,.08)!important;}
+    .text-navy,.text-navy2,.text-gray-900,.text-gray-800,.text-slate-900,.text-slate-800{color:var(--estate-text)!important;}
+    .text-gray-700,.text-gray-600,.text-gray-500,.text-slate-600,.text-slate-500,.matrix-muted,.t-caption{color:var(--estate-muted)!important;}
+    .bg-gray-50,.bg-slate-50,.bg-blue-50,.bg-amber-50,.bg-green-50{background:rgba(255,255,255,.035)!important;}
+    input,select,textarea,.tax-select-light{
+      background:#0b1018!important;
+      border-color:var(--estate-line)!important;
+      color:var(--estate-text)!important;
+      border-radius:2px!important;
+    }
+    .tab-btn,.preset-chip{border-radius:2px!important;}
+    .gold-stripe{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    @media(max-width:767px){
+      .mobile-switch{background:rgba(10,14,20,.95)!important;border-bottom-color:var(--estate-line)!important;backdrop-filter:blur(14px);}
+      .mobile-switch a{background:#11161f!important;border-color:var(--estate-line)!important;color:var(--estate-text)!important;border-radius:2px!important;font-size:10px!important;padding:9px 4px!important;}
+      .mobile-switch a.active{background:rgba(201,162,74,.12)!important;color:var(--gold-l)!important;}
+    }
+    .pdf-page{font-family:var(--sans-cn);background:#0a0e14;color:var(--estate-text);}
+    .pdf-dark{background:#0a0e14!important;color:#fff!important;}
   </style>
 </head>
 
@@ -464,6 +532,7 @@
   <a class="active" href="triton_portfolio_presentation.html">分隔基金</a>
   <a href="fidelity_tclass_strategy.html">Fidelity</a>
   <a href="investment_tax_calculator.html">抵税</a>
+  <a href="estate_tax_diagnostic.html">传承</a>
 </div>
 
 <!-- ════════════════════ LOADING SCREEN ════════════════════ -->
@@ -1656,15 +1725,15 @@ function buildLegacyPDFLayout() {
   // ────────────────────────────────────────────────────────────────
 
   // Design tokens
-  const G    = '#C9A84C';
-  const NAVY = '#0B1B2E';
-  const NAVY2= '#10243D';
-  const BG   = '#F7F9FC';
+  const G    = '#c9a24a';
+  const NAVY = '#0a0e14';
+  const NAVY2= '#11161f';
+  const BG   = '#0a0e14';
   const POS  = '#079455';
   const NEG  = '#D92D20';
-  const BORD = '#E4E8EF';
-  const TX1  = '#111827';
-  const TX2  = '#667085';
+  const BORD = '#26303f';
+  const TX1  = '#e8e6e0';
+  const TX2  = '#9aa3b0';
   const FUND_PAL = FUND_PALETTE;
 
   const fN  = (v, d=1) => (v!=null) ? v.toFixed(d) : 'N/A';
@@ -2260,10 +2329,10 @@ function buildPDFLayout() {
     try { charts[c.id] = c.toDataURL('image/png', 1.0); } catch(e) { charts[c.id] = ''; }
   });
 
-  const NAVY = '#0A1628';
-  const NAVY2 = '#123052';
-  const GOLD = '#B99A45';
-  const BG = '#F7F8FA';
+  const NAVY = '#0a0e14';
+  const NAVY2 = '#11161f';
+  const GOLD = '#c9a24a';
+  const BG = '#0a0e14';
   const LINE = '#DDE3EA';
   const TEXT = '#172033';
   const MUTED = '#667085';
@@ -2284,7 +2353,7 @@ function buildPDFLayout() {
     <section class="pdf-page" style="display:flex;flex-direction:column;background:${opts.dark ? NAVY : '#fff'};color:${opts.dark ? '#fff' : TEXT};padding:0">
       <header style="height:58px;padding:18px 42px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:12px">
-          <img src="${opts.cover ? 'triton-logo.png' : 'LOGO PNG 竖版.png'}" style="height:${opts.cover ? '34px' : '34px'};width:auto;object-fit:contain" onerror="this.style.display='none'">
+          <img src="triton-logo.png" style="height:34px;width:auto;object-fit:contain" onerror="this.style.display='none'">
           <div style="height:24px;width:1px;background:${opts.dark ? 'rgba(201,168,76,.45)' : LINE}"></div>
           <div>
             <div style="font-family:Inter,sans-serif;font-size:8px;font-weight:800;letter-spacing:1.8px;color:${GOLD}">TRITON WEALTH</div>

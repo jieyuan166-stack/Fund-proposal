@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>传承税负诊断 · Estate Tax Liability Diagnostic | Triton Wealth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="auth.v2.js" defer></script>
+<style>
+  :root{
+    --ink:#0a0e14;
+    --panel:#11161f;
+    --panel-2:#161c27;
+    --line:#26303f;
+    --line-soft:#1c2531;
+    --gold:#c9a24a;
+    --gold-bright:#e3c074;
+    --gold-soft:#7a6634;
+    --text:#e8e6e0;
+    --text-dim:#9aa3b0;
+    --text-faint:#646e7d;
+    --danger:#d98a6a;
+    --positive:#7fb89a;
+    --serif-en:"Cormorant Garamond",serif;
+    --serif-cn:"Noto Serif SC",serif;
+    --sans-cn:"Noto Sans SC",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--ink);color:var(--text);font-family:var(--sans-cn);-webkit-font-smoothing:antialiased}
+  body{
+    background:
+      radial-gradient(900px 500px at 85% -5%, rgba(201,162,74,.10), transparent 60%),
+      radial-gradient(700px 600px at -10% 110%, rgba(201,162,74,.05), transparent 55%),
+      var(--ink);
+    min-height:100vh;
+    padding:clamp(16px,4vw,48px);
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+
+  .mobile-switch{display:none}
+  .site-nav{
+    max-width:1080px;margin:0 auto 28px;display:flex;align-items:center;justify-content:space-between;
+    gap:18px;border-bottom:1px solid var(--line);padding-bottom:18px;
+  }
+  .site-brand{display:flex;align-items:center;gap:14px;min-width:0}
+  .site-brand img{height:42px;width:auto;display:block;flex:0 0 auto}
+  .site-brand .brand-copy{min-width:0}
+  .site-title{font-family:var(--serif-cn);font-size:17px;font-weight:600;letter-spacing:1px;color:var(--text)}
+  .site-subtitle{font-family:var(--serif-en);font-size:12px;font-style:italic;letter-spacing:1px;color:var(--text-faint);margin-top:2px}
+  .site-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .site-links a,.site-links button{
+    border:1px solid var(--line);background:#0b1018;color:var(--text-dim);text-decoration:none;
+    padding:8px 12px;font-family:var(--sans-cn);font-size:12px;letter-spacing:.5px;cursor:pointer;
+    transition:border-color .2s,color .2s,background .2s;
+  }
+  .site-links a.active,.site-links button{border-color:var(--gold-soft);color:var(--gold-bright);background:rgba(201,162,74,.08)}
+  .site-links a:hover,.site-links button:hover{border-color:var(--gold);color:var(--gold-bright)}
+
+  /* Header */
+  header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:8px;
+    gap:20px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand-name{font-family:var(--serif-en);font-size:26px;letter-spacing:3px;color:var(--text);font-weight:500}
+  .brand-name b{color:var(--gold-bright);font-weight:600}
+  .brand-sub{font-size:11px;letter-spacing:3px;color:var(--text-faint);text-transform:uppercase;margin-top:3px}
+  .tag{text-align:right}
+  .tag-cn{font-family:var(--serif-cn);font-size:13px;color:var(--text-dim);letter-spacing:2px}
+  .tag-en{font-family:var(--serif-en);font-size:13px;color:var(--text-faint);font-style:italic;letter-spacing:1px;margin-top:2px}
+
+  .title-block{margin:34px 0 26px}
+  .eyebrow{font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:12px}
+  h1{font-family:var(--serif-cn);font-size:clamp(28px,5vw,42px);font-weight:600;line-height:1.15;letter-spacing:1px}
+  h1 .en{display:block;font-family:var(--serif-en);font-size:clamp(18px,3vw,24px);font-style:italic;color:var(--text-dim);font-weight:400;letter-spacing:.5px;margin-top:6px}
+
+  .layout{display:grid;grid-template-columns:1fr 420px;gap:26px;align-items:start}
+  @media(max-width:880px){.layout{grid-template-columns:1fr}}
+
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line-soft);
+    padding:26px;
+  }
+  .card + .card{margin-top:22px}
+  .card-head{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+  .card-num{font-family:var(--serif-en);font-size:15px;color:var(--gold);font-style:italic}
+  .card-title{font-family:var(--serif-cn);font-size:17px;font-weight:600;letter-spacing:1px}
+  .card-en{font-family:var(--serif-en);font-size:13px;color:var(--text-faint);font-style:italic;margin-bottom:20px;letter-spacing:.5px}
+
+  .field{margin-bottom:18px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:13px;color:var(--text);margin-bottom:7px;letter-spacing:.5px}
+  .field label .en{color:var(--text-faint);font-family:var(--serif-en);font-style:italic;font-size:12px;margin-left:6px}
+  .field .hint{font-size:11px;color:var(--text-faint);margin-top:5px;line-height:1.5}
+  .inputs-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:480px){.inputs-2{grid-template-columns:1fr}}
+
+  .money{position:relative}
+  .money::before{content:"$";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--gold-soft);font-size:14px;pointer-events:none}
+  input[type=number]{
+    width:100%;background:#0b1018;border:1px solid var(--line);color:var(--text);
+    padding:12px 14px 12px 26px;font-family:var(--sans-cn);font-size:15px;letter-spacing:.5px;
+    transition:border-color .2s,box-shadow .2s;
+  }
+  input[type=number]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,74,.12)}
+  input[type=number]::-webkit-inner-spin-button{opacity:.25}
+  .sub-label{font-size:11px;color:var(--text-faint);margin-bottom:5px;letter-spacing:.5px}
+
+  .check{display:flex;align-items:center;gap:9px;margin-top:9px;cursor:pointer;user-select:none}
+  .check input{position:absolute;opacity:0}
+  .check .box{width:17px;height:17px;border:1px solid var(--line);background:#0b1018;flex-shrink:0;position:relative;transition:all .2s}
+  .check input:checked + .box{background:var(--gold);border-color:var(--gold)}
+  .check input:checked + .box::after{content:"";position:absolute;left:5px;top:1px;width:4px;height:9px;border:solid var(--ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .check span{font-size:12px;color:var(--text-dim)}
+
+  select{
+    width:100%;background:#0b1018;border:1px solid var(--line);color:var(--text);
+    padding:12px 14px;font-family:var(--sans-cn);font-size:14px;cursor:pointer;
+  }
+  select:focus{outline:none;border-color:var(--gold)}
+
+  /* Results sticky panel */
+  .results{position:sticky;top:24px}
+  .result-card{
+    background:linear-gradient(165deg,#13182172,#0c1119);
+    border:1px solid var(--gold-soft);
+    padding:28px 26px;position:relative;overflow:hidden;
+  }
+  .result-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .res-eyebrow{font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+
+  .breakdown{border-bottom:1px solid var(--line-soft);padding-bottom:16px;margin-bottom:18px}
+  .brow{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;font-size:13px}
+  .brow .lbl{color:var(--text-dim)}
+  .brow .val{font-family:var(--serif-en);font-size:15px;color:var(--text);letter-spacing:.5px}
+  .brow .val.zero{color:var(--text-faint)}
+
+  .headline{text-align:center;margin:6px 0 4px}
+  .headline .label{font-size:12px;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px}
+  .headline .label .en{display:block;font-family:var(--serif-en);font-style:italic;font-size:11px;color:var(--text-faint);margin-top:2px}
+  .headline .amount{font-family:var(--serif-en);font-size:clamp(40px,8vw,56px);font-weight:600;color:var(--gold-bright);line-height:1;letter-spacing:1px}
+  .headline .amount.pulse{animation:pulse .5s ease}
+  @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.04);color:#fff}100%{transform:scale(1)}}
+
+  .solution{background:#0b1018;border:1px solid var(--line);padding:18px 20px;margin-top:22px}
+  .sol-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:13px}
+  .sol-row .lbl{color:var(--text-dim)}
+  .sol-row .val{font-family:var(--serif-en);font-size:16px;color:var(--text)}
+  .sol-row.lev{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:12px}
+  .sol-row.lev .val{font-size:22px;color:var(--gold-bright);font-weight:600}
+  .lev-note{font-size:11px;color:var(--text-faint);margin-top:10px;line-height:1.6;font-style:italic;font-family:var(--serif-en)}
+
+  .insight{
+    margin-top:22px;padding:16px 18px;border-left:2px solid var(--gold);
+    background:rgba(201,162,74,.05);font-size:12px;line-height:1.7;color:var(--text-dim);
+  }
+  .insight b{color:var(--gold-bright);font-weight:500}
+
+  /* Optional premium section */
+  details{margin-top:22px;border-top:1px solid var(--line-soft);padding-top:20px}
+  summary{cursor:pointer;font-size:13px;color:var(--gold);letter-spacing:1px;list-style:none;display:flex;align-items:center;gap:8px}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"+";font-family:var(--serif-en);font-size:18px;color:var(--gold);transition:transform .2s}
+  details[open] summary::before{content:"–"}
+  .prem-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+
+  footer{margin-top:34px;border-top:1px solid var(--line-soft);padding-top:20px}
+  .disclaimer{font-size:10.5px;color:var(--text-faint);line-height:1.7;max-width:760px}
+  .disclaimer b{color:var(--text-dim);font-weight:500}
+  .advisor{display:flex;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap;gap:12px}
+  .advisor .who{font-size:12px;color:var(--text-dim)}
+  .advisor .who b{color:var(--gold-bright);font-family:var(--serif-en);font-size:15px;font-weight:600;letter-spacing:1px}
+  .reset{background:none;border:1px solid var(--line);color:var(--text-faint);padding:8px 16px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:var(--sans-cn);transition:all .2s}
+  .reset:hover{border-color:var(--gold-soft);color:var(--gold)}
+
+  .section-note{font-size:11px;color:var(--text-faint);margin:-8px 0 18px;line-height:1.6;font-style:italic;font-family:var(--serif-en)}
+
+  body.embedded-shell{padding:clamp(16px,3vw,34px)}
+  body.embedded-shell .site-nav,
+  body.embedded-shell .mobile-switch{display:none!important}
+
+  @media(max-width:680px){
+    body{padding:70px 14px 28px}
+    .mobile-switch{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;position:fixed;top:0;left:0;right:0;
+      z-index:50;padding:9px 10px;background:rgba(10,14,20,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)
+    }
+    .mobile-switch a{
+      min-width:0;text-align:center;text-decoration:none;border:1px solid var(--line);background:#0b1018;color:var(--text-dim);
+      padding:9px 5px;font-size:11px;font-weight:600;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+    }
+    .mobile-switch a.active{border-color:var(--gold-soft);color:var(--gold-bright);background:rgba(201,162,74,.08)}
+    .site-nav{display:none}
+    header{align-items:flex-start}
+    .brand img{height:42px!important}
+    .brand-name{font-size:21px}
+    .inputs-2{grid-template-columns:1fr}
+    .tag{text-align:left}
+    .results{position:static}
+  }
+
+  @media print{
+    .site-nav,.mobile-switch,.reset{display:none!important}
+    body{padding:0;background:#0a0e14;color:var(--text)}
+    .wrap{max-width:none}
+  }
+</style>
+</head>
+<body>
+<nav class="mobile-switch" aria-label="方案切换">
+  <a href="triton_portfolio_presentation.html">分隔基金</a>
+  <a href="fidelity_tclass_strategy.html">Fidelity</a>
+  <a href="investment_tax_calculator.html">抵税</a>
+  <a class="active" href="estate_tax_diagnostic.html">传承</a>
+</nav>
+<nav class="site-nav no-print" aria-label="Triton Wealth 页面导航">
+  <div class="site-brand">
+    <img src="triton-logo.png" alt="Triton Wealth" onerror="this.style.display='none'">
+    <div class="brand-copy">
+      <div class="site-title">传承税负诊断</div>
+      <div class="site-subtitle">Estate tax liability diagnostic</div>
+    </div>
+  </div>
+  <div class="site-links">
+    <a href="triton_portfolio_presentation.html">分隔基金</a>
+    <a href="fidelity_tclass_strategy.html">Fidelity</a>
+    <a href="investment_tax_calculator.html">抵税</a>
+    <a class="active" href="estate_tax_diagnostic.html">传承</a>
+    <button type="button" onclick="window.exportPDF()">导出PDF</button>
+  </div>
+</nav>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <img src="triton-logo.png" alt="Triton Wealth" style="height:54px;width:auto;display:block" onerror="this.style.display='none'">
+      <div>
+        <div class="brand-name">TRITON <b>WEALTH</b></div>
+        <div class="brand-sub">Management Corporation</div>
+      </div>
+    </div>
+    <div class="tag">
+      <div class="tag-cn">财富传承 · 税务规划</div>
+      <div class="tag-en">Legacy &amp; Tax Planning</div>
+    </div>
+  </header>
+
+  <div class="title-block">
+    <div class="eyebrow">Estate Liquidity Diagnostic</div>
+    <h1>身故传承税负诊断
+      <span class="en">What will the tax bill be — before your wealth reaches the next generation?</span>
+    </h1>
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT: INPUTS -->
+    <div class="inputs-col">
+
+      <div class="card">
+        <div class="card-head"><span class="card-num">01</span><span class="card-title">税务假设</span></div>
+        <div class="card-en">Tax assumptions</div>
+        <div class="inputs-2">
+          <div class="field">
+            <label>边际税率 <span class="en">Marginal rate</span></label>
+            <select id="rate">
+              <option value="0.535">BC 最高 53.5%</option>
+              <option value="0.5353">ON 最高 53.53%</option>
+              <option value="0.48">AB 最高 48.0%</option>
+              <option value="0.45">混合估算 45%</option>
+              <option value="0.40">较低估算 40%</option>
+            </select>
+            <div class="hint">身故年度多项资产叠加，多数高净值客户落在最高档。</div>
+          </div>
+          <div class="field">
+            <label>资本利得纳入率 <span class="en">Inclusion</span></label>
+            <select id="incl">
+              <option value="0.5">50%（2026 现行）</option>
+              <option value="0.6667">66.67%（备用情景）</option>
+            </select>
+            <div class="hint">2025 年提议上调已取消，现行维持 50%。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-num">02</span><span class="card-title">资产清单（身故时）</span></div>
+        <div class="card-en">Assets at death — fair market value &amp; cost base</div>
+        <div class="section-note">Capital gains are triggered on a deemed disposition at death. Enter FMV and adjusted cost base (ACB).</div>
+
+        <div class="field">
+          <label>私人公司股份 <span class="en">Private corp shares</span></label>
+          <div class="inputs-2">
+            <div><div class="sub-label">市场价值 FMV</div><div class="money"><input type="number" id="corp_fmv" placeholder="0"></div></div>
+            <div><div class="sub-label">成本基础 ACB</div><div class="money"><input type="number" id="corp_acb" placeholder="0"></div></div>
+          </div>
+          <label class="check"><input type="checkbox" id="corp_lcge"><span class="box"></span><span>符合 QSBC，可用终身资本利得豁免（最高 $1.25M）<i style="font-style:italic;color:var(--text-faint)"> · LCGE</i></span></label>
+        </div>
+
+        <div class="field">
+          <label>投资性房产 <span class="en">Investment real estate</span></label>
+          <div class="inputs-2">
+            <div><div class="sub-label">市场价值 FMV</div><div class="money"><input type="number" id="re_fmv" placeholder="0"></div></div>
+            <div><div class="sub-label">成本基础 ACB</div><div class="money"><input type="number" id="re_acb" placeholder="0"></div></div>
+          </div>
+          <div class="hint">自住主居所通常可享主居所豁免，不计入此处。</div>
+        </div>
+
+        <div class="field">
+          <label>非注册投资账户 <span class="en">Non-registered portfolio</span></label>
+          <div class="inputs-2">
+            <div><div class="sub-label">市场价值 FMV</div><div class="money"><input type="number" id="inv_fmv" placeholder="0"></div></div>
+            <div><div class="sub-label">成本基础 ACB</div><div class="money"><input type="number" id="inv_acb" placeholder="0"></div></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>注册账户 RRSP / RRIF <span class="en">Registered</span></label>
+          <div class="money"><input type="number" id="rrsp" placeholder="0"></div>
+          <div class="hint">身故时全额计入当年收入（除非配偶/合资格转移）——这通常是最大的单笔税负。</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-num">03</span><span class="card-title">已有保障与流动资金</span></div>
+        <div class="card-en">Existing coverage &amp; earmarked liquidity</div>
+        <div class="inputs-2">
+          <div class="field">
+            <label>现有人寿保额 <span class="en">Existing insurance</span></label>
+            <div class="money"><input type="number" id="existing_ins" placeholder="0"></div>
+          </div>
+          <div class="field">
+            <label>可动用流动资产 <span class="en">Liquid assets</span></label>
+            <div class="money"><input type="number" id="liquid" placeholder="0"></div>
+            <div class="hint">TFSA、现金等预留用于缴税的部分。</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="results">
+      <div class="result-card">
+        <div class="res-eyebrow">Diagnosis · 诊断结果</div>
+
+        <div class="breakdown">
+          <div class="brow"><span class="lbl">公司股份资本利得税</span><span class="val zero" id="r_corp">$0</span></div>
+          <div class="brow"><span class="lbl">投资房产资本利得税</span><span class="val zero" id="r_re">$0</span></div>
+          <div class="brow"><span class="lbl">非注册投资资本利得税</span><span class="val zero" id="r_inv">$0</span></div>
+          <div class="brow"><span class="lbl">注册账户清算收入税</span><span class="val zero" id="r_rrsp">$0</span></div>
+        </div>
+
+        <div class="headline">
+          <div class="label">预估身故税单总额<span class="en">Estimated tax at death</span></div>
+          <div class="amount" id="r_total">$0</div>
+        </div>
+
+        <div class="solution">
+          <div class="sol-row"><span class="lbl">减：现有保障 + 流动资金</span><span class="val" id="r_offset">– $0</span></div>
+          <div class="sol-row"><span class="lbl">净流动性缺口</span><span class="val" id="r_gap" style="color:var(--gold-bright);font-weight:600">$0</span></div>
+        </div>
+
+        <div class="insight" id="insight">
+          填入资产数据，即时看到这笔常被忽略的税单。<b> 公司持有的永久寿险</b>身故赔付可经资本红利账户（CDA）免税分配给继承人——用确定的保费，对冲不确定却必然到来的税负。
+        </div>
+
+        <details>
+          <summary>保费杠杆测算 · Premium leverage</summary>
+          <div class="prem-grid">
+            <div class="field" style="margin:0">
+              <label>预估年保费 <span class="en">Annual</span></label>
+              <div class="money"><input type="number" id="prem" placeholder="0"></div>
+            </div>
+            <div class="field" style="margin:0">
+              <label>缴费年期 <span class="en">Years</span></label>
+              <input type="number" id="prem_yrs" placeholder="10" style="padding-left:14px">
+            </div>
+          </div>
+          <div class="solution" style="margin-top:16px">
+            <div class="sol-row"><span class="lbl">累计保费投入</span><span class="val" id="r_premtotal">$0</span></div>
+            <div class="sol-row"><span class="lbl">所覆盖的传承税负</span><span class="val" id="r_covered">$0</span></div>
+            <div class="sol-row lev"><span class="lbl">杠杆倍数</span><span class="val" id="r_lev">—</span></div>
+          </div>
+          <div class="lev-note" id="lev_note">Every premium dollar can create multiples in tax-free legacy.</div>
+        </details>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="disclaimer">
+      <b>免责声明 / Disclaimer：</b>本工具仅为概念性测算，采用简化假设（身故视同处置、注册账户全额计入收入、单一边际税率），未考虑配偶递延、遗嘱信托、AMT、外国资产、债务、最终申报扣除及个案具体情况。结果不构成税务、法律或投资建议，实际税负请以持牌会计师 / 税务师的测算为准。保费与杠杆为示意，实际取决于年龄、健康、产品与核保。
+      This tool provides conceptual estimates using simplified assumptions and does not constitute tax, legal, or investment advice. Confirm all figures with a licensed accountant.
+    </div>
+    <div class="advisor">
+      <div class="who">准备人 / Prepared by　<b>Jeffrey Yuan</b>　·　Triton Wealth Management Corp.　·　Licensed in BC / ON / AB</div>
+      <button class="reset" id="reset">清空重填 · RESET</button>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  if (new URLSearchParams(location.search).has('embedded')) {
+    document.body.classList.add('embedded-shell');
+  }
+  const LCGE = 1250000;
+  const $ = id => document.getElementById(id);
+  const num = id => { const v = parseFloat($(id).value); return isNaN(v)||v<0 ? 0 : v; };
+  const fmt = n => '$' + Math.round(n).toLocaleString('en-CA');
+
+  const ids = ['corp_fmv','corp_acb','re_fmv','re_acb','inv_fmv','inv_acb','rrsp',
+               'existing_ins','liquid','prem','prem_yrs'];
+
+  function setVal(el, amount, isZero){
+    el.textContent = amount;
+    el.classList.toggle('zero', isZero);
+  }
+
+  function calc(){
+    const rate = parseFloat($('rate').value);
+    const incl = parseFloat($('incl').value);
+
+    // Private corp shares
+    let corpGain = Math.max(0, num('corp_fmv') - num('corp_acb'));
+    if($('corp_lcge').checked) corpGain = Math.max(0, corpGain - LCGE);
+    const corpTax = corpGain * incl * rate;
+
+    // Investment real estate
+    const reGain = Math.max(0, num('re_fmv') - num('re_acb'));
+    const reTax = reGain * incl * rate;
+
+    // Non-registered portfolio
+    const invGain = Math.max(0, num('inv_fmv') - num('inv_acb'));
+    const invTax = invGain * incl * rate;
+
+    // RRSP/RRIF fully taxable as income
+    const rrspTax = num('rrsp') * rate;
+
+    const total = corpTax + reTax + invTax + rrspTax;
+    const offset = num('existing_ins') + num('liquid');
+    const gap = Math.max(0, total - offset);
+
+    setVal($('r_corp'), fmt(corpTax), corpTax===0);
+    setVal($('r_re'),   fmt(reTax),   reTax===0);
+    setVal($('r_inv'),  fmt(invTax),  invTax===0);
+    setVal($('r_rrsp'), fmt(rrspTax), rrspTax===0);
+
+    const totalEl = $('r_total');
+    totalEl.textContent = fmt(total);
+    totalEl.classList.remove('pulse'); void totalEl.offsetWidth; if(total>0) totalEl.classList.add('pulse');
+
+    $('r_offset').textContent = '– ' + fmt(offset);
+    $('r_gap').textContent = fmt(gap);
+
+    // Dynamic insight
+    const ins = $('insight');
+    if(rrspTax>0 && rrspTax >= total*0.4 && total>0){
+      ins.innerHTML = '注册账户清算贡献了税单的主要部分——<b>'+fmt(rrspTax)+'</b>，几乎是即时、无豁免的。<b>公司持有的永久寿险</b>赔付可经 CDA 免税分配，用确定的保费对冲这笔必然到来的税负。';
+    } else if(corpTax>0){
+      ins.innerHTML = '公司股份的隐含资本利得税约 <b>'+fmt(corpTax)+'</b>。<b>公司持有的永久寿险</b>身故赔付可经资本红利账户（CDA）<b>免税</b>分配给继承人——这是为数不多能把公司资金高效传给下一代的工具。';
+    } else {
+      ins.innerHTML = '填入资产数据，即时看到这笔常被忽略的税单。<b>公司持有的永久寿险</b>身故赔付可经资本红利账户（CDA）免税分配给继承人——用确定的保费，对冲不确定却必然到来的税负。';
+    }
+
+    // Leverage
+    const prem = num('prem'), yrs = num('prem_yrs');
+    const premTotal = prem * yrs;
+    const covered = gap>0 ? gap : total;
+    $('r_premtotal').textContent = fmt(premTotal);
+    $('r_covered').textContent = fmt(covered);
+    if(premTotal>0 && covered>0){
+      const lev = covered / premTotal;
+      $('r_lev').textContent = lev.toFixed(1) + '×';
+      $('lev_note').textContent = '每投入 $1 保费，可创造约 $'+lev.toFixed(1)+' 的免税传承缺口覆盖。 / Each premium dollar covers ~$'+lev.toFixed(1)+' of tax-free legacy.';
+    } else {
+      $('r_lev').textContent = '—';
+      $('lev_note').textContent = 'Every premium dollar can create multiples in tax-free legacy.';
+    }
+  }
+
+  ids.forEach(id => $(id).addEventListener('input', calc));
+  $('rate').addEventListener('change', calc);
+  $('incl').addEventListener('change', calc);
+  $('corp_lcge').addEventListener('change', calc);
+  $('reset').addEventListener('click', function(){
+    ids.forEach(id => $(id).value='');
+    $('corp_lcge').checked=false;
+    $('rate').value='0.535'; $('incl').value='0.5';
+    calc();
+  });
+
+  calc();
+})();
+
+window.exportPDF = () => window.print();
+window.addEventListener('message', event => {
+  if (event.data && event.data.type === 'TRITON_EXPORT_PDF') window.exportPDF();
+});
+</script>
+</body>
+</html>
