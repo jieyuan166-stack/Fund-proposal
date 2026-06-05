@@ -524,25 +524,50 @@
     .metric-48,.t-num-lg,#calcInput{font-size:clamp(30px,4.8vw,50px)!important;font-weight:700!important;}
     .t-num-sm,.data-cell,td:last-child{font-size:max(15px,1em)!important;font-weight:700!important;color:var(--gold-l)!important;}
     #monthlyOut,#annualOut,#taxSavedOut,#acbYearsOut{font-size:clamp(30px,4vw,46px)!important;color:var(--gold-l)!important;}
+    .cashflow-metric-card,
     #rcMonthly,#rcAnnual,#rcTaxSaved,#rcAcbYear{
-      min-height:174px;
+      min-height:156px;
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:center;
+      justify-content:space-between;
+      gap:8px;
       overflow:hidden;
+      padding:16px 12px!important;
     }
+    .cashflow-metric-card .t-label,
+    #rcMonthly .t-label,#rcAnnual .t-label,#rcTaxSaved .t-label,#rcAcbYear .t-label{
+      min-height:24px;
+      margin:0!important;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      line-height:1.25!important;
+      max-width:100%;
+      white-space:normal;
+    }
+    .cashflow-metric-card .big-metric,
     #rcMonthly .big-metric,#rcAnnual .big-metric,#rcTaxSaved .big-metric,#rcAcbYear .big-metric{
       font-family:Arial,Helvetica,var(--sans-cn)!important;
-      font-size:clamp(30px,2.8vw,40px)!important;
-      line-height:1!important;
+      font-size:clamp(24px,2.25vw,34px)!important;
+      line-height:1.05!important;
       white-space:nowrap;
       max-width:100%;
+      margin:0!important;
     }
-    #rcAcbYear .big-metric{font-size:clamp(28px,2.6vw,36px)!important;}
+    .cashflow-metric-card .text-xs,
     #rcMonthly .text-xs,#rcAnnual .text-xs,#rcTaxSaved .text-xs,#rcAcbYear .text-xs{
-      margin-top:10px!important;
+      min-height:30px;
+      margin:0!important;
       line-height:1.25!important;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      text-wrap:balance;
+    }
+    @media(max-width:680px){
+      .cashflow-output-grid{grid-template-columns:1fr!important;}
+      #calcInput{min-width:0!important;font-size:clamp(30px,9vw,42px)!important;}
     }
     [style*="color:#0A1628"],[style*="color: #0A1628"],
     [style*="color:#1A2D4D"],[style*="color: #1A2D4D"],
@@ -705,25 +730,25 @@
       </div>
 
       <!-- Outputs -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="result-card p-5 rounded-xl text-center" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35)" id="rcMonthly">
+      <div class="cashflow-output-grid grid grid-cols-2 gap-3">
+        <div class="result-card cashflow-metric-card rounded-xl text-center" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35)" id="rcMonthly">
           <div class="t-label mb-2" style="font-size:9px">月度现金流 MONTHLY</div>
-          <div class="big-metric text-white" style="font-size:30px">$<span id="oMonthly">667</span></div>
+          <div class="big-metric text-white">$<span id="oMonthly">667</span></div>
           <div class="text-xs text-white/40 mt-1 en">Cash to your account</div>
         </div>
-        <div class="result-card p-5 rounded-xl text-center" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)" id="rcAnnual">
+        <div class="result-card cashflow-metric-card rounded-xl text-center" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)" id="rcAnnual">
           <div class="t-label mb-2" style="font-size:9px">年度合计 ANNUAL</div>
-          <div class="big-metric text-white" style="font-size:26px">$<span id="oAnnual">8,000</span></div>
+          <div class="big-metric text-white">$<span id="oAnnual">8,000</span></div>
           <div class="text-xs text-white/40 mt-1 en">Total per year</div>
         </div>
-        <div class="result-card p-5 rounded-xl text-center" style="background:rgba(7,148,85,.1);border:1px solid rgba(7,148,85,.3)" id="rcTaxSaved">
+        <div class="result-card cashflow-metric-card rounded-xl text-center" style="background:rgba(7,148,85,.1);border:1px solid rgba(7,148,85,.3)" id="rcTaxSaved">
           <div class="t-label mb-2" style="font-size:9px;color:#10B981">首年税务节省 TAX SAVED Y1</div>
-          <div class="big-metric" style="font-size:26px;color:#10B981">$<span id="oTaxSaved">4,282</span></div>
+          <div class="big-metric" style="color:#10B981">$<span id="oTaxSaved">4,282</span></div>
           <div class="text-xs text-white/40 mt-1 en">vs GIC interest income</div>
         </div>
-        <div class="result-card p-5 rounded-xl text-center" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)" id="rcAcbYear">
+        <div class="result-card cashflow-metric-card rounded-xl text-center" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)" id="rcAcbYear">
           <div class="t-label mb-2" style="font-size:9px">ACB→0 年数 DEPLETION</div>
-          <div class="big-metric text-white" style="font-size:26px"><span id="oAcbYear">12.5年</span></div>
+          <div class="big-metric text-white"><span id="oAcbYear">12.5年</span></div>
           <div class="text-xs text-white/40 mt-1 en">at selected historical return</div>
         </div>
       </div>
@@ -2550,25 +2575,50 @@ window.addEventListener('load', () => {
     .big-metric,.metric-72{font-size:clamp(44px,6vw,70px)!important;}
     .metric-48,.t-num-lg,#calcInput{font-size:clamp(34px,4.8vw,54px)!important;}
     #monthlyOut,#annualOut,#taxSavedOut,#acbYearsOut{font-size:clamp(32px,4vw,48px)!important;color:#e3c074!important;}
+    .cashflow-metric-card,
     #rcMonthly,#rcAnnual,#rcTaxSaved,#rcAcbYear{
-      min-height:174px!important;
+      min-height:156px!important;
       display:flex!important;
       flex-direction:column!important;
       align-items:center!important;
-      justify-content:center!important;
+      justify-content:space-between!important;
+      gap:8px!important;
       overflow:hidden!important;
+      padding:16px 12px!important;
     }
+    .cashflow-metric-card .t-label,
+    #rcMonthly .t-label,#rcAnnual .t-label,#rcTaxSaved .t-label,#rcAcbYear .t-label{
+      min-height:24px!important;
+      margin:0!important;
+      display:flex!important;
+      align-items:flex-end!important;
+      justify-content:center!important;
+      line-height:1.25!important;
+      max-width:100%!important;
+      white-space:normal!important;
+    }
+    .cashflow-metric-card .big-metric,
     #rcMonthly .big-metric,#rcAnnual .big-metric,#rcTaxSaved .big-metric,#rcAcbYear .big-metric{
       font-family:Arial,Helvetica,'Noto Sans SC',sans-serif!important;
-      font-size:clamp(30px,2.8vw,40px)!important;
-      line-height:1!important;
+      font-size:clamp(24px,2.25vw,34px)!important;
+      line-height:1.05!important;
       white-space:nowrap!important;
       max-width:100%!important;
+      margin:0!important;
     }
-    #rcAcbYear .big-metric{font-size:clamp(28px,2.6vw,36px)!important;}
+    .cashflow-metric-card .text-xs,
     #rcMonthly .text-xs,#rcAnnual .text-xs,#rcTaxSaved .text-xs,#rcAcbYear .text-xs{
-      margin-top:10px!important;
+      min-height:30px!important;
+      margin:0!important;
       line-height:1.25!important;
+      display:flex!important;
+      align-items:flex-start!important;
+      justify-content:center!important;
+      text-wrap:balance!important;
+    }
+    @media(max-width:680px){
+      .cashflow-output-grid{grid-template-columns:1fr!important;}
+      #calcInput{min-width:0!important;font-size:clamp(30px,9vw,42px)!important;}
     }
     .t-num-sm,[style*="background:#F"] .t-num-sm,[style*="background: #F"] .t-num-sm{
       font-size:22px!important;

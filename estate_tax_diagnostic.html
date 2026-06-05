@@ -275,8 +275,6 @@
               <option value="0.535">BC 最高 53.5%</option>
               <option value="0.5353">ON 最高 53.53%</option>
               <option value="0.48">AB 最高 48%</option>
-              <option value="0.45">混合估算 45%</option>
-              <option value="0.40">较低估算 40%</option>
             </select>
             <div class="hint">边际税率自动读取最新税表；<span id="estate_tax_status">Tax data loading...</span></div>
           </div>
@@ -452,7 +450,54 @@ const TAX_DATA = {
     return option ? option.dataset.province || '' : '';
   }
 
-  function updateTaxBracketChip(){
+  function progressiveTax(province, taxableIncome){
+    const rows = TAX_DATA.otherIncome && TAX_DATA.otherIncome[province] ? TAX_DATA.otherIncome[province] : [];
+    let remaining = Math.max(0, taxableIncome);
+    let lower = 0;
+    let tax = 0;
+
+    for (const row of rows) {
+      const upper = row.upTo === null ? Infinity : row.upTo;
+      const bracketAmount = Math.max(0, Math.min(remaining, upper - lower));
+      tax += bracketAmount * (row.rate / 100);
+      remaining -= bracketAmount;
+      lower = upper;
+      if (remaining <= 0) break;
+    }
+
+    return tax;
+  }
+
+  function allocateTax(totalTax, taxableAmounts){
+    const roundedTotal = Math.round(totalTax);
+    const taxableTotal = taxableAmounts.reduce((sum, amount) => sum + amount, 0);
+    if (taxableTotal <= 0 || roundedTotal <= 0) return taxableAmounts.map(() => 0);
+
+    const raw = taxableAmounts.map(amount => totalTax * (amount / taxableTotal));
+    const rounded = raw.map(amount => Math.round(amount));
+    const maxIndex = taxableAmounts.reduce((best, amount, index) => amount > taxableAmounts[best] ? index : best, 0);
+    const diff = roundedTotal - rounded.reduce((sum, amount) => sum + amount, 0);
+    rounded[maxIndex] += diff;
+    return rounded;
+  }
+
+  function taxBracketFor(province, taxableIncome){
+    const rows = TAX_DATA.otherIncome && TAX_DATA.otherIncome[province] ? TAX_DATA.otherIncome[province] : [];
+    const amount = Math.max(0, taxableIncome);
+    if (amount <= 0 || rows.length === 0) return null;
+
+    let lower = 0;
+    for (const row of rows) {
+      const upper = row.upTo === null ? Infinity : row.upTo;
+      if (amount <= upper) {
+        return { lower, upper: row.upTo, rate: row.rate };
+      }
+      lower = upper;
+    }
+    return null;
+  }
+
+  function updateTaxBracketChip(taxableIncome = 0){
     const province = selectedProvince();
     const chip = $('estate_bracket_chip');
     if (!chip) return;
@@ -462,10 +507,15 @@ const TAX_DATA = {
       return;
     }
 
-    const rows = TAX_DATA.otherIncome[province];
-    const top = rows[rows.length - 1];
-    const prev = rows.length > 1 ? rows[rows.length - 2].upTo : 0;
-    chip.textContent = province + ' · ' + formatMoney(prev + 1) + '+ · ' + formatRate(top.rate / 100) + '%';
+    const bracket = taxBracketFor(province, taxableIncome);
+    if (!bracket) {
+      chip.textContent = '未产生应税收入';
+      return;
+    }
+
+    const lowerText = bracket.lower === 0 ? '$0' : formatMoney(bracket.lower + 1);
+    const rangeText = bracket.upper === null ? lowerText + '+' : lowerText + '-' + formatMoney(bracket.upper);
+    chip.textContent = province + ' · ' + rangeText + ' · ' + formatRate(bracket.rate / 100) + '%';
   }
 
   function populateMarginalRates(){
@@ -476,9 +526,7 @@ const TAX_DATA = {
       return '<option value="'+rate+'" data-province="'+code+'">'+code+' 最高 '+formatRate(rate)+'% · '+provinceLabels[code]+'</option>';
     }).join('');
 
-    rateSelect.innerHTML = options +
-      '<option value="0.45">混合估算 45%</option>' +
-      '<option value="0.40">较低估算 40%</option>';
+    rateSelect.innerHTML = options;
     rateSelect.value = String(topRateFor('BC') || 0.535);
 
     const status = $('estate_tax_status');
@@ -493,32 +541,38 @@ const TAX_DATA = {
       if (currentOption) currentOption.textContent = Math.round(TAX_DATA.inclusionRate * 100)+'%（'+TAX_DATA.year+' 现行）';
     }
 
-    updateTaxBracketChip();
+    updateTaxBracketChip(0);
   }
 
   function calc(){
-    const rate = parseFloat($('rate').value);
+    const province = selectedProvince();
     const incl = parseFloat($('incl').value);
 
     // Private corp shares
     let corpGain = Math.max(0, num('corp_fmv') - num('corp_acb'));
     if($('corp_lcge').checked) corpGain = Math.max(0, corpGain - LCGE);
-    const corpTax = corpGain * incl * rate;
+    const corpTaxable = corpGain * incl;
 
     // Investment real estate
     const reGain = Math.max(0, num('re_fmv') - num('re_acb'));
-    const reTax = reGain * incl * rate;
+    const reTaxable = reGain * incl;
 
     // Non-registered portfolio
     const invGain = Math.max(0, num('inv_fmv') - num('inv_acb'));
-    const invTax = invGain * incl * rate;
+    const invTaxable = invGain * incl;
 
     // RRSP/RRIF fully taxable as income
-    const rrspTax = num('rrsp') * rate;
+    const rrspTaxable = num('rrsp');
 
-    const total = corpTax + reTax + invTax + rrspTax;
+    const taxableTotal = corpTaxable + reTaxable + invTaxable + rrspTaxable;
+    const total = progressiveTax(province, taxableTotal);
+    const [corpTax, reTax, invTax, rrspTax] = allocateTax(total, [corpTaxable, reTaxable, invTaxable, rrspTaxable]);
+
+    const roundedTotal = Math.round(total);
     const offset = num('existing_ins') + num('liquid');
-    const netGap = total - offset;
+    const netGap = roundedTotal - offset;
+
+    updateTaxBracketChip(taxableTotal);
 
     setVal($('r_corp'), fmt(corpTax), corpTax===0);
     setVal($('r_re'),   fmt(reTax),   reTax===0);
@@ -526,8 +580,8 @@ const TAX_DATA = {
     setVal($('r_rrsp'), fmt(rrspTax), rrspTax===0);
 
     const totalEl = $('r_total');
-    totalEl.textContent = fmt(total);
-    totalEl.classList.remove('pulse'); void totalEl.offsetWidth; if(total>0) totalEl.classList.add('pulse');
+    totalEl.textContent = fmt(roundedTotal);
+    totalEl.classList.remove('pulse'); void totalEl.offsetWidth; if(roundedTotal>0) totalEl.classList.add('pulse');
 
     $('r_offset').textContent = '– ' + fmt(offset);
     const gapEl = $('r_gap');
@@ -543,9 +597,9 @@ const TAX_DATA = {
 
     // Dynamic insight
     const ins = $('insight');
-    if(netGap < 0 && total>0){
+    if(netGap < 0 && roundedTotal>0){
       ins.innerHTML = '现有保障与预留流动资金已覆盖预估税单，并形成约 <b>'+fmt(Math.abs(netGap))+'</b> 的净正现金流。这个数字可作为继承安排、遗产费用或额外流动性缓冲的参考。';
-    } else if(rrspTax>0 && rrspTax >= total*0.4 && total>0){
+    } else if(rrspTax>0 && rrspTax >= roundedTotal*0.4 && roundedTotal>0){
       ins.innerHTML = '注册账户清算贡献了税单的主要部分——<b>'+fmt(rrspTax)+'</b>，几乎是即时、无豁免的。<b>公司持有的永久寿险</b>赔付可经 CDA 免税分配，用确定的保费对冲这笔必然到来的税负。';
     } else if(corpTax>0){
       ins.innerHTML = '公司股份的隐含资本利得税约 <b>'+fmt(corpTax)+'</b>。<b>公司持有的永久寿险</b>身故赔付可经资本红利账户（CDA）<b>免税</b>分配给继承人——这是为数不多能把公司资金高效传给下一代的工具。';
@@ -559,7 +613,6 @@ const TAX_DATA = {
 
   ids.forEach(id => $(id).addEventListener('input', calc));
   $('rate').addEventListener('change', function(){
-    updateTaxBracketChip();
     calc();
   });
   $('incl').addEventListener('change', calc);
@@ -569,7 +622,6 @@ const TAX_DATA = {
     $('corp_lcge').checked=false;
     $('rate').value=String(topRateFor('BC') || 0.535);
     $('incl').value=String(TAX_DATA.inclusionRate || 0.5);
-    updateTaxBracketChip();
     calc();
   });
 
