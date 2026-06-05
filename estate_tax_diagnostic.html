@@ -75,27 +75,13 @@
   }
   .site-actions button:hover{border-color:var(--gold);background:rgba(201,162,74,.14);transform:translateY(-1px)}
 
-  /* Header */
-  header{
-    display:flex;justify-content:space-between;align-items:flex-end;
-    border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:8px;
-    gap:20px;flex-wrap:wrap;
-  }
-  .brand{display:flex;align-items:center;gap:14px}
-  .brand-name{font-family:var(--serif-en);font-size:26px;letter-spacing:3px;color:var(--text);font-weight:500}
-  .brand-name b{color:var(--gold-bright);font-weight:600}
-  .brand-sub{font-size:11px;letter-spacing:3px;color:var(--text-faint);text-transform:uppercase;margin-top:3px}
-  .tag{text-align:right}
-  .tag-cn{font-family:var(--serif-cn);font-size:13px;color:var(--text-dim);letter-spacing:2px}
-  .tag-en{font-family:var(--serif-en);font-size:13px;color:var(--text-faint);font-style:italic;letter-spacing:1px;margin-top:2px}
-
-  .title-block{margin:34px 0 26px}
+  .title-block{margin:28px 0 26px}
   .eyebrow{font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:12px}
   h1{font-family:var(--serif-cn);font-size:clamp(28px,5vw,42px);font-weight:500;line-height:1.15;letter-spacing:1px}
   h1 .en{display:block;font-family:var(--serif-en);font-size:clamp(18px,3vw,24px);font-style:normal;color:var(--text-dim);font-weight:400;letter-spacing:0;margin-top:6px}
 
   .layout{display:grid;grid-template-columns:1fr 420px;gap:26px;align-items:start}
-  .inputs-col,.card,.field,.tax-bracket-panel,.tax-bracket-table,.results{min-width:0}
+  .inputs-col,.card,.field,.results{min-width:0}
   @media(max-width:880px){.layout{grid-template-columns:1fr}}
 
   .card{
@@ -116,24 +102,6 @@
   .field .hint{font-size:11px;color:var(--text-faint);margin-top:5px;line-height:1.5;overflow-wrap:anywhere}
   .inputs-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:480px){.inputs-2{grid-template-columns:1fr}}
-
-  .tax-bracket-panel{
-    margin-top:18px;border:1px solid rgba(201,162,74,.24);background:rgba(11,16,24,.74);
-    padding:18px;position:relative;overflow:hidden;
-  }
-  .tax-bracket-panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(var(--gold),transparent)}
-  .tax-bracket-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
-  .tax-bracket-title{font-family:var(--serif-cn);font-size:15px;color:var(--text);letter-spacing:.8px}
-  .tax-bracket-title .en{display:block;font-family:var(--serif-en);font-size:11px;color:var(--text-faint);font-style:italic;letter-spacing:.5px;margin-top:2px}
-  .tax-bracket-status{font-family:Arial,Helvetica,var(--sans-cn);font-size:12px;color:var(--gold-bright);text-align:right;font-variant-numeric:tabular-nums}
-  .tax-bracket-table{display:grid;gap:6px}
-  .tax-row{
-    display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:12px;align-items:center;
-    padding:9px 10px;border:1px solid rgba(154,163,176,.13);background:rgba(255,255,255,.025);
-  }
-  .tax-row.active{border-color:rgba(201,162,74,.55);background:rgba(201,162,74,.085)}
-  .tax-range{font-size:12px;color:var(--text-dim);line-height:1.35}
-  .tax-rate{font-family:Arial,Helvetica,var(--sans-cn);font-size:15px;font-weight:600;color:var(--gold-bright);text-align:right;font-variant-numeric:tabular-nums}
 
   .money{position:relative}
   .money::before{content:"$";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--gold-soft);font-size:14px;pointer-events:none}
@@ -177,8 +145,15 @@
   .brow .val.zero{color:var(--text-faint)}
 
   .headline{text-align:center;margin:6px 0 4px}
+  .headline-top{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
   .headline .label{font-size:12px;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px}
+  .headline-top .label{margin-bottom:0}
   .headline .label .en{display:block;font-family:var(--serif-en);font-style:italic;font-size:11px;color:var(--text-faint);margin-top:2px}
+  .bracket-chip{
+    border:1px solid rgba(201,162,74,.35);background:rgba(201,162,74,.08);color:var(--gold-bright);
+    padding:7px 9px;font-family:Arial,Helvetica,var(--sans-cn);font-size:11px;font-weight:600;
+    letter-spacing:.2px;font-variant-numeric:tabular-nums;line-height:1.25;
+  }
   .headline .amount{font-family:Arial,Helvetica,var(--sans-cn);font-size:clamp(48px,9vw,68px);font-weight:600;color:var(--gold-bright);line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums}
   .headline .amount.pulse{animation:pulse .5s ease}
   @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.04);color:#fff}100%{transform:scale(1)}}
@@ -187,23 +162,13 @@
   .sol-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:13px}
   .sol-row .lbl{color:var(--text-dim)}
   .sol-row .val{font-family:Arial,Helvetica,var(--sans-cn);font-size:20px;color:var(--gold-bright);font-variant-numeric:tabular-nums}
-  .sol-row.lev{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:12px}
-  .sol-row.lev .val{font-size:28px;color:var(--gold-bright);font-weight:600}
-  .lev-note{font-size:11px;color:var(--text-faint);margin-top:10px;line-height:1.6;font-style:italic;font-family:var(--serif-en)}
+  .sol-row .val.positive{color:var(--positive);font-weight:600}
 
   .insight{
     margin-top:22px;padding:16px 18px;border-left:2px solid var(--gold);
     background:rgba(201,162,74,.05);font-size:12px;line-height:1.7;color:var(--text-dim);
   }
   .insight b{color:var(--gold-bright);font-weight:500}
-
-  /* Optional premium section */
-  details{margin-top:22px;border-top:1px solid var(--line-soft);padding-top:20px}
-  summary{cursor:pointer;font-size:13px;color:var(--gold);letter-spacing:1px;list-style:none;display:flex;align-items:center;gap:8px}
-  summary::-webkit-details-marker{display:none}
-  summary::before{content:"+";font-family:var(--serif-en);font-size:18px;color:var(--gold);transition:transform .2s}
-  details[open] summary::before{content:"–"}
-  .prem-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
 
   footer{margin-top:34px;border-top:1px solid var(--line-soft);padding-top:20px}
   .disclaimer{font-size:10.5px;color:var(--text-faint);line-height:1.7;max-width:760px}
@@ -242,12 +207,6 @@
     .mobile-switch .nav-en{font-size:9px;letter-spacing:.7px}
     .mobile-switch a.active{border-color:var(--gold);color:var(--gold-bright);background:rgba(201,162,74,.11)}
     .site-nav{display:none}
-    header{align-items:flex-start}
-    .brand{width:100%;gap:10px;min-width:0}
-    .brand > div{min-width:0}
-    .brand img{height:38px!important}
-    .brand-name{font-size:18px;letter-spacing:2px;white-space:normal}
-    .brand-sub{font-size:9px;letter-spacing:2px}
     h1{font-size:30px;line-height:1.15}
     h1 .en{font-size:16px;line-height:1.25;max-width:31ch;overflow-wrap:normal}
     .inputs-2{grid-template-columns:1fr}
@@ -256,12 +215,8 @@
     .card{padding:20px 16px}
     .field .hint span{display:block;margin-top:2px}
     select{font-size:14px}
-    .tax-bracket-head{display:block}
-    .tax-bracket-status{text-align:left;margin-top:8px;overflow-wrap:anywhere}
-    .tax-bracket-panel{padding:16px 14px}
-    .tax-row{grid-template-columns:1fr;padding:9px;gap:3px}
-    .tax-range{font-size:11px}
-    .tax-rate{font-size:14px;text-align:left}
+    .headline-top{display:grid;gap:8px}
+    .bracket-chip{justify-self:center}
   }
 
   @media print{
@@ -298,20 +253,6 @@
 </nav>
 <div class="wrap">
 
-  <header>
-    <div class="brand">
-      <img src="triton-logo.png" alt="Triton Wealth" style="height:54px;width:auto;display:block" onerror="this.style.display='none'">
-      <div>
-        <div class="brand-name">TRITON <b>WEALTH</b></div>
-        <div class="brand-sub">Management Corporation</div>
-      </div>
-    </div>
-    <div class="tag">
-      <div class="tag-cn">财富传承 · 税务规划</div>
-      <div class="tag-en">Legacy &amp; Tax Planning</div>
-    </div>
-  </header>
-
   <div class="title-block">
     <div class="eyebrow">Estate Liquidity Diagnostic</div>
     <h1>身故传承税负诊断
@@ -347,13 +288,6 @@
             </select>
             <div class="hint">2025 年提议上调已取消，现行维持 50%。</div>
           </div>
-        </div>
-        <div class="tax-bracket-panel">
-          <div class="tax-bracket-head">
-            <div class="tax-bracket-title">对应普通收入税阶<span class="en">Combined federal + provincial ordinary income brackets</span></div>
-            <div class="tax-bracket-status" id="tax_bracket_status">Tax bracket loading...</div>
-          </div>
-          <div class="tax-bracket-table" id="tax_bracket_rows"></div>
         </div>
       </div>
 
@@ -426,38 +360,22 @@
         </div>
 
         <div class="headline">
-          <div class="label">预估身故税单总额<span class="en">Estimated tax at death</span></div>
+          <div class="headline-top">
+            <div class="label">预估身故税单总额<span class="en">Estimated tax at death</span></div>
+            <div class="bracket-chip" id="estate_bracket_chip">对应税阶 loading...</div>
+          </div>
           <div class="amount" id="r_total">$0</div>
         </div>
 
         <div class="solution">
           <div class="sol-row"><span class="lbl">减：现有保障 + 流动资金</span><span class="val" id="r_offset">– $0</span></div>
-          <div class="sol-row"><span class="lbl">净流动性缺口</span><span class="val" id="r_gap" style="color:var(--gold-bright);font-weight:600">$0</span></div>
+          <div class="sol-row"><span class="lbl" id="r_gap_lbl">净流动性缺口</span><span class="val" id="r_gap">$0</span></div>
         </div>
 
         <div class="insight" id="insight">
           填入资产数据，即时看到这笔常被忽略的税单。<b> 公司持有的永久寿险</b>身故赔付可经资本红利账户（CDA）免税分配给继承人——用确定的保费，对冲不确定却必然到来的税负。
         </div>
 
-        <details>
-          <summary>保费杠杆测算 · Premium leverage</summary>
-          <div class="prem-grid">
-            <div class="field" style="margin:0">
-              <label>预估年保费 <span class="en">Annual</span></label>
-              <div class="money"><input type="number" id="prem" placeholder="0"></div>
-            </div>
-            <div class="field" style="margin:0">
-              <label>缴费年期 <span class="en">Years</span></label>
-              <input type="number" id="prem_yrs" placeholder="10" style="padding-left:14px">
-            </div>
-          </div>
-          <div class="solution" style="margin-top:16px">
-            <div class="sol-row"><span class="lbl">累计保费投入</span><span class="val" id="r_premtotal">$0</span></div>
-            <div class="sol-row"><span class="lbl">所覆盖的传承税负</span><span class="val" id="r_covered">$0</span></div>
-            <div class="sol-row lev"><span class="lbl">杠杆倍数</span><span class="val" id="r_lev">—</span></div>
-          </div>
-          <div class="lev-note" id="lev_note">Every premium dollar can create multiples in tax-free legacy.</div>
-        </details>
       </div>
     </div>
 
@@ -465,7 +383,7 @@
 
   <footer>
     <div class="disclaimer">
-      <b>免责声明 / Disclaimer：</b>本工具仅为概念性测算，采用简化假设（身故视同处置、注册账户全额计入收入、单一边际税率），未考虑配偶递延、遗嘱信托、AMT、外国资产、债务、最终申报扣除及个案具体情况。结果不构成税务、法律或投资建议，实际税负请以持牌会计师 / 税务师的测算为准。保费与杠杆为示意，实际取决于年龄、健康、产品与核保。
+      <b>免责声明 / Disclaimer：</b>本工具仅为概念性测算，采用简化假设（身故视同处置、注册账户全额计入收入、单一边际税率），未考虑配偶递延、遗嘱信托、AMT、外国资产、债务、最终申报扣除及个案具体情况。结果不构成税务、法律或投资建议，实际税负请以持牌会计师 / 税务师的测算为准。
       This tool provides conceptual estimates using simplified assumptions and does not constitute tax, legal, or investment advice. Confirm all figures with a licensed accountant.
     </div>
     <div class="advisor">
@@ -506,7 +424,7 @@ const TAX_DATA = {
   const fmt = n => '$' + Math.round(n).toLocaleString('en-CA');
 
   const ids = ['corp_fmv','corp_acb','re_fmv','re_acb','inv_fmv','inv_acb','rrsp',
-               'existing_ins','liquid','prem','prem_yrs'];
+               'existing_ins','liquid'];
   const provinceLabels = {BC:'British Columbia', ON:'Ontario', AB:'Alberta'};
   const provinceOrder = ['BC','ON','AB'];
 
@@ -529,40 +447,25 @@ const TAX_DATA = {
     return '$' + Math.round(n).toLocaleString('en-CA');
   }
 
-  function formatBracketRange(rows, index){
-    const row = rows[index];
-    const prev = index === 0 ? 0 : rows[index - 1].upTo;
-    if (row.upTo === null) return formatMoney(prev + 1) + '+';
-    if (index === 0) return '$0 - ' + formatMoney(row.upTo);
-    return formatMoney(prev + 1) + ' - ' + formatMoney(row.upTo);
-  }
-
   function selectedProvince(){
     const option = $('rate').selectedOptions && $('rate').selectedOptions[0];
     return option ? option.dataset.province || '' : '';
   }
 
-  function updateTaxBracketPanel(){
+  function updateTaxBracketChip(){
     const province = selectedProvince();
-    const rowsEl = $('tax_bracket_rows');
-    const statusEl = $('tax_bracket_status');
-    if (!rowsEl || !statusEl) return;
+    const chip = $('estate_bracket_chip');
+    if (!chip) return;
 
     if (!province || !TAX_DATA.otherIncome[province]) {
-      statusEl.textContent = '自定义税率 · 税阶表适用于 BC / ON / AB';
-      rowsEl.innerHTML = '<div class="tax-row"><div class="tax-range">选择 BC、ON 或 AB 最高边际税率后，会显示对应年度税阶。</div><div class="tax-rate">—</div></div>';
+      chip.textContent = '自定义税率 · 无固定税阶';
       return;
     }
 
     const rows = TAX_DATA.otherIncome[province];
-    statusEl.textContent = province + ' · ' + TAX_DATA.year + ' · ' + TAX_DATA.source;
-    rowsEl.innerHTML = rows.map((row, index) => {
-      const isTop = row.upTo === null;
-      return '<div class="tax-row'+(isTop ? ' active' : '')+'">' +
-        '<div class="tax-range">'+formatBracketRange(rows, index)+'</div>' +
-        '<div class="tax-rate">'+formatRate(row.rate / 100)+'%</div>' +
-      '</div>';
-    }).join('');
+    const top = rows[rows.length - 1];
+    const prev = rows.length > 1 ? rows[rows.length - 2].upTo : 0;
+    chip.textContent = province + ' · ' + formatMoney(prev + 1) + '+ · ' + formatRate(top.rate / 100) + '%';
   }
 
   function populateMarginalRates(){
@@ -590,7 +493,7 @@ const TAX_DATA = {
       if (currentOption) currentOption.textContent = Math.round(TAX_DATA.inclusionRate * 100)+'%（'+TAX_DATA.year+' 现行）';
     }
 
-    updateTaxBracketPanel();
+    updateTaxBracketChip();
   }
 
   function calc(){
@@ -615,7 +518,7 @@ const TAX_DATA = {
 
     const total = corpTax + reTax + invTax + rrspTax;
     const offset = num('existing_ins') + num('liquid');
-    const gap = Math.max(0, total - offset);
+    const netGap = total - offset;
 
     setVal($('r_corp'), fmt(corpTax), corpTax===0);
     setVal($('r_re'),   fmt(reTax),   reTax===0);
@@ -627,11 +530,22 @@ const TAX_DATA = {
     totalEl.classList.remove('pulse'); void totalEl.offsetWidth; if(total>0) totalEl.classList.add('pulse');
 
     $('r_offset').textContent = '– ' + fmt(offset);
-    $('r_gap').textContent = fmt(gap);
+    const gapEl = $('r_gap');
+    const gapLbl = $('r_gap_lbl');
+    gapEl.classList.toggle('positive', netGap < 0);
+    if(netGap < 0){
+      gapLbl.textContent = '净正现金流';
+      gapEl.textContent = '+' + fmt(Math.abs(netGap));
+    } else {
+      gapLbl.textContent = '净流动性缺口';
+      gapEl.textContent = fmt(netGap);
+    }
 
     // Dynamic insight
     const ins = $('insight');
-    if(rrspTax>0 && rrspTax >= total*0.4 && total>0){
+    if(netGap < 0 && total>0){
+      ins.innerHTML = '现有保障与预留流动资金已覆盖预估税单，并形成约 <b>'+fmt(Math.abs(netGap))+'</b> 的净正现金流。这个数字可作为继承安排、遗产费用或额外流动性缓冲的参考。';
+    } else if(rrspTax>0 && rrspTax >= total*0.4 && total>0){
       ins.innerHTML = '注册账户清算贡献了税单的主要部分——<b>'+fmt(rrspTax)+'</b>，几乎是即时、无豁免的。<b>公司持有的永久寿险</b>赔付可经 CDA 免税分配，用确定的保费对冲这笔必然到来的税负。';
     } else if(corpTax>0){
       ins.innerHTML = '公司股份的隐含资本利得税约 <b>'+fmt(corpTax)+'</b>。<b>公司持有的永久寿险</b>身故赔付可经资本红利账户（CDA）<b>免税</b>分配给继承人——这是为数不多能把公司资金高效传给下一代的工具。';
@@ -639,27 +553,13 @@ const TAX_DATA = {
       ins.innerHTML = '填入资产数据，即时看到这笔常被忽略的税单。<b>公司持有的永久寿险</b>身故赔付可经资本红利账户（CDA）免税分配给继承人——用确定的保费，对冲不确定却必然到来的税负。';
     }
 
-    // Leverage
-    const prem = num('prem'), yrs = num('prem_yrs');
-    const premTotal = prem * yrs;
-    const covered = gap>0 ? gap : total;
-    $('r_premtotal').textContent = fmt(premTotal);
-    $('r_covered').textContent = fmt(covered);
-    if(premTotal>0 && covered>0){
-      const lev = covered / premTotal;
-      $('r_lev').textContent = lev.toFixed(1) + '×';
-      $('lev_note').textContent = '每投入 $1 保费，可创造约 $'+lev.toFixed(1)+' 的免税传承缺口覆盖。 / Each premium dollar covers ~$'+lev.toFixed(1)+' of tax-free legacy.';
-    } else {
-      $('r_lev').textContent = '—';
-      $('lev_note').textContent = 'Every premium dollar can create multiples in tax-free legacy.';
-    }
   }
 
   populateMarginalRates();
 
   ids.forEach(id => $(id).addEventListener('input', calc));
   $('rate').addEventListener('change', function(){
-    updateTaxBracketPanel();
+    updateTaxBracketChip();
     calc();
   });
   $('incl').addEventListener('change', calc);
@@ -669,7 +569,7 @@ const TAX_DATA = {
     $('corp_lcge').checked=false;
     $('rate').value=String(topRateFor('BC') || 0.535);
     $('incl').value=String(TAX_DATA.inclusionRate || 0.5);
-    updateTaxBracketPanel();
+    updateTaxBracketChip();
     calc();
   });
 
