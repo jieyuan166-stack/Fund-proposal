@@ -17,7 +17,7 @@
     --gold:#c9a24a; --gold-l:#e3c074;
     --bg:#0a0e14; --section:#11161f; --line:rgba(201,162,74,.28);
     --r:2px; --r-lg:2px;
-    --serif-en:'Cormorant Garamond',Georgia,serif;
+    --serif-en:Arial,Helvetica,sans-serif;
     --serif-cn:'Noto Serif SC','Songti SC',serif;
     --sans-cn:'Noto Sans SC',system-ui,sans-serif;
     --sh:0 18px 48px rgba(0,0,0,.2);
@@ -58,7 +58,7 @@
   .head::after{content:"";position:absolute;left:42px;right:42px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
   .head-inner{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:28px;align-items:end;}
   .head .brand{font-family:var(--serif-en);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;}
-  .head h1{margin:12px 0 10px;font-family:var(--serif-cn);font-size:clamp(25px,3.6vw,40px);font-weight:900;letter-spacing:0;line-height:1.12;}
+  .head h1{margin:12px 0 10px;font-family:var(--serif-cn);font-size:clamp(25px,3.6vw,40px);font-weight:500;letter-spacing:0;line-height:1.12;}
   .head h1 span{display:block;margin-top:7px;font-family:var(--serif-en);font-size:clamp(15px,1.6vw,19px);font-weight:600;color:#B8C7DA;letter-spacing:0;}
   .head p{margin:0;color:#C7D4E6;font-size:14.5px;max-width:660px;overflow-wrap:anywhere;}
   .head-logo{justify-self:end;text-align:right;}
@@ -71,7 +71,7 @@
   /* ---------- section ---------- */
   .sec{margin-top:34px;}
   .sec-h{font-family:var(--serif-en);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:0 0 6px;}
-  .sec-t{font-family:var(--serif-cn);font-size:21px;font-weight:800;color:var(--ink);margin:0 0 18px;letter-spacing:0;}
+  .sec-t{font-family:var(--serif-cn);font-size:21px;font-weight:500;color:var(--ink);margin:0 0 18px;letter-spacing:0;}
   .sec-t .en{display:block;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:0;margin-top:2px;}
 
   /* ---------- inputs ---------- */
@@ -182,7 +182,7 @@
   }
   .out .ov,.card .cv,.frow .fv,.srow .sv,.detail td:last-child,
   .ctrl input,.ctrl select,.rate-pill,.head-meta strong,.mobile-tax-year strong{
-    font-family:var(--serif-en),var(--sans-cn)!important;
+    font-family:Arial,Helvetica,var(--sans-cn)!important;
     font-variant-numeric:tabular-nums;
     letter-spacing:0!important;
     font-weight:700!important;
@@ -196,6 +196,8 @@
   .srow.total .sv{font-size:42px;color:var(--gold-l)!important;}
   .detail td:last-child{font-size:16px;color:var(--gold-l)!important;}
   .ctrl input,.ctrl select{font-size:18px;}
+  .head h1,.sec-t{font-weight:500!important;}
+  .en,.num{font-family:Arial,Helvetica,var(--sans-cn)!important;}
 
   /* ---------- responsive ---------- */
   @media(max-width:680px){

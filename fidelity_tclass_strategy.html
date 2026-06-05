@@ -474,7 +474,7 @@
       --estate-line:rgba(201,162,74,.28);
       --estate-panel:#11161f;
       --estate-panel-2:#0f141d;
-      --serif-en:'Cormorant Garamond',Georgia,serif;
+      --serif-en:Arial,Helvetica,sans-serif;
       --serif-cn:'Noto Serif SC','Songti SC',serif;
       --sans-cn:'Noto Sans SC',system-ui,sans-serif;
     }
@@ -485,7 +485,7 @@
       color:var(--estate-text);
       font-family:var(--sans-cn);
     }
-    .serif,.t-display,.t-section,h1,h2,h3{font-family:var(--serif-cn);letter-spacing:0!important;}
+    .serif,.t-display,.t-section,h1,h2,h3{font-family:var(--serif-cn);letter-spacing:0!important;font-weight:500!important;}
     .num,.en,.t-label,.t-num-lg,.t-num-sm,.big-metric{font-family:var(--serif-en),var(--sans-cn);}
     .hero-bg{
       background:
@@ -2519,10 +2519,10 @@ window.addEventListener('load', () => {
     .text-slate-700,.text-slate-600,.text-slate-500,.text-slate-400 {
       color:#9aa3b0!important;
     }
-    .num,.data-cell,.big-metric,.metric-72,.metric-48,.t-num-lg,.t-num-sm,
+    .en,.num,.data-cell,.big-metric,.metric-72,.metric-48,.t-num-lg,.t-num-sm,
     td:last-child,[id*="return"],[id*="tax"],[id*="value"],[id*="amount"],
     #calcInput,#monthlyOut,#annualOut,#taxSavedOut,#acbYearsOut {
-      font-family:'Cormorant Garamond','Noto Sans SC',serif!important;
+      font-family:Arial,Helvetica,'Noto Sans SC',sans-serif!important;
       font-variant-numeric:tabular-nums;
       letter-spacing:0!important;
     }
@@ -2539,6 +2539,9 @@ window.addEventListener('load', () => {
       background:#0b1018!important;
       border-color:rgba(201,162,74,.28)!important;
       color:#e8e6e0!important;
+    }
+    h1,.serif,.t-display,.t-section{
+      font-weight:500!important;
     }
   `;
   document.head.appendChild(style);
