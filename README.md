@@ -11,7 +11,7 @@ Static Triton Wealth proposal site with a small Node.js password gate.
 - `/api/data-health` reports data age and flags portfolio performance data as stale after 45 days by default.
 - Seg fund portfolio performance is updated on the NAS by `scripts/update-portfolio-data.sh`, which downloads Equitable/Fundata FundSummary PDFs, parses the official return tables, backs up the prior JSON, and rewrites `portfolio_data.json`.
 - Fidelity T-Class fund data is updated on the NAS by `scripts/update-fidelity-data.sh`, which downloads Fidelity Canada fund pages, parses the official Standard period returns and MER, backs up the prior JSON, and rewrites `fidelity_data.json`.
-- Investment tax calculator rates are updated on the NAS by `scripts/update-tax-rates.sh`, which downloads the current calendar year's TaxTips.ca combined federal/provincial marginal tax tables and rewrites the embedded tax data in `investment_tax_calculator.html`. The page renders the top-right tax year from that embedded data, not from hardcoded text.
+- Investment tax calculator and estate diagnostic rates are updated on the NAS by `scripts/update-tax-rates.sh`, which downloads the current calendar year's TaxTips.ca combined federal/provincial marginal tax tables and rewrites the embedded tax data in `investment_tax_calculator.html` and `estate_tax_diagnostic.html`. Both pages render their tax year/status from that embedded data, not from hardcoded text.
 - `scripts/update-all-data.sh` runs all data refreshes and is the monthly NAS cron target.
 - Fund returns are historical official-source returns. Do not present them as future projections.
 

@@ -271,11 +271,11 @@
             <select id="rate">
               <option value="0.535">BC 最高 53.5%</option>
               <option value="0.5353">ON 最高 53.53%</option>
-              <option value="0.48">AB 最高 48.0%</option>
+              <option value="0.48">AB 最高 48%</option>
               <option value="0.45">混合估算 45%</option>
               <option value="0.40">较低估算 40%</option>
             </select>
-            <div class="hint">身故年度多项资产叠加，多数高净值客户落在最高档。</div>
+            <div class="hint">边际税率自动读取最新税表；<span id="estate_tax_status">Tax data loading...</span></div>
           </div>
           <div class="field">
             <label>资本利得纳入率 <span class="en">Inclusion</span></label>
@@ -408,6 +408,25 @@
 </div>
 
 <script>
+/* TAX_DATA_START — 由 update_rates.py 自动生成，请勿手动修改此块 */
+const TAX_DATA = {
+  year: 2026,
+  source: "taxtips.ca",
+  fetched: "2026-06-05",
+  inclusionRate: 0.5,
+  otherIncome: {
+    AB:[{upTo:58523,rate:22.0},{upTo:61200,rate:28.5},{upTo:117045,rate:30.5},{upTo:154259,rate:36.0},{upTo:181440,rate:38.0},{upTo:185111,rate:41.29},{upTo:246813,rate:42.29},{upTo:258482,rate:43.29},{upTo:370220,rate:47.0},{upTo:null,rate:48.0}],
+    BC:[{upTo:50363,rate:19.6},{upTo:58523,rate:21.7},{upTo:100728,rate:28.2},{upTo:115648,rate:31.0},{upTo:117045,rate:32.79},{upTo:140430,rate:38.29},{upTo:181440,rate:40.7},{upTo:190405,rate:43.99},{upTo:258482,rate:46.09},{upTo:265545,rate:49.8},{upTo:null,rate:53.5}],
+    ON:[{upTo:53891,rate:19.05},{upTo:58523,rate:23.15},{upTo:94907,rate:29.65},{upTo:107785,rate:31.48},{upTo:111814,rate:33.89},{upTo:117045,rate:37.91},{upTo:150000,rate:43.41},{upTo:181440,rate:44.97},{upTo:220000,rate:48.26},{upTo:258482,rate:49.82},{upTo:null,rate:53.53}]
+  },
+  eligibleDividend: {
+    AB:[{upTo:58523,rate:-1.57},{upTo:61200,rate:7.4},{upTo:117045,rate:10.16},{upTo:154259,rate:17.75},{upTo:181440,rate:20.51},{upTo:185111,rate:25.05},{upTo:246813,rate:26.43},{upTo:258482,rate:27.81},{upTo:370220,rate:32.93},{upTo:null,rate:34.31}],
+    BC:[{upTo:50363,rate:-10.24},{upTo:58523,rate:-7.34},{upTo:100728,rate:1.63},{upTo:115648,rate:5.49},{upTo:117045,rate:7.96},{upTo:140430,rate:15.55},{upTo:181440,rate:18.88},{upTo:190405,rate:23.42},{upTo:258482,rate:26.32},{upTo:265545,rate:31.44},{upTo:null,rate:36.54}],
+    ON:[{upTo:53891,rate:-8.24},{upTo:58523,rate:-2.58},{upTo:94907,rate:6.39},{upTo:107785,rate:8.92},{upTo:111814,rate:12.24},{upTo:117045,rate:17.79},{upTo:150000,rate:25.38},{upTo:181440,rate:27.53},{upTo:220000,rate:32.07},{upTo:258482,rate:34.22},{upTo:null,rate:39.34}]
+  }
+};
+/* TAX_DATA_END */
+
 (function(){
   if (new URLSearchParams(location.search).has('embedded')) {
     document.body.classList.add('embedded-shell');
@@ -419,10 +438,48 @@
 
   const ids = ['corp_fmv','corp_acb','re_fmv','re_acb','inv_fmv','inv_acb','rrsp',
                'existing_ins','liquid','prem','prem_yrs'];
+  const provinceLabels = {BC:'British Columbia', ON:'Ontario', AB:'Alberta'};
+  const provinceOrder = ['BC','ON','AB'];
 
   function setVal(el, amount, isZero){
     el.textContent = amount;
     el.classList.toggle('zero', isZero);
+  }
+
+  function topRateFor(province){
+    const rows = TAX_DATA.otherIncome && TAX_DATA.otherIncome[province] ? TAX_DATA.otherIncome[province] : [];
+    const top = rows[rows.length - 1];
+    return top ? top.rate / 100 : null;
+  }
+
+  function formatRate(rate){
+    return (rate * 100).toFixed(2).replace(/\.?0+$/,'');
+  }
+
+  function populateMarginalRates(){
+    const rateSelect = $('rate');
+    const options = provinceOrder.map(code => {
+      const rate = topRateFor(code);
+      if (rate === null) return '';
+      return '<option value="'+rate+'">'+code+' 最高 '+formatRate(rate)+'% · '+provinceLabels[code]+'</option>';
+    }).join('');
+
+    rateSelect.innerHTML = options +
+      '<option value="0.45">混合估算 45%</option>' +
+      '<option value="0.40">较低估算 40%</option>';
+    rateSelect.value = String(topRateFor('BC') || 0.535);
+
+    const status = $('estate_tax_status');
+    if (status) {
+      status.textContent = '税率年份 '+TAX_DATA.year+' · 来源 '+TAX_DATA.source+' · 抓取 '+TAX_DATA.fetched;
+    }
+
+    const incl = $('incl');
+    if (incl && TAX_DATA.inclusionRate) {
+      incl.value = String(TAX_DATA.inclusionRate);
+      const currentOption = Array.from(incl.options).find(option => Number(option.value) === TAX_DATA.inclusionRate);
+      if (currentOption) currentOption.textContent = Math.round(TAX_DATA.inclusionRate * 100)+'%（'+TAX_DATA.year+' 现行）';
+    }
   }
 
   function calc(){
@@ -487,6 +544,8 @@
     }
   }
 
+  populateMarginalRates();
+
   ids.forEach(id => $(id).addEventListener('input', calc));
   $('rate').addEventListener('change', calc);
   $('incl').addEventListener('change', calc);
@@ -494,7 +553,8 @@
   $('reset').addEventListener('click', function(){
     ids.forEach(id => $(id).value='');
     $('corp_lcge').checked=false;
-    $('rate').value='0.535'; $('incl').value='0.5';
+    $('rate').value=String(topRateFor('BC') || 0.535);
+    $('incl').value=String(TAX_DATA.inclusionRate || 0.5);
     calc();
   });
 

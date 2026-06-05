@@ -9,12 +9,15 @@ LOG_FILE="$LOG_DIR/tax-rates-update.$STAMP.log"
 mkdir -p "$LOG_DIR"
 
 {
-  echo "[$(date -Iseconds)] Starting Triton investment tax rate update"
-  /usr/bin/python3 "$ROOT/scripts/update-tax-rates.py" \
-    --file "$ROOT/investment_tax_calculator.html" \
-    --year "$(date +%Y)"
-  echo "[$(date -Iseconds)] Completed Triton investment tax rate update"
+  echo "[$(date -Iseconds)] Starting Triton tax rate update"
+  for target in investment_tax_calculator.html estate_tax_diagnostic.html; do
+    echo "[$(date -Iseconds)] Updating $target"
+    /usr/bin/python3 "$ROOT/scripts/update-tax-rates.py" \
+      --file "$ROOT/$target" \
+      --year "$(date +%Y)"
+    rm -f "$ROOT/$target.bak"
+  done
+  echo "[$(date -Iseconds)] Completed Triton tax rate update"
 } >> "$LOG_FILE" 2>&1
 
-rm -f "$ROOT/investment_tax_calculator.html.bak"
 find "$LOG_DIR" -name 'tax-rates-update.*.log' -type f -mtime +180 -delete
