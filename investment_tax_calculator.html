@@ -175,6 +175,28 @@
   .detail tr.em td{background:rgba(201,162,74,.08);}
   .detail tr.em td:last-child{color:var(--green);}
 
+  /* Final dark-theme readability pass */
+  .field label,.flow-h,.frow.total .fl,.tg,summary,.detail td:last-child,
+  .card.navy .cv,.out .ov,.frow.total .fv{
+    color:var(--ink)!important;
+  }
+  .out .ov,.card .cv,.frow .fv,.srow .sv,.detail td:last-child,
+  .ctrl input,.ctrl select,.rate-pill,.head-meta strong,.mobile-tax-year strong{
+    font-family:var(--serif-en),var(--sans-cn)!important;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:0!important;
+    font-weight:700!important;
+  }
+  .out .ov{font-size:34px;color:var(--gold-l)!important;line-height:1;}
+  .frow .fv{font-size:20px;color:var(--ink)!important;}
+  .frow.total .fv{font-size:28px;color:var(--gold-l)!important;}
+  .card .cv{font-size:42px;color:var(--gold-l)!important;line-height:1;}
+  .cost-pair .rate-pill{font-size:16px;color:var(--gold-l)!important;}
+  .srow .sv{font-size:25px;}
+  .srow.total .sv{font-size:42px;color:var(--gold-l)!important;}
+  .detail td:last-child{font-size:16px;color:var(--gold-l)!important;}
+  .ctrl input,.ctrl select{font-size:18px;}
+
   /* ---------- responsive ---------- */
   @media(max-width:680px){
     .mobile-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;position:fixed;top:0;left:0;right:0;z-index:20;width:100%;height:52px;padding:9px 10px;background:rgba(10,14,20,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(12px);}
