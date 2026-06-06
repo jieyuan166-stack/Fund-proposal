@@ -1254,7 +1254,7 @@ let FIDELITY_DATA_META = {
   }
 };
 const FUND_DATA = {
-  ucg: { name: 'Fidelity Canadian Growth Company Class', nameEN: 'Cdn Growth Co.', mer: 2.23, role: '加股成长',   color: '#0A1628', y1:57.28, y3:33.21, y5:17.25 },
+  ucg: { name: 'Fidelity Canadian Growth Company Class', nameEN: 'Cdn Growth Co.', mer: 2.23, role: '加股成长',   color: '#EA580C', y1:57.28, y3:33.21, y5:17.25 },
   ucl: { name: 'Fidelity Insights Class',                  nameEN: 'Insights Class', mer: 2.22, role: '全球精选',   color: '#3B82F6', y1:29.60, y3:25.71, y5:15.14 },
   ugq: { name: 'Fidelity Global Growth and Value Class',   nameEN: 'Global G&V',     mer: 2.24, role: '价值+成长',  color: '#C9A84C', y1:24.37, y3:19.11, y5:12.08 },
   ugb: { name: 'Fidelity Global Balanced Class Portfolio', nameEN: 'Global Balanced',mer: 2.19, role: '稳定器',     color: '#10B981', y1:20.61, y3:13.81, y5: 7.93 },
@@ -1495,7 +1495,7 @@ function renderPortfolio() {
     return `<tr class="border-b border-gray-100">
       <td class="py-3 px-3">
         <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${f.color}"></div>
+          <div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${f.color};box-shadow:0 0 0 1px rgba(232,230,224,.5)"></div>
           <span class="font-medium text-navy text-[11px] en">${f.name}</span>
         </div>
       </td>

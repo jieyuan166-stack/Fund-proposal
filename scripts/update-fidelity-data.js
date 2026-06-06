@@ -15,7 +15,7 @@ const FUND_SOURCES = {
     name: 'Fidelity Canadian Growth Company Class',
     nameEN: 'Cdn Growth Co.',
     role: '加股成长',
-    color: '#0A1628'
+    color: '#EA580C'
   },
   ucl: {
     slug: 'ugg',
