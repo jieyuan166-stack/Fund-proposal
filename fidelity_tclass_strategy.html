@@ -592,6 +592,22 @@
       justify-content:center;
       text-wrap:balance;
     }
+    .tclass-mini-grid{align-items:stretch;}
+    .tclass-mini-metric{
+      background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.03))!important;
+      border:1px solid rgba(201,162,74,.24)!important;
+      color:var(--estate-text)!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .tclass-mini-metric-blue{border-color:rgba(158,185,232,.42)!important;}
+    .tclass-mini-metric-gold{border-color:rgba(227,192,116,.42)!important;}
+    .tclass-mini-label{
+      color:var(--estate-muted)!important;
+      font-weight:700!important;
+      letter-spacing:.08em!important;
+    }
+    #t5_annual,#t5_acbYear{color:#9eb9e8!important;}
+    #t8_annual,#t8_acbYear{color:#e3c074!important;}
     @media(max-width:1180px){
       .cashflow-calculator-grid{grid-template-columns:1fr!important;}
     }
@@ -910,13 +926,13 @@
           <div class="text-3xl font-extrabold text-blue-600 en" id="t5_monthly">$417</div>
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        <div class="rounded-lg p-3 text-center" style="background:#EFF6FF">
-          <div class="text-[10px] text-gray-500 tracking-wider mb-1">年度合计</div>
+      <div class="tclass-mini-grid grid grid-cols-2 gap-2 mb-4">
+        <div class="tclass-mini-metric tclass-mini-metric-blue rounded-lg p-3 text-center">
+          <div class="tclass-mini-label text-[10px] tracking-wider mb-1">年度合计</div>
           <div class="text-lg font-bold text-blue-700 en" id="t5_annual">$5,000</div>
         </div>
-        <div class="rounded-lg p-3 text-center" style="background:#EFF6FF">
-          <div class="text-[10px] text-gray-500 tracking-wider mb-1">ACB→0 年数</div>
+        <div class="tclass-mini-metric tclass-mini-metric-blue rounded-lg p-3 text-center">
+          <div class="tclass-mini-label text-[10px] tracking-wider mb-1">ACB→0 年数</div>
           <div class="text-lg font-bold text-blue-700 en" id="t5_acbYear">--</div>
         </div>
       </div>
@@ -947,13 +963,13 @@
           <div class="text-3xl font-extrabold en" id="t8_monthly" style="color:#C9A84C">$667</div>
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        <div class="rounded-lg p-3 text-center" style="background:#FFFBF0">
-          <div class="text-[10px] text-gray-500 tracking-wider mb-1">年度合计</div>
+      <div class="tclass-mini-grid grid grid-cols-2 gap-2 mb-4">
+        <div class="tclass-mini-metric tclass-mini-metric-gold rounded-lg p-3 text-center">
+          <div class="tclass-mini-label text-[10px] tracking-wider mb-1">年度合计</div>
           <div class="text-lg font-bold en" id="t8_annual" style="color:#92400E">$8,000</div>
         </div>
-        <div class="rounded-lg p-3 text-center" style="background:#FFFBF0">
-          <div class="text-[10px] text-gray-500 tracking-wider mb-1">ACB→0 年数</div>
+        <div class="tclass-mini-metric tclass-mini-metric-gold rounded-lg p-3 text-center">
+          <div class="tclass-mini-label text-[10px] tracking-wider mb-1">ACB→0 年数</div>
           <div class="text-lg font-bold en" id="t8_acbYear" style="color:#92400E">--</div>
         </div>
       </div>
@@ -2691,6 +2707,23 @@ window.addEventListener('load', () => {
       justify-content:center!important;
       text-wrap:balance!important;
     }
+    .tclass-mini-grid{align-items:stretch!important;}
+    .tclass-mini-metric{
+      background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.03))!important;
+      background-color:rgba(255,255,255,.045)!important;
+      border:1px solid rgba(201,162,74,.24)!important;
+      color:#e8e6e0!important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+    }
+    .tclass-mini-metric-blue{border-color:rgba(158,185,232,.42)!important;}
+    .tclass-mini-metric-gold{border-color:rgba(227,192,116,.42)!important;}
+    .tclass-mini-label{
+      color:#9aa3b0!important;
+      font-weight:700!important;
+      letter-spacing:.08em!important;
+    }
+    #t5_annual,#t5_acbYear{color:#9eb9e8!important;}
+    #t8_annual,#t8_acbYear{color:#e3c074!important;}
     @media(max-width:1180px){
       .cashflow-calculator-grid{grid-template-columns:1fr!important;}
     }
@@ -2754,6 +2787,19 @@ window.addEventListener('load', () => {
       #rcMonthly .text-xs,#rcAnnual .text-xs,#rcTaxSaved .text-xs,#rcAcbYear .text-xs{
         min-height:22px!important;
         font-size:10px!important;
+      }
+      .tclass-mini-metric{
+        padding:11px 8px!important;
+        min-width:0!important;
+      }
+      .tclass-mini-label{
+        font-size:9px!important;
+        line-height:1.25!important;
+        white-space:normal!important;
+      }
+      #t5_annual,#t5_acbYear,#t8_annual,#t8_acbYear{
+        font-size:17px!important;
+        line-height:1.1!important;
       }
       .flex.flex-col.items-center.justify-center>div[style*="width:240px"]{
         width:min(210px,100%)!important;
