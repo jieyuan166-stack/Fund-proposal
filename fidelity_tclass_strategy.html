@@ -495,7 +495,7 @@
     }
     nav.no-print{border-bottom:1px solid var(--estate-line);box-shadow:0 20px 50px rgba(0,0,0,.25);}
     nav.no-print .rounded-full,nav.no-print button,.tclass-toggle button{border-radius:2px!important;}
-    .lux-card,.matrix-cell,.comparison-matrix,.path-step,.bg-white,table{
+    .lux-card,.matrix-cell,.comparison-matrix,.path-step,.concept-card,.bg-white,table{
       background:linear-gradient(180deg,var(--estate-panel),var(--estate-panel-2))!important;
       border-color:var(--estate-line)!important;
       color:var(--estate-text)!important;
@@ -1142,8 +1142,8 @@
   </details>
 
   <!-- ═══ Section 8: Advisor Contact ═══ -->
-  <div class="section-divider"><span>您的专属顾问 · Your Advisor</span></div>
-  <section class="mt-0">
+  <div class="section-divider mobile-advisor-hide"><span>您的专属顾问 · Your Advisor</span></div>
+  <section class="mt-0 mobile-advisor-hide">
     <div class="lux-card-dark p-8" style="background:linear-gradient(135deg,#0A1628 0%,#1A2D4D 100%)">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
         <div class="lg:col-span-1 text-center lg:text-left">
@@ -2707,6 +2707,45 @@ window.addEventListener('load', () => {
       th,td{padding-left:6px!important;padding-right:6px!important;}
       .preset-chip{padding:5px 9px!important;font-size:10px!important;}
       .tclass-toggle button{padding:7px 5px!important;font-size:11px!important;white-space:nowrap;}
+      .mobile-advisor-hide{display:none!important;}
+      .concept-card,
+      .lux-card,
+      .lux-card [style*="background:#F"],
+      .lux-card [style*="background: #F"],
+      .concept-card [style*="background:#F"],
+      .concept-card [style*="background: #F"],
+      details.accordion,
+      details.accordion summary,
+      details.accordion .content{
+        background:linear-gradient(180deg,#11161f,#0f141d)!important;
+        background-color:#11161f!important;
+        border-color:rgba(201,162,74,.28)!important;
+        color:#e8e6e0!important;
+      }
+      .concept-card h3,
+      .concept-card p,
+      .concept-card strong,
+      .lux-card h3,
+      .lux-card h4,
+      .lux-card p,
+      .lux-card th,
+      .lux-card td,
+      .lux-card .text-gray-400,
+      .lux-card .text-gray-500,
+      .lux-card .text-gray-600,
+      .lux-card .text-gray-700,
+      details.accordion .content,
+      details.accordion .content p,
+      details.accordion .content li,
+      details.accordion .content strong{
+        color:#d7d4cb!important;
+      }
+      .concept-card strong,
+      .lux-card strong,
+      details.accordion .content strong{color:#e3c074!important;}
+      .text-blue-600,.text-blue-700{color:#9eb9e8!important;}
+      .lux-card .text-navy,
+      .concept-card .text-navy{color:#e8e6e0!important;}
     }
   `;
   document.head.appendChild(style);

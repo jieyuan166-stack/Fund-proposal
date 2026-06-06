@@ -497,6 +497,20 @@
       box-shadow:0 18px 48px rgba(0,0,0,.2)!important;
       border-radius:2px!important;
     }
+    details.accordion summary,
+    details.accordion .content,
+    details.accordion .content p,
+    details.accordion .content li,
+    details.accordion .content span{
+      color:var(--estate-text)!important;
+    }
+    details.accordion .content strong{color:var(--gold-l)!important;}
+    details.accordion .content [style*="background:#F"],
+    details.accordion .content [style*="background: #F"]{
+      background:#0b1018!important;
+      border-color:var(--estate-line)!important;
+      color:var(--estate-text)!important;
+    }
     .lux-card-dark{background:linear-gradient(180deg,#141b26,#0f141d)!important;border:1px solid var(--estate-line)!important;border-radius:2px!important;}
     .matrix-head,.path-step-num{background:#0a0e14!important;color:var(--gold-l)!important;}
     .matrix-gold,.fund-table tbody tr:nth-child(even),.fund-table tfoot tr,.fund-table thead tr{background:rgba(201,162,74,.08)!important;}
@@ -866,8 +880,8 @@
   </section>
 
   <!-- ═══════════ 客户经理联系卡片 ═══════════ -->
-  <div class="section-divider"><span>您的专属顾问 · Your Advisor</span></div>
-  <section class="mt-0">
+  <div class="section-divider mobile-advisor-hide"><span>您的专属顾问 · Your Advisor</span></div>
+  <section class="mt-0 mobile-advisor-hide">
     <div class="lux-card-dark advisor-card p-8" style="background:linear-gradient(135deg,#0A1628 0%,#1A2D4D 100%)">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
         <div class="lg:col-span-1 text-center lg:text-left">
@@ -2767,6 +2781,29 @@ window.addEventListener('load', () => {
     [style*="color:#1D4ED8"],[style*="color: #1D4ED8"],
     [style*="color:#1E40AF"],[style*="color: #1E40AF"],
     [style*="color:#3730A3"],[style*="color: #3730A3"]{color:#9eb9e8!important;}
+    details.accordion,
+    details.accordion summary,
+    details.accordion .content,
+    details.accordion .content [style*="background:#F"],
+    details.accordion .content [style*="background: #F"]{
+      background:linear-gradient(180deg,#11161f,#0f141d)!important;
+      background-color:#11161f!important;
+      border-color:rgba(201,162,74,.28)!important;
+      color:#e8e6e0!important;
+    }
+    details.accordion summary span,
+    details.accordion .content,
+    details.accordion .content p,
+    details.accordion .content li,
+    details.accordion .content span,
+    details.accordion .content .text-xs,
+    details.accordion .content .text-gray-400,
+    details.accordion .content .text-gray-500,
+    details.accordion .content .text-gray-600{
+      color:#d7d4cb!important;
+    }
+    details.accordion .content strong{color:#e3c074!important;}
+    details.accordion .text-red-700{color:#ee8f82!important;}
     @media(max-width:767px){
       html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;}
       .mobile-switch{width:100vw!important;max-width:100vw!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;}
@@ -2803,6 +2840,7 @@ window.addEventListener('load', () => {
       .chart-subtitle{font-size:9.5px!important;line-height:1.45!important;}
       [class*="text-white/"],[class*="text-blue-200/"]{color:rgba(232,230,224,.72)!important;}
       section.hero-bg p{white-space:normal!important;text-overflow:clip!important;overflow:visible!important;}
+      .mobile-advisor-hide{display:none!important;}
     }
   `;
   document.head.appendChild(style);
