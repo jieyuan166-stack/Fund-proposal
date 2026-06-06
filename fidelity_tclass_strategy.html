@@ -1834,14 +1834,32 @@ function initPortfolioChart() {
   const labels = p.holdings.map(h => FUND_DATA[h.key].nameEN);
   const data   = p.holdings.map(h => h.alloc);
   const colors = p.holdings.map(h => FUND_DATA[h.key].color);
+  const mobile = window.matchMedia('(max-width: 767px)').matches;
 
   CH.portfolio = new Chart(canvas, {
     type: 'doughnut',
-    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 3, borderColor: '#fff', hoverOffset: 12 }]},
+    data: { labels, datasets: [{
+      data,
+      backgroundColor: colors,
+      borderWidth: mobile ? .75 : 1.25,
+      borderColor: 'rgba(10,14,20,.82)',
+      hoverBorderWidth: 1,
+      hoverOffset: mobile ? 4 : 7
+    }]},
     options: {
-      responsive: true, maintainAspectRatio: true, cutout: '62%',
+      responsive: true, maintainAspectRatio: true, cutout: mobile ? '68%' : '64%',
       plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 10, family: 'Inter' }, padding: 10, usePointStyle: true, boxWidth: 8 }},
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#c8cdd5',
+            font: { size: mobile ? 8 : 10, family: 'Arial' },
+            padding: mobile ? 6 : 10,
+            usePointStyle: true,
+            pointStyleWidth: mobile ? 6 : 8,
+            boxWidth: mobile ? 6 : 8
+          }
+        },
         tooltip: { padding: 10, backgroundColor: '#0A1628', titleColor: '#C9A84C',
                    callbacks: { label: c => ` ${c.label}: ${c.parsed}%` }}
       }
@@ -2632,6 +2650,63 @@ window.addEventListener('load', () => {
     }
     h1,.serif,.t-display,.t-section{
       font-weight:500!important;
+    }
+    [style*="color:#047857"],[style*="color: #047857"],
+    [style*="color:#079455"],[style*="color: #079455"],
+    [style*="color:#10B981"],[style*="color: #10B981"]{color:#7fc7a3!important;}
+    [style*="color:#B91C1C"],[style*="color: #B91C1C"],
+    [style*="color:#D92D20"],[style*="color: #D92D20"],
+    [style*="color:#EF4444"],[style*="color: #EF4444"]{color:#ee8f82!important;}
+    [style*="color:#92400E"],[style*="color: #92400E"],
+    [style*="color:#9A7B2E"],[style*="color: #9A7B2E"]{color:#e3c074!important;}
+    [style*="color:#1D4ED8"],[style*="color: #1D4ED8"],
+    [style*="color:#1E40AF"],[style*="color: #1E40AF"],
+    [style*="color:#3730A3"],[style*="color: #3730A3"],
+    [style*="color:#6D28D9"],[style*="color: #6D28D9"]{color:#9eb9e8!important;}
+    @media(max-width:767px){
+      html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;}
+      .mobile-switch{width:100vw!important;max-width:100vw!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;}
+      .grid>*{min-width:0;}
+      main{padding-left:12px!important;padding-right:12px!important;padding-bottom:42px!important;}
+      .lux-card,.lux-card-dark,.concept-card{padding:16px!important;}
+      .t-display{font-size:clamp(21px,6.4vw,26px)!important;line-height:1.25!important;text-wrap:balance;}
+      .t-section{font-size:17px!important;line-height:1.3!important;}
+      .t-caption,.text-xs{font-size:11px!important;line-height:1.55!important;}
+      .section-divider{margin:30px 0 20px!important;gap:9px!important;}
+      .section-divider span{font-size:8px!important;letter-spacing:.09em!important;text-align:center;white-space:normal!important;}
+      .big-metric,.metric-72{font-size:clamp(28px,9vw,38px)!important;line-height:1!important;}
+      .metric-48,.t-num-lg,#calcInput{font-size:clamp(25px,7.8vw,32px)!important;line-height:1!important;}
+      .t-num-sm,[style*="background:#F"] .t-num-sm,[style*="background: #F"] .t-num-sm{
+        font-size:18px!important;
+      }
+      .data-cell,td:last-child{font-size:13.5px!important;}
+      .cashflow-metric-card,
+      #rcMonthly,#rcAnnual,#rcTaxSaved,#rcAcbYear{
+        min-height:128px!important;
+        padding:13px 10px!important;
+        gap:5px!important;
+      }
+      .cashflow-metric-card .big-metric,
+      #rcMonthly .big-metric,#rcAnnual .big-metric,#rcTaxSaved .big-metric,#rcAcbYear .big-metric{
+        font-size:clamp(23px,7.2vw,29px)!important;
+      }
+      .cashflow-metric-card .text-xs,
+      #rcMonthly .text-xs,#rcAnnual .text-xs,#rcTaxSaved .text-xs,#rcAcbYear .text-xs{
+        min-height:22px!important;
+        font-size:10px!important;
+      }
+      .flex.flex-col.items-center.justify-center>div[style*="width:240px"]{
+        width:min(210px,100%)!important;
+        height:210px!important;
+      }
+      #chartCompare{max-height:280px!important;}
+      #chartTax{max-height:250px!important;}
+      [class*="text-white/"],[class*="text-blue-200/"]{color:rgba(232,230,224,.72)!important;}
+      section.hero-bg p{white-space:normal!important;text-overflow:clip!important;overflow:visible!important;}
+      table{font-size:11px!important;}
+      th,td{padding-left:6px!important;padding-right:6px!important;}
+      .preset-chip{padding:5px 9px!important;font-size:10px!important;}
+      .tclass-toggle button{padding:7px 5px!important;font-size:11px!important;white-space:nowrap;}
     }
   `;
   document.head.appendChild(style);

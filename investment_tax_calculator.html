@@ -201,13 +201,14 @@
 
   /* ---------- responsive ---------- */
   @media(max-width:680px){
-    .mobile-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;position:fixed;top:0;left:0;right:0;z-index:20;width:100%;height:52px;padding:9px 10px;background:rgba(10,14,20,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(12px);}
+    .mobile-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;position:fixed;top:0;left:0;right:0;z-index:20;width:100vw;max-width:100vw;height:52px;padding:9px 10px;background:rgba(10,14,20,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(12px);}
     .mobile-switch a{flex:1 1 0;min-width:0;min-height:34px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:2px;color:var(--ink);background:#11161f;text-decoration:none;font-size:10px;font-weight:800;line-height:1.15;text-align:center;overflow:hidden;text-overflow:ellipsis;}
     .mobile-switch a.active{border-color:rgba(201,162,74,.55);background:rgba(201,162,74,.12);color:var(--gold-l);}
     .site-nav{display:none;}
     .wrap{width:100vw;max-width:100vw;padding:68px 14px 64px;overflow:hidden;}
-    .head{width:100%;padding:28px 22px;} .head h1{font-size:23px;overflow-wrap:anywhere;}
-    .head p{font-size:13.5px;overflow-wrap:anywhere;}
+    .head{width:100%;padding:24px 18px;} .head h1{font-size:21px;line-height:1.22;overflow-wrap:anywhere;}
+    .head h1 span{font-size:14px;line-height:1.35;}
+    .head p{font-size:12.5px;line-height:1.65;overflow-wrap:anywhere;}
     .head-inner{grid-template-columns:1fr;}
     .head-logo{display:none;}
     .mobile-tax-year{display:inline-flex;align-items:center;gap:7px;margin:0 0 13px;padding:6px 9px;border:1px solid rgba(201,168,76,.42);border-radius:999px;background:rgba(255,255,255,.055);color:var(--gold);font-family:'Inter',sans-serif;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;}
@@ -216,7 +217,26 @@
     .outs{grid-template-columns:1fr;}
     .flows{grid-template-columns:1fr;}
     .hl{grid-template-columns:1fr;}
-    .card .cv{font-size:32px;}
+    .sec{margin-top:27px;}
+    .sec-h{font-size:10px;letter-spacing:.12em;}
+    .sec-t{font-size:18px;line-height:1.35;margin-bottom:15px;}
+    .sec-t .en{font-size:11.5px;}
+    .field label{font-size:12px;color:var(--ink)!important;}
+    .out,.flow,.card,.summary{padding:17px 15px;}
+    .out .ov{font-size:27px;}
+    .frow .fl{font-size:12px;}
+    .frow .fv{font-size:17px;}
+    .frow.total .fv{font-size:23px;}
+    .card .cv{font-size:29px!important;}
+    .card .cl{font-size:11.5px;min-height:0;}
+    .srow .sl{font-size:12.5px;}
+    .srow .sv{font-size:19px;}
+    .srow.total .sl{font-size:14px;}
+    .srow.total .sv{font-size:31px;}
+    .detail{font-size:11.5px;}
+    .detail td{padding:9px 10px;}
+    .detail td:last-child{font-size:13px;}
+    .hint,.tgnote,.summary-note,.disc{color:#aeb6c2;}
   }
   body.embedded-shell .mobile-switch{display:none!important;}
   body.embedded-shell .site-nav{display:none!important;}
@@ -383,7 +403,7 @@
 const TAX_DATA = {
   year: 2026,
   source: "taxtips.ca",
-  fetched: "2026-06-05",
+  fetched: "2026-06-06",
   inclusionRate: 0.5,
   otherIncome: {
     AB:[{upTo:58523,rate:22.0},{upTo:61200,rate:28.5},{upTo:117045,rate:30.5},{upTo:154259,rate:36.0},{upTo:181440,rate:38.0},{upTo:185111,rate:41.29},{upTo:246813,rate:42.29},{upTo:258482,rate:43.29},{upTo:370220,rate:47.0},{upTo:null,rate:48.0}],
