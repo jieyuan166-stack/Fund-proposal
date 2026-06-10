@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-04-30T16:00:00-04:00",
-  "asOfLabel": "2026年4月30日",
+  "lastUpdated": "2026-05-31T16:00:00-04:00",
+  "asOfLabel": "2026年5月31日",
   "dataSource": {
     "primary": "Equitable Life Fundata FundSummary PDFs",
     "url": "https://equitablelife.fundata.com",
     "note": "Fund returns are parsed from Equitable/Fundata FundSummary PDFs. Returns are net of MER when stated by source; guarantee fees are not included. Portfolio returns are allocation-weighted from fund-level returns.",
-    "lastAutomatedUpdate": "2026-05-27T00:00:06.673Z",
+    "lastAutomatedUpdate": "2026-06-10T23:10:31.052Z",
     "updateMode": "NAS monthly cron; official PDFs parsed with pdftotext"
   },
   "benchmarks": {
@@ -42,9 +42,9 @@
       "objective": "以收益型与低波动资产为核心，降低组合回撤，争取明显优于定存的中长期复合增长。",
       "suitableClient": "风险承受度较低、接近退休或已退休、希望减少市场波动但仍保留长期增长潜力的客户。",
       "metrics": {
-        "annualReturn3Y": 13.48,
-        "annualReturn5Y": 9.35,
-        "annualReturn1Y": 24.2,
+        "annualReturn3Y": 15.53,
+        "annualReturn5Y": 9.79,
+        "annualReturn1Y": 23.21,
         "ytdReturn": 5.68,
         "volatility": 7.8,
         "maxDrawdown": -9.5,
@@ -57,87 +57,87 @@
           "name": "Fidelity® Tactical High Income",
           "alloc": 50,
           "role": "收益核心",
-          "y1": 24.6,
-          "y3": 11.4,
-          "y5": 7.3,
+          "y1": 24,
+          "y3": 12.6,
+          "y5": 7.9,
           "ytd": 5.6,
           "mer": 2.82,
           "source": {
             "id": "857506",
             "label": "Equitable Fidelity Tactical High Income",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857506?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "MFS Low Volatility Canadian Equity",
           "alloc": 20,
           "role": "低波动加股",
-          "y1": 20.9,
-          "y3": 15.7,
-          "y5": 11.1,
+          "y1": 19.3,
+          "y3": 19,
+          "y5": 11.5,
           "ytd": 4.4,
           "mer": 2.86,
           "source": {
             "id": "577",
             "label": "Equitable MFS Low Volatility Canadian Equity",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/577?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Fidelity® Dividend",
           "alloc": 15,
           "role": "股息成长",
-          "y1": 24.4,
-          "y3": 13.6,
-          "y5": 11.2,
+          "y1": 22.4,
+          "y3": 16.4,
+          "y5": 11,
           "ytd": 8.3,
           "mer": 2.8,
           "source": {
             "id": "857504",
             "label": "Equitable Fidelity Dividend",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857504?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Vanguard Canada Index ETF",
           "alloc": 5,
           "role": "加股市场宽度",
-          "y1": 32.7,
-          "y3": 18.5,
-          "y5": 13.4,
+          "y1": 28.7,
+          "y3": 21.5,
+          "y5": 13,
           "ytd": 6.4,
           "mer": 2.48,
           "source": {
             "id": "857561",
             "label": "Equitable Vanguard Canada Index ETF",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857561?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Vanguard S&P 500 Index ETF",
           "alloc": 5,
           "role": "美股核心",
-          "y1": 30,
-          "y3": 20,
-          "y5": 13.2,
+          "y1": 31.2,
+          "y3": 22.3,
+          "y5": 15,
           "ytd": 3.7,
           "mer": 2.33,
           "source": {
             "id": "857565",
             "label": "Equitable Vanguard S&P 500 Index ETF",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857565?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Fidelity® Global Equity+ Balanced",
           "alloc": 5,
           "role": "全球稳定器",
-          "y1": 18.5,
+          "y1": 19.9,
           "y3": null,
           "y5": null,
           "ytd": 4.9,
@@ -146,7 +146,7 @@
             "id": "857505",
             "label": "Equitable Fidelity Global Equity+ Balanced",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857505?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         }
       ],
@@ -213,9 +213,9 @@
       "objective": "在可接受中等波动的前提下，提高美股、全球价值与国际股票配置，明显拉开与稳健型的增长目标。",
       "suitableClient": "希望提升长期增长潜力、可接受中等市场波动、投资期 5 年以上的成长型客户。",
       "metrics": {
-        "annualReturn3Y": 19.27,
-        "annualReturn5Y": 12.55,
-        "annualReturn1Y": 31.37,
+        "annualReturn3Y": 21.61,
+        "annualReturn5Y": 13.53,
+        "annualReturn1Y": 31.32,
         "ytdReturn": 5.79,
         "volatility": 13.5,
         "maxDrawdown": -18.5,
@@ -228,96 +228,96 @@
           "name": "Vanguard S&P 500 Index ETF",
           "alloc": 24,
           "role": "美股核心引擎",
-          "y1": 30,
-          "y3": 20,
-          "y5": 13.2,
+          "y1": 31.2,
+          "y3": 22.3,
+          "y5": 15,
           "ytd": 3.7,
           "mer": 2.33,
           "source": {
             "id": "857565",
             "label": "Equitable Vanguard S&P 500 Index ETF",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857565?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Fidelity® U.S. Focused Stock",
           "alloc": 16,
           "role": "美股成长增强",
-          "y1": 45.5,
-          "y3": 26,
-          "y5": 14.8,
+          "y1": 48.6,
+          "y3": 28.2,
+          "y5": 17.3,
           "ytd": 11.9,
           "mer": 2.84,
           "source": {
             "id": "730513",
             "label": "Equitable Fidelity U.S. Focused Stock",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/730513?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Brandes Global Equity",
           "alloc": 20,
           "role": "全球价值",
-          "y1": 24.6,
-          "y3": 18.5,
-          "y5": 13.5,
+          "y1": 22.9,
+          "y3": 20.8,
+          "y5": 13.2,
           "ytd": 1.3,
           "mer": 2.83,
           "source": {
             "id": "857471",
             "label": "Equitable Brandes Global Equity",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857471?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Vanguard Canada Index ETF",
           "alloc": 15,
           "role": "本国核心",
-          "y1": 32.7,
-          "y3": 18.5,
-          "y5": 13.4,
+          "y1": 28.7,
+          "y3": 21.5,
+          "y5": 13,
           "ytd": 6.4,
           "mer": 2.48,
           "source": {
             "id": "857561",
             "label": "Equitable Vanguard Canada Index ETF",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857561?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Vanguard Developed All Cap ex NA ETF",
           "alloc": 15,
           "role": "国际分散",
-          "y1": 30.7,
-          "y3": 18,
-          "y5": 10.5,
+          "y1": 31.8,
+          "y3": 20.7,
+          "y5": 11.9,
           "ytd": 8.1,
           "mer": 2.48,
           "source": {
             "id": "857563",
             "label": "Equitable Vanguard Global All Cap ex Canada Index ETF",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857563?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Fidelity® Tactical High Income",
           "alloc": 10,
           "role": "收益缓冲",
-          "y1": 24.6,
-          "y3": 11.4,
-          "y5": 7.3,
+          "y1": 24,
+          "y3": 12.6,
+          "y5": 7.9,
           "ytd": 5.6,
           "mer": 2.82,
           "source": {
             "id": "857506",
             "label": "Equitable Fidelity Tactical High Income",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857506?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         }
       ],
@@ -382,9 +382,9 @@
       "objective": "追求中长期资本增长，重仓美股成长、科技与全球创新主题、新兴市场。波动较高。",
       "suitableClient": "追求资本增长、能承受较大短期市场波动、投资期 7 年以上的积极型客户。",
       "metrics": {
-        "annualReturn3Y": 29.13,
-        "annualReturn5Y": 14.97,
-        "annualReturn1Y": 49.96,
+        "annualReturn3Y": 31.82,
+        "annualReturn5Y": 18.07,
+        "annualReturn1Y": 54.56,
         "ytdReturn": 13.19,
         "volatility": 17,
         "maxDrawdown": -25,
@@ -397,96 +397,96 @@
           "name": "Fidelity® U.S. Focused Stock",
           "alloc": 22,
           "role": "美股成长龙头",
-          "y1": 45.5,
-          "y3": 26,
-          "y5": 14.8,
+          "y1": 48.6,
+          "y3": 28.2,
+          "y5": 17.3,
           "ytd": 11.9,
           "mer": 2.84,
           "source": {
             "id": "730513",
             "label": "Equitable Fidelity U.S. Focused Stock",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/730513?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Fidelity® Global Innovators",
           "alloc": 20,
           "role": "创新核心",
-          "y1": 66,
-          "y3": 42.3,
-          "y5": 18.7,
+          "y1": 74,
+          "y3": 45,
+          "y5": 23.2,
           "ytd": 21.9,
           "mer": 2.89,
           "source": {
             "id": "730517",
             "label": "Equitable Fidelity Global Innovators",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/730517?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Invesco NASDAQ 100 Index ETF",
           "alloc": 18,
           "role": "科技敞口",
-          "y1": 43.1,
-          "y3": 27.5,
-          "y5": null,
+          "y1": 47.8,
+          "y3": 29.1,
+          "y5": 19.6,
           "ytd": 6.8,
           "mer": 2.38,
           "source": {
             "id": "857550",
             "label": "Equitable Invesco NASDAQ 100 Index ETF",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857550?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Fidelity® Special Situations",
           "alloc": 15,
           "role": "Alpha 引擎",
-          "y1": 62.8,
-          "y3": 31.1,
-          "y5": 16,
+          "y1": 68.7,
+          "y3": 35.3,
+          "y5": 18.3,
           "ytd": 18.1,
           "mer": 3.05,
           "source": {
             "id": "322078",
             "label": "Equitable Fidelity Special Situations",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/322078?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Vanguard S&P 500 Index ETF",
           "alloc": 15,
           "role": "市场锚定",
-          "y1": 30,
-          "y3": 20,
-          "y5": 13.2,
+          "y1": 31.2,
+          "y3": 22.3,
+          "y5": 15,
           "ytd": 3.7,
           "mer": 2.33,
           "source": {
             "id": "857565",
             "label": "Equitable Vanguard S&P 500 Index ETF",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/857565?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         },
         {
           "name": "Mackenzie Emerging Markets",
           "alloc": 10,
           "role": "新兴市场引擎",
-          "y1": 50.7,
-          "y3": 23.3,
-          "y5": 9,
+          "y1": 54.8,
+          "y3": 27.4,
+          "y5": 11,
           "ytd": 17,
           "mer": 2.86,
           "source": {
             "id": "730521",
             "label": "Equitable Mackenzie Emerging Markets",
             "url": "https://equitablelife.fundata.com/PDFReports/FundSummary/730521?language=en",
-            "asOf": "April 30, 2026"
+            "asOf": "May 31, 2026"
           }
         }
       ],
