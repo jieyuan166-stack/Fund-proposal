@@ -21,8 +21,9 @@ mkdir -p "$LOG_DIR"
   fi
 
   docker run --rm \
-    --user "$(id -u):$(id -g)" \
-    --env HOME=/tmp \
+    --env HOME=/root \
+    --env HOST_UID="$(id -u)" \
+    --env HOST_GID="$(id -g)" \
     --env TRITON_GIT_REMOTE="$REMOTE" \
     --env "GIT_SSH_COMMAND=ssh -i /run/triton-secrets/github_backup_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/run/triton-secrets/github_known_hosts" \
     --volume "$ROOT:/repo" \
@@ -31,6 +32,7 @@ mkdir -p "$LOG_DIR"
     --entrypoint /bin/sh \
     "$IMAGE" -c '
       set -eu
+      trap '\''chown -R "$HOST_UID:$HOST_GID" /repo/.git'\'' EXIT
       git config --global --add safe.directory /repo
 
       attempt=1
