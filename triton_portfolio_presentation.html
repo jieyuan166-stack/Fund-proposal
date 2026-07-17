@@ -2330,7 +2330,7 @@ function buildPDFLayout() {
   Object.values(CH).forEach(chart => {
     if (!chart) return;
     if (chart.options?.plugins?.legend?.labels) {
-      chart.options.plugins.legend.labels.color = '#475467';
+      chart.options.plugins.legend.labels.color = '#aab3bf';
       chart.options.plugins.legend.labels.font = { size: 10, family: 'Inter', weight: '500' };
       chart.options.plugins.legend.labels.pointStyleWidth = 8;
       chart.options.plugins.legend.labels.boxWidth = 8;
@@ -2339,25 +2339,25 @@ function buildPDFLayout() {
     chart.data?.datasets?.forEach((ds, i) => {
       if (chart.config.type === 'doughnut') {
         ds.borderWidth = 1;
-        ds.borderColor = '#F8FAFC';
+        ds.borderColor = '#0a0e14';
         ds.hoverOffset = 1;
       }
       if (chart.config.type === 'line') {
         ds.borderWidth = i === 0 ? 2.3 : 1;
         ds.pointRadius = i === 0 ? 2.4 : 1;
         ds.pointHoverRadius = i === 0 ? 4 : 2.8;
-        ds.backgroundColor = i === 0 ? `${col}10` : 'transparent';
-        if (i === 1) ds.borderColor = '#B8C3D1';
-        if (i === 2) ds.borderColor = '#D3DAE4';
+        ds.backgroundColor = i === 0 ? `${col}22` : 'transparent';
+        if (i === 1) ds.borderColor = '#aab3bf';
+        if (i === 2) ds.borderColor = 'rgba(227,192,116,.45)';
       }
     });
     if (chart.options?.scales) {
       Object.values(chart.options.scales).forEach(scale => {
         if (scale?.ticks) {
-          scale.ticks.color = '#667085';
+          scale.ticks.color = '#aab3bf';
           scale.ticks.font = { size: 12, family: 'Inter', weight: '500' };
         }
-        if (scale?.grid) scale.grid.color = '#E4E8EF';
+        if (scale?.grid) scale.grid.color = 'rgba(170,179,191,.18)';
       });
     }
     chart.update('none');
@@ -2371,11 +2371,14 @@ function buildPDFLayout() {
   const NAVY2 = '#11161f';
   const GOLD = '#c9a24a';
   const BG = '#0a0e14';
-  const LINE = '#DDE3EA';
-  const TEXT = '#172033';
-  const MUTED = '#667085';
-  const POS = '#047857';
-  const NEG = '#B42318';
+  const LINE = 'rgba(201,162,74,.28)';
+  const TEXT = '#e8e6e0';
+  const MUTED = '#aab3bf';
+  const CARD = '#11161f';
+  const CARD2 = '#0f141d';
+  const SOFT = 'rgba(201,162,74,.08)';
+  const POS = '#7fc7a3';
+  const NEG = '#ee8f82';
   const FUND_PAL = FUND_PALETTE;
   const TOTAL = 9;
 
@@ -2385,21 +2388,21 @@ function buildPDFLayout() {
 
   const chartImg = (id, h='230px') => charts[id]
     ? `<img src="${charts[id]}" style="width:100%;height:${h};object-fit:contain;display:block" alt="">`
-    : `<div style="height:${h};display:flex;align-items:center;justify-content:center;background:#F3F6F9;color:#98A2B3;border:1px solid ${LINE};font-size:9px">Chart unavailable - open the web report before exporting.</div>`;
+    : `<div style="height:${h};display:flex;align-items:center;justify-content:center;background:${CARD};color:${MUTED};border:1px solid ${LINE};font-size:9px">Chart unavailable - open the web report before exporting.</div>`;
 
   const page = (num, eyebrow, title, body, opts={}) => `
-    <section class="pdf-page" style="display:flex;flex-direction:column;background:${opts.dark ? NAVY : '#fff'};color:${opts.dark ? '#fff' : TEXT};padding:0">
+    <section class="pdf-page" style="display:flex;flex-direction:column;background:${BG};color:${TEXT};padding:0">
       <header style="height:58px;padding:18px 42px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:12px">
           <img src="triton-logo.png" style="height:34px;width:auto;object-fit:contain" onerror="this.style.display='none'">
-          <div style="height:24px;width:1px;background:${opts.dark ? 'rgba(201,168,76,.45)' : LINE}"></div>
+          <div style="height:24px;width:1px;background:${LINE}"></div>
           <div>
             <div style="font-family:Inter,sans-serif;font-size:8px;font-weight:800;letter-spacing:1.8px;color:${GOLD}">TRITON WEALTH</div>
-            <div style="font-size:7.5px;color:${opts.dark ? '#8CA1BA' : MUTED};margin-top:2px">Private Wealth Advisory</div>
+            <div style="font-size:7.5px;color:${MUTED};margin-top:2px">Private Wealth Advisory</div>
           </div>
         </div>
-        <div style="text-align:right;font-family:Inter,sans-serif;font-size:8px;color:${opts.dark ? '#8CA1BA' : MUTED}">
-          <div style="font-weight:800;color:${opts.dark ? GOLD : NAVY}">CONFIDENTIAL</div>
+        <div style="text-align:right;font-family:Inter,sans-serif;font-size:8px;color:${MUTED}">
+          <div style="font-weight:800;color:${GOLD}">CONFIDENTIAL</div>
           <div style="margin-top:2px">Data as of ${APP_DATA.asOfLabel}</div>
         </div>
       </header>
@@ -2411,22 +2414,22 @@ function buildPDFLayout() {
           </div>` : body}
         ${!opts.cover ? body : ''}
       </div>
-      <footer style="height:36px;padding:0 42px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid ${opts.dark ? 'rgba(255,255,255,.12)' : LINE};font-family:Inter,sans-serif;font-size:7.5px;color:${opts.dark ? '#758BA8' : '#8A94A6'};flex-shrink:0">
+      <footer style="height:36px;padding:0 42px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid ${LINE};font-family:Inter,sans-serif;font-size:7.5px;color:${MUTED};flex-shrink:0">
         <span>© 2026 Triton Wealth Management Corporation · Past performance does not guarantee future results.</span>
         <span>Page ${num} of ${TOTAL}</span>
       </footer>
     </section>`;
 
   const metricBox = (label, value, color, note='') => `
-    <div style="border:1px solid ${LINE};border-radius:6px;padding:14px 14px;background:#fff">
+    <div style="border:1px solid ${LINE};border-radius:6px;padding:14px 14px;background:${CARD}">
       <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:${MUTED};margin-bottom:9px">${label}</div>
       <div style="font-family:Inter,sans-serif;font-size:25px;line-height:1;font-weight:800;color:${color};letter-spacing:0">${value}</div>
       ${note ? `<div style="font-size:9px;color:${MUTED};margin-top:8px;line-height:1.45">${note}</div>` : ''}
     </div>`;
 
   const section = (title, body) => `
-    <div style="border:1px solid ${LINE};border-radius:7px;background:#fff;padding:16px 18px;margin-bottom:12px">
-      <div style="font-size:13px;font-weight:800;color:${NAVY};margin-bottom:8px">${title}</div>
+    <div style="border:1px solid ${LINE};border-radius:7px;background:${CARD};padding:16px 18px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:${TEXT};margin-bottom:8px">${title}</div>
       <div style="font-size:10.5px;line-height:1.62;color:${TEXT}">${body}</div>
     </div>`;
 
@@ -2442,7 +2445,7 @@ function buildPDFLayout() {
   const w5yTotal = funds5yPdf.reduce((s,f) => s + f.alloc, 0);
   const w5y = w5yTotal ? funds5yPdf.reduce((s,f) => s + f.y5 * f.alloc, 0) / w5yTotal : null;
   const fundRows = d.funds.map((f,i) => `
-    <tr style="background:${i % 2 ? '#FAFBFC' : '#fff'}">
+    <tr style="background:${i % 2 ? CARD : CARD2}">
       <td style="padding:9px 8px;border-bottom:1px solid ${LINE}">
         <div style="display:flex;align-items:center;gap:7px">
           <span style="width:8px;height:8px;border-radius:50%;background:${FUND_PAL[i % FUND_PAL.length]};display:inline-block;flex-shrink:0"></span>
@@ -2461,9 +2464,9 @@ function buildPDFLayout() {
           <span style="width:8px;height:8px;border-radius:50%;background:${colors[i % colors.length]};display:inline-block;flex-shrink:0"></span>
           <span style="font-size:10px;font-weight:700;color:${TEXT};line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.label}</span>
         </div>
-        <span style="font-family:Inter,sans-serif;font-size:10px;font-weight:800;color:${NAVY}">${item.value}%</span>
+        <span style="font-family:Inter,sans-serif;font-size:10px;font-weight:800;color:${TEXT}">${item.value}%</span>
       </div>
-      <div style="height:6px;background:#EEF2F6;border-radius:99px;overflow:hidden">
+      <div style="height:6px;background:rgba(255,255,255,.09);border-radius:99px;overflow:hidden">
         <div style="height:100%;width:${item.value}%;background:${colors[i % colors.length]};border-radius:99px"></div>
       </div>
     </div>`).join('');
@@ -2477,8 +2480,8 @@ function buildPDFLayout() {
   const tax5 = calculateTaxComparison(10000);
   const tax10 = calculateTaxComparison(25000);
   const scenarioTableRows = scenarioYears.map((y, i) => `
-    <tr style="background:${i % 2 ? '#fff' : BG}">
-      <td style="padding:12px 14px;border-bottom:1px solid ${LINE};font-size:11px;font-weight:800;color:${NAVY}">${y} 年后</td>
+    <tr style="background:${i % 2 ? CARD : CARD2}">
+      <td style="padding:12px 14px;border-bottom:1px solid ${LINE};font-size:11px;font-weight:800;color:${TEXT}">${y} 年后</td>
       <td style="padding:12px 14px;border-bottom:1px solid ${LINE};text-align:right;font-family:Inter,sans-serif;font-size:11px;font-weight:800;color:${MUTED}">${money(fv(gicRate, y))}</td>
       <td style="padding:12px 14px;border-bottom:1px solid ${LINE};text-align:right;font-family:Inter,sans-serif;font-size:12px;font-weight:800;color:${GOLD}">${money(fv(m.annualReturn5Y, y))}</td>
     </tr>`).join('');
@@ -2491,21 +2494,21 @@ function buildPDFLayout() {
           分隔基金投资组合<br>客户建议报告
         </h1>
         <div style="width:82px;height:2px;background:${GOLD};margin:24px 0"></div>
-        <div style="font-size:13px;line-height:1.65;color:#C7D2E1">
+        <div style="font-size:13px;line-height:1.65;color:${TEXT}">
           兼顾增长、保障与传承的分隔基金配置方案<br>
-          <span style="font-family:Inter,sans-serif;color:#8CA1BA">Growth · Tax · Estate · Risk · Guarantees</span>
+          <span style="font-family:Inter,sans-serif;color:${MUTED}">Growth · Tax · Estate · Risk · Guarantees</span>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         <div style="border:1px solid rgba(201,168,76,.38);background:rgba(255,255,255,.035);border-radius:7px;padding:16px">
           <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Portfolio</div>
           <div style="font-size:17px;font-weight:800;color:#fff">${d.name}</div>
-          <div style="font-family:Inter,sans-serif;font-size:10px;color:#8CA1BA;margin-top:4px">${d.nameEN}</div>
+          <div style="font-family:Inter,sans-serif;font-size:10px;color:${MUTED};margin-top:4px">${d.nameEN}</div>
         </div>
         <div style="border:1px solid rgba(201,168,76,.38);background:rgba(255,255,255,.035);border-radius:7px;padding:16px">
           <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Prepared For</div>
           <div style="font-size:17px;font-weight:800;color:#fff">High-Net-Worth Client</div>
-          <div style="font-family:Inter,sans-serif;font-size:10px;color:#8CA1BA;margin-top:4px">Data as of ${APP_DATA.asOfLabel}</div>
+          <div style="font-family:Inter,sans-serif;font-size:10px;color:${MUTED};margin-top:4px">Data as of ${APP_DATA.asOfLabel}</div>
         </div>
       </div>
     </div>`, { dark:true, cover:true });
@@ -2513,7 +2516,7 @@ function buildPDFLayout() {
   const exec = page(2, 'Executive Summary', 'GIC 与分隔基金的适用场景比较', `
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
       ${metricBox('5Y Average Return', fP(m.annualReturn5Y), POS, '组合历史加权平均回报')}
-      ${metricBox('Volatility', `${fN(m.volatility)}%`, NAVY, '组合估算波动率')}
+      ${metricBox('Volatility', `${fN(m.volatility)}%`, TEXT, '组合估算波动率')}
       ${metricBox('Max Drawdown', fP(m.maxDrawdown), NEG, '组合估算最大回撤')}
     </div>
     ${section('核心观点', '不同资金用途对应不同工具。GIC 偏向短期确定性和已知现金流安排；分隔基金偏向中长期增长、合同保证、税务效率和传承安排。两者不应被简单看作替代关系，而应根据资金用途进行分层配置。')}
@@ -2525,20 +2528,20 @@ function buildPDFLayout() {
     </div>`);
 
   const compare = page(3, 'GIC vs Segregated Fund', '银行 GIC 与分隔基金对比', `
-    <div style="border:1px solid ${LINE};border-radius:7px;overflow:hidden;background:#fff">
+    <div style="border:1px solid ${LINE};border-radius:7px;overflow:hidden;background:${CARD}">
       <div style="display:grid;grid-template-columns:1fr 1.25fr 1.25fr;background:${NAVY};color:#fff;font-size:10px;font-weight:800">
         <div style="padding:12px 14px">客户关心的问题</div>
         <div style="padding:12px 14px;border-left:1px solid rgba(255,255,255,.15)">银行 GIC</div>
         <div style="padding:12px 14px;border-left:1px solid rgba(255,255,255,.15);color:${GOLD}">分隔基金</div>
       </div>
       ${comparisonRows.map((r,i)=>`
-        <div style="display:grid;grid-template-columns:1fr 1.25fr 1.25fr;background:${i % 2 ? '#fff' : BG};border-top:1px solid ${LINE}">
-          <div style="padding:13px 14px;font-size:11px;font-weight:800;color:${NAVY}">${r[0]}</div>
+        <div style="display:grid;grid-template-columns:1fr 1.25fr 1.25fr;background:${i % 2 ? CARD : CARD2};border-top:1px solid ${LINE}">
+          <div style="padding:13px 14px;font-size:11px;font-weight:800;color:${TEXT}">${r[0]}</div>
           <div style="padding:13px 14px;font-size:10px;line-height:1.55;color:${MUTED};border-left:1px solid ${LINE}">${r[1]}</div>
-          <div style="padding:13px 14px;font-size:10px;line-height:1.55;color:${TEXT};border-left:1px solid ${LINE};background:#FFFCF3">${r[2]}</div>
+          <div style="padding:13px 14px;font-size:10px;line-height:1.55;color:${TEXT};border-left:1px solid ${LINE};background:${SOFT}">${r[2]}</div>
         </div>`).join('')}
     </div>
-    <div style="margin-top:16px;border-left:3px solid ${GOLD};padding:10px 13px;background:#F8FAFC;font-size:10.5px;line-height:1.6;color:${TEXT}">
+    <div style="margin-top:16px;border-left:3px solid ${GOLD};padding:10px 13px;background:${CARD2};font-size:10.5px;line-height:1.6;color:${TEXT}">
       顾问观点：GIC 适合短期确定性资金；分隔基金适合中长期财富增长和传承规划。产品适配应以客户目标、账户类型、风险承受度和时间周期为基础。
     </div>`);
 
@@ -2554,7 +2557,7 @@ function buildPDFLayout() {
         ${metricBox('YTD', fP(m.ytdReturn), fCol(m.ytdReturn))}
         ${metricBox('1Y Return', fP(m.annualReturn1Y), POS)}
         ${metricBox('5Y Annualized', fP(m.annualReturn5Y), POS)}
-        ${metricBox('Sharpe Ratio', fN(m.sharpeRatio,2), NAVY)}
+        ${metricBox('Sharpe Ratio', fN(m.sharpeRatio,2), TEXT)}
       </div>
     </div>`);
 
@@ -2571,8 +2574,8 @@ function buildPDFLayout() {
       </thead>
       <tbody>${fundRows}</tbody>
       <tfoot>
-        <tr style="background:#F1F5F9">
-          <td colspan="3" style="padding:11px 8px;font-size:10px;font-weight:800;color:${NAVY}">组合加权 5Y 平均回报</td>
+        <tr style="background:${CARD2}">
+          <td colspan="3" style="padding:11px 8px;font-size:10px;font-weight:800;color:${TEXT}">组合加权 5Y 平均回报</td>
           <td style="padding:11px 8px;text-align:right;font-family:Inter,sans-serif;font-size:11px;font-weight:800;color:${fCol(w5y)}">${fP(w5y)}</td>
           <td style="padding:11px 8px;text-align:right;font-size:8.5px;color:${MUTED};font-style:italic">weighted average</td>
         </tr>
@@ -2581,9 +2584,9 @@ function buildPDFLayout() {
 
   const allocation = page(6, 'Long-Term Growth Scenario', '长期增长情景', `
     <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:14px">
-      <div style="border:1px solid ${LINE};border-radius:7px;background:#fff;overflow:hidden">
-        <div style="padding:14px 16px;border-bottom:1px solid ${LINE};background:#FFFCF3">
-          <div style="font-size:13px;font-weight:800;color:${NAVY};margin-bottom:4px">如果长期持有，历史情景下账户价值如何变化？</div>
+      <div style="border:1px solid ${LINE};border-radius:7px;background:${CARD};overflow:hidden">
+        <div style="padding:14px 16px;border-bottom:1px solid ${LINE};background:${SOFT}">
+          <div style="font-size:13px;font-weight:800;color:${TEXT};margin-bottom:4px">如果长期持有，历史情景下账户价值如何变化？</div>
           <div style="font-family:Inter,sans-serif;font-size:9px;color:${MUTED}">$100,000 initial investment · 5Y annualized historical scenario</div>
         </div>
         <table style="width:100%;border-collapse:collapse">
@@ -2600,13 +2603,13 @@ function buildPDFLayout() {
       <div style="display:grid;grid-template-columns:1fr;gap:10px">
         ${metricBox('本组合 5Y 情景', fP(m.annualReturn5Y), col, `$100K · historical average return scenario`)}
         ${metricBox('GIC 确定性参考', fP(gicRate), MUTED, '确定性收益参考，长期增长空间相对有限')}
-        ${metricBox('风险语境', `${fN(m.volatility)}% Vol`, NAVY, `Max drawdown ${fP(m.maxDrawdown)} · Review guarantees and estate fit together`)}
+        ${metricBox('风险语境', `${fN(m.volatility)}% Vol`, TEXT, `Max drawdown ${fP(m.maxDrawdown)} · Review guarantees and estate fit together`)}
       </div>
     </div>
-    <div style="margin-top:14px;border:1px solid ${LINE};border-radius:7px;background:#fff;padding:14px">
+    <div style="margin-top:14px;border:1px solid ${LINE};border-radius:7px;background:${CARD};padding:14px">
       <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:10px">
         <div>
-          <div style="font-size:12px;font-weight:800;color:${NAVY};margin-bottom:3px">税务视角 · Tax Perspective</div>
+          <div style="font-size:12px;font-weight:800;color:${TEXT};margin-bottom:3px">税务视角 · Tax Perspective</div>
           <div style="font-size:8.5px;color:${MUTED};line-height:1.45">Tax bracket: ${taxProvince.label} · ${taxBracket.labelEN} · ${taxBracket.range}</div>
         </div>
         <div style="font-size:8px;color:${MUTED};text-align:right">Same growth amount illustration<br>Capital gains use 50% inclusion simplification</div>
@@ -2616,18 +2619,18 @@ function buildPDFLayout() {
         ${metricBox('10Y Observation · $25K Gain', money(tax10.difference), POS, `GIC tax ${money(tax10.gicTax)} vs Seg fund gain tax ${money(tax10.segTax)}`)}
       </div>
     </div>
-    <div style="margin-top:16px;border-left:3px solid ${GOLD};padding:10px 13px;background:#F8FAFC;font-size:9.5px;line-height:1.55;color:${MUTED}">
+    <div style="margin-top:16px;border-left:3px solid ${GOLD};padding:10px 13px;background:${CARD2};font-size:9.5px;line-height:1.55;color:${MUTED}">
       历史回报情景，不构成预测；税务示意不构成税务建议；实际分隔基金分派可能包含资本利得、合格股息、利息或本金返还。
     </div>`);
 
   const growth = page(7, 'Growth Scenario Comparison', '$100,000 中长期增长情景：本组合 vs GIC', `
-    <div style="border:1px solid ${LINE};border-radius:7px;padding:18px;background:#fff">
+    <div style="border:1px solid ${LINE};border-radius:7px;padding:18px;background:${CARD}">
       ${chartImg('chartGrowth','390px')}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px">
       ${metricBox('This Portfolio 5Y', fP(m.annualReturn5Y), col, `$100K → $${(100000*Math.pow(1+m.annualReturn5Y/100,5)/1000).toFixed(0)}K · Vol ${fN(m.volatility)}%, Max DD ${fP(m.maxDrawdown)}`)}
       ${metricBox('5Y GIC Reference', fP(APP_DATA.benchmarks.gic_5yr.y5), MUTED, `$100K → $${(100000*Math.pow(1+APP_DATA.benchmarks.gic_5yr.y5/100,5)/1000).toFixed(0)}K · Deterministic return reference`)}
-      ${metricBox('S&P 500 Context', fP(APP_DATA.benchmarks.sp500.y5), '#667085', `Pure equity index; not comparable on guarantees, tax, estate features`)}
+      ${metricBox('S&P 500 Context', fP(APP_DATA.benchmarks.sp500.y5), MUTED, `Pure equity index; not comparable on guarantees, tax, estate features`)}
     </div>
     <div style="font-size:9px;line-height:1.55;color:${MUTED};margin-top:12px">
       S&amp;P 500 是纯股票指数参考，用于理解市场背景；本组合评估重点是增长、波动、回撤、合同保证与传承规划的综合适配。Hypothetical based on historical annualized returns; not a forecast.
@@ -2642,9 +2645,9 @@ function buildPDFLayout() {
 
   const contact = page(9, 'Advisor Contact', '您的专属客户经理', `
     <div style="height:100%;display:flex;flex-direction:column;justify-content:center">
-      <div style="border:1px solid ${LINE};border-top:4px solid ${GOLD};border-radius:8px;padding:28px;background:#fff">
+      <div style="border:1px solid ${LINE};border-top:4px solid ${GOLD};border-radius:8px;padding:28px;background:${CARD}">
         <div style="font-family:Inter,sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:10px">Your Dedicated Advisor</div>
-        <div style="font-family:Inter,sans-serif;font-size:28px;line-height:1;font-weight:800;color:${NAVY};margin-bottom:8px">Jeffrey Yuan</div>
+        <div style="font-family:Inter,sans-serif;font-size:28px;line-height:1;font-weight:800;color:${TEXT};margin-bottom:8px">Jeffrey Yuan</div>
         <div style="font-size:12px;color:${MUTED};margin-bottom:24px">Independent Broker · Private Wealth Advisor</div>
         <div style="display:grid;grid-template-columns:92px 1fr;gap:12px 18px;font-family:Inter,sans-serif;font-size:12px">
           <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:${GOLD}">Phone</div>
@@ -2655,7 +2658,7 @@ function buildPDFLayout() {
           <div style="font-weight:700;color:${TEXT}">www.tritonwealth.ca</div>
         </div>
       </div>
-      <div style="margin-top:22px;border-left:3px solid ${GOLD};padding:12px 15px;background:#F8FAFC;font-size:11px;line-height:1.65;color:${TEXT}">
+      <div style="margin-top:22px;border-left:3px solid ${GOLD};padding:12px 15px;background:${CARD2};font-size:11px;line-height:1.65;color:${TEXT}">
         Protecting and growing generational wealth, one family at a time.
       </div>
     </div>`);
