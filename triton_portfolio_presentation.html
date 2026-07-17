@@ -83,6 +83,126 @@
       width:32px; height:3px; background: var(--gold); border-radius:2px;
     }
 
+    /* Portfolio comparison controls */
+    .compare-panel {
+      display:grid;
+      grid-template-columns:minmax(190px,.82fr) minmax(300px,1.25fr) minmax(190px,.72fr);
+      gap:18px;
+      align-items:end;
+      max-width:980px;
+      margin:0 auto 34px;
+      padding:18px 20px;
+      background:rgba(10,14,20,.72);
+      border:1px solid rgba(201,162,74,.34);
+      border-top:2px solid rgba(201,162,74,.72);
+      box-shadow:0 18px 48px rgba(0,0,0,.22);
+      backdrop-filter:blur(14px);
+    }
+    .compare-field-label {
+      display:block;
+      margin-bottom:8px;
+      color:#e3c074;
+      font-family:Arial,Helvetica,sans-serif;
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .client-name-input {
+      width:100%;
+      min-height:42px;
+      box-sizing:border-box;
+      padding:10px 12px;
+      border:1px solid rgba(201,162,74,.34);
+      background:#0b1018;
+      color:#e8e6e0;
+      font-family:Arial,'Noto Sans SC',sans-serif;
+      font-size:14px;
+      outline:none;
+      transition:border-color .2s ease, background .2s ease;
+    }
+    .client-name-input:focus {
+      border-color:#e3c074;
+      background:#101722;
+    }
+    .client-name-input::placeholder { color:#7f8996; }
+    .compare-options {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+    }
+    .compare-option {
+      min-width:0;
+      min-height:42px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 10px;
+      border:1px solid rgba(201,162,74,.24);
+      background:rgba(255,255,255,.035);
+      color:#e8e6e0;
+      cursor:pointer;
+      transition:border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+    .compare-option:hover { border-color:rgba(227,192,116,.62); background:rgba(201,162,74,.08); }
+    .compare-option:active { transform:translateY(1px); }
+    .compare-option input {
+      width:16px;
+      height:16px;
+      margin:0;
+      flex:0 0 auto;
+      accent-color:#c9a24a;
+    }
+    .compare-option-copy { min-width:0; line-height:1.15; }
+    .compare-option-copy strong {
+      display:block;
+      overflow:hidden;
+      color:#f2efe8;
+      font-size:12px;
+      font-weight:700;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .compare-option-copy span {
+      display:block;
+      margin-top:3px;
+      color:#9aa3b0;
+      font-family:Arial,sans-serif;
+      font-size:9px;
+    }
+    .compare-status {
+      min-height:18px;
+      margin-top:6px;
+      color:#9aa3b0;
+      font-size:10px;
+      line-height:1.45;
+    }
+    .compare-status.is-warning { color:#ee8f82; }
+    .compare-actions { display:grid; gap:8px; }
+    .compare-action {
+      min-height:42px;
+      width:100%;
+      border:1px solid rgba(201,162,74,.48);
+      background:transparent;
+      color:#e3c074;
+      font-family:Arial,'Noto Sans SC',sans-serif;
+      font-size:11px;
+      font-weight:700;
+      cursor:pointer;
+      transition:background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .compare-action:hover { background:rgba(201,162,74,.1); border-color:#e3c074; }
+    .compare-action:active { transform:translateY(1px); }
+    .compare-action.primary { background:#c9a24a; color:#0a0e14 !important; }
+    .compare-action.primary:hover { background:#e3c074; }
+    .compare-action:disabled {
+      border-color:rgba(170,179,191,.2);
+      background:rgba(170,179,191,.06);
+      color:#6f7885 !important;
+      cursor:not-allowed;
+      transform:none;
+    }
+
     /* Loading screen */
     #loading-screen {
       position:fixed; inset:0; z-index:9999;
@@ -227,7 +347,7 @@
       }
 
       /* ── Hide all web layout ── */
-      #loading-screen, nav, .hero-bg,
+      #loading-screen, nav, .mobile-switch, .triton-account-button, .hero-bg,
       main, footer { display: none !important; }
 
       /* ── Show PDF layout ── */
@@ -440,6 +560,20 @@
         font-size:11px !important;
         line-height:1.35 !important;
       }
+      .compare-panel {
+        grid-template-columns:1fr;
+        gap:15px;
+        width:100%;
+        margin-bottom:26px;
+        padding:16px;
+        box-sizing:border-box;
+      }
+      .compare-options { grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+      .compare-option { padding:8px 7px; gap:6px; }
+      .compare-option-copy strong { font-size:11px; }
+      .compare-option-copy span { font-size:8px; }
+      .compare-actions { grid-template-columns:1fr 1fr; }
+      .compare-action { min-width:0; padding:8px 6px; line-height:1.25; }
       .advisor-path { grid-template-columns:1fr; }
       .comparison-matrix { grid-template-columns:1fr; }
       .matrix-cell, .matrix-cell:not(:nth-child(3n)) { border-right:0; }
@@ -524,7 +658,7 @@
       border-radius:2px!important;
     }
     .num,.data-cell,.big-metric,.metric-72,.metric-48,.t-num-lg,.t-num-sm,
-    input[type="number"],input[type="range"] + span,td:last-child,.fund-table td,
+    input[type="number"],input[type="range"] + span,main td:last-child,.fund-table td,
     [id*="amount"],[id*="value"],[id*="return"],[id*="tax"],[id*="rate"]{
       font-family:var(--serif-en),var(--sans-cn)!important;
       font-variant-numeric:tabular-nums;
@@ -533,7 +667,7 @@
     .big-metric,.metric-72{font-size:clamp(42px,6vw,68px)!important;font-weight:700!important;line-height:.95!important;}
     .metric-48,.t-num-lg{font-size:clamp(32px,4.8vw,52px)!important;font-weight:700!important;}
     .fund-name{font-family:Arial,Helvetica,sans-serif!important;font-size:15px!important;line-height:1.35!important;font-weight:700!important;color:var(--estate-text)!important;}
-    .t-num-sm,.data-cell,td:last-child{font-size:max(15px,1em)!important;font-weight:700!important;color:var(--gold-l)!important;}
+    .t-num-sm,.data-cell,main td:last-child{font-size:max(15px,1em)!important;font-weight:700!important;color:var(--gold-l)!important;}
     [style*="color:#0A1628"],[style*="color: #0A1628"],
     [style*="color:#1A2D4D"],[style*="color: #1A2D4D"],
     [style*="color:#111827"],[style*="color: #111827"],
@@ -599,7 +733,7 @@
       <button onclick="refreshData()" id="refresh-btn" class="ml-1 text-gold hover:text-white transition-colors" title="刷新数据" style="color:#C9A84C">🔄</button>
     </div>
     <span class="text-xs border border-gold text-gold px-3 py-1 rounded-full font-medium" style="border-color:#C9A84C;color:#C9A84C">CONFIDENTIAL</span>
-    <button onclick="exportPDF()" class="bg-gold hover:bg-yellow-300 text-navy font-bold px-4 py-1.5 rounded-lg text-xs transition-all" style="background:#C9A84C;color:#0A1628">导出PDF</button>
+    <button onclick="exportPDF('single')" data-pdf-export="single" class="bg-gold hover:bg-yellow-300 text-navy px-4 py-1.5 rounded-lg text-xs transition-all" style="background:#C9A84C;color:#0A1628;font-weight:700">当前组合PDF</button>
   </div>
 </nav>
 
@@ -618,7 +752,7 @@
     </div>
 
     <!-- Tab Selector -->
-    <div class="flex justify-center mb-10">
+    <div class="flex justify-center mb-6">
       <div class="inline-flex bg-white/5 backdrop-blur rounded-2xl p-1.5 border border-white/10">
         <button onclick="switchTab('a')" id="tab-a" class="tab-btn px-6 py-3 rounded-xl text-sm font-semibold transition-all">
           <span class="block text-xs opacity-60 mb-0.5">A</span>稳健型
@@ -629,6 +763,36 @@
         <button onclick="switchTab('c')" id="tab-c" class="tab-btn px-6 py-3 rounded-xl text-sm font-semibold transition-all">
           <span class="block text-xs opacity-60 mb-0.5">C</span>进取型
         </button>
+      </div>
+    </div>
+
+    <!-- Client name and portfolio comparison -->
+    <div class="compare-panel" aria-label="组合对比与 PDF 导出">
+      <div>
+        <label class="compare-field-label" for="client-name-input">Prepared For / 客户姓名</label>
+        <input id="client-name-input" class="client-name-input" type="text" maxlength="60" autocomplete="off" placeholder="High-Net-Worth Client" oninput="updateClientName(this.value)" />
+      </div>
+      <div>
+        <span class="compare-field-label">组合对比 / Select 2-3 Portfolios</span>
+        <div class="compare-options">
+          <label class="compare-option">
+            <input id="compare-a" type="checkbox" checked onchange="updateCompareSelection('a', this.checked)" />
+            <span class="compare-option-copy"><strong>稳健型</strong><span>CONSERVATIVE</span></span>
+          </label>
+          <label class="compare-option">
+            <input id="compare-b" type="checkbox" checked onchange="updateCompareSelection('b', this.checked)" />
+            <span class="compare-option-copy"><strong>均衡型</strong><span>BALANCED</span></span>
+          </label>
+          <label class="compare-option">
+            <input id="compare-c" type="checkbox" onchange="updateCompareSelection('c', this.checked)" />
+            <span class="compare-option-copy"><strong>进取型</strong><span>GROWTH</span></span>
+          </label>
+        </div>
+        <div id="compare-selection-status" class="compare-status" aria-live="polite">已选择 2 个组合，可生成对比报告。</div>
+      </div>
+      <div class="compare-actions">
+        <button type="button" class="compare-action" data-pdf-export="single" onclick="exportPDF('single')">导出当前组合 PDF</button>
+        <button type="button" id="compare-export-btn" class="compare-action primary" data-pdf-export="compare" onclick="exportPDF('compare')">导出组合对比 PDF</button>
       </div>
     </div>
 
@@ -1046,6 +1210,9 @@ const FALLBACK_DATA = {
 // ════════════════════════════════════════════════════════════════════
 let APP_DATA = null;
 let currentTab = 'a';
+let clientName = '';
+let compareSelection = new Set(['a','b']);
+let activePrintMode = null;
 let CH = { fund:null, asset:null, sector:null, geo:null, growth:null };
 const FUND_PALETTE   = ['#3B82F6','#C9A84C','#10B981','#8B5CF6','#EF4444','#14B8A6'];
 const ASSET_PALETTE  = ['#3B82F6','#C9A84C','#10B981','#8B5CF6'];
@@ -1054,6 +1221,51 @@ const GEO_PALETTE    = ['#EF4444','#3B82F6','#10B981','#F59E0B','#8B5CF6'];
 const TAB_COLORS = { a:'#3B82F6', b:'#10B981', c:'#C9A84C' };
 function reportDateLabel(locale='zh-CN') {
   return new Date().toLocaleDateString(locale, { year:'numeric', month:'long', day:'numeric' });
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>'"]/g, char => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'
+  })[char]);
+}
+
+function getPreparedForName() {
+  return escapeHTML(clientName.trim() || 'High-Net-Worth Client');
+}
+
+function updateClientName(value) {
+  clientName = String(value || '').slice(0, 60);
+  const pdfBody = document.getElementById('pdf-body');
+  if (pdfBody) pdfBody.innerHTML = '';
+}
+
+function updateCompareSelection(id, checked) {
+  if (!['a','b','c'].includes(id)) return;
+  if (checked) compareSelection.add(id);
+  else compareSelection.delete(id);
+
+  if (compareSelection.size > 3) {
+    compareSelection.delete(id);
+    const input = document.getElementById(`compare-${id}`);
+    if (input) input.checked = false;
+  }
+  syncComparisonPanel();
+  const pdfBody = document.getElementById('pdf-body');
+  if (pdfBody) pdfBody.innerHTML = '';
+}
+
+function syncComparisonPanel() {
+  const selectedIds = ['a','b','c'].filter(id => compareSelection.has(id));
+  const status = document.getElementById('compare-selection-status');
+  const exportBtn = document.getElementById('compare-export-btn');
+  const isReady = selectedIds.length >= 2 && selectedIds.length <= 3;
+  if (status) {
+    status.textContent = isReady
+      ? `已选择 ${selectedIds.length} 个组合，可生成对比报告。`
+      : '请至少选择 2 个组合后生成对比报告。';
+    status.classList.toggle('is-warning', !isReady);
+  }
+  if (exportBtn) exportBtn.disabled = !isReady;
 }
 const SEG_TAX_DATA_FALLBACK = {
   2026: {
@@ -2507,7 +2719,7 @@ function buildPDFLayout() {
         </div>
         <div style="border:1px solid rgba(201,168,76,.38);background:rgba(255,255,255,.035);border-radius:7px;padding:16px">
           <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Prepared For</div>
-          <div style="font-size:17px;font-weight:800;color:#fff">High-Net-Worth Client</div>
+          <div style="font-size:17px;font-weight:800;color:#fff;overflow-wrap:anywhere">${getPreparedForName()}</div>
           <div style="font-family:Inter,sans-serif;font-size:10px;color:${MUTED};margin-top:4px">Data as of ${APP_DATA.asOfLabel}</div>
         </div>
       </div>
@@ -2666,49 +2878,275 @@ function buildPDFLayout() {
   return cover + exec + compare + overview + holdings + allocation + growth + disclosures + contact;
 }
 
+function buildComparisonPDFLayout(selectedIds) {
+  const ids = ['a','b','c'].filter(id => selectedIds.includes(id));
+  if (ids.length < 2 || ids.length > 3) throw new Error('Select two or three portfolios for comparison.');
+
+  const portfolios = ids.map(id => ({ id, color:TAB_COLORS[id], ...APP_DATA.portfolios[id] }));
+  const BG = '#0a0e14';
+  const CARD = '#11161f';
+  const CARD2 = '#0f141d';
+  const GOLD = '#c9a24a';
+  const TEXT = '#e8e6e0';
+  const MUTED = '#aab3bf';
+  const POS = '#7fc7a3';
+  const NEG = '#ee8f82';
+  const LINE = 'rgba(201,162,74,.28)';
+  const TOTAL = 6;
+  const principal = 100000;
+  const years = [1,3,5,10];
+  const gicRate = APP_DATA.benchmarks.gic_5yr.y5;
+
+  const fmtNumber = (value, digits=1) => value == null ? 'N/A' : Number(value).toFixed(digits);
+  const fmtPct = (value, digits=1) => value == null ? 'N/A' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}%`;
+  const fmtMoney = value => '$' + Math.round(value).toLocaleString('en-CA');
+  const futureValue = (rate, year) => principal * Math.pow(1 + Number(rate) / 100, year);
+  const valueColor = value => value != null && Number(value) >= 0 ? POS : NEG;
+
+  const page = (num, eyebrow, title, body, cover=false) => `
+    <section class="pdf-page" style="display:flex;flex-direction:column;background:${BG};color:${TEXT};padding:0">
+      <header style="height:58px;padding:18px 42px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <img src="triton-logo.png" style="height:34px;width:auto;object-fit:contain" onerror="this.style.display='none'">
+          <div style="height:24px;width:1px;background:${LINE}"></div>
+          <div>
+            <div style="font-family:Arial,sans-serif;font-size:8px;font-weight:800;letter-spacing:1.8px;color:${GOLD}">TRITON WEALTH</div>
+            <div style="font-size:7.5px;color:${MUTED};margin-top:2px">Portfolio Comparison · Private Wealth Advisory</div>
+          </div>
+        </div>
+        <div style="text-align:right;font-family:Arial,sans-serif;font-size:8px;color:${MUTED}">
+          <div style="font-weight:800;color:${GOLD}">CONFIDENTIAL</div>
+          <div style="margin-top:2px">Data as of ${APP_DATA.asOfLabel}</div>
+        </div>
+      </header>
+      <div style="flex:1;padding:${cover ? '42px 54px 34px' : '24px 42px 20px'};overflow:hidden">
+        ${cover ? body : `
+          <div style="border-top:1px solid ${LINE};padding-top:18px;margin-bottom:18px">
+            <div style="font-family:Arial,sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:7px">${eyebrow}</div>
+            <h1 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:25px;line-height:1.22;font-weight:700;letter-spacing:0;margin:0;color:${TEXT}">${title}</h1>
+          </div>${body}`}
+      </div>
+      <footer style="height:36px;padding:0 42px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid ${LINE};font-family:Arial,sans-serif;font-size:7.5px;color:${MUTED};flex-shrink:0">
+        <span>© 2026 Triton Wealth Management Corporation · Historical scenarios are not forecasts.</span>
+        <span>Page ${num} of ${TOTAL}</span>
+      </footer>
+    </section>`;
+
+  const portfolioHead = portfolios.map(p => `
+    <th style="padding:10px 8px;border-left:1px solid ${LINE};text-align:right;vertical-align:bottom">
+      <div style="font-size:9px;font-weight:800;color:${p.color}">${p.name}</div>
+      <div style="font-family:Arial,sans-serif;font-size:7px;color:${MUTED};margin-top:3px">${p.nameEN}</div>
+    </th>`).join('');
+
+  const metricRows = [
+    ['YTD Return', '年初至今回报', p => fmtPct(p.metrics.ytdReturn)],
+    ['1Y Return', '1年历史回报', p => fmtPct(p.metrics.annualReturn1Y)],
+    ['5Y Annualized', '5年年化历史回报', p => fmtPct(p.metrics.annualReturn5Y)],
+    ['Volatility', '估算波动率', p => `${fmtNumber(p.metrics.volatility)}%`],
+    ['Max Drawdown', '估算最大回撤', p => fmtPct(p.metrics.maxDrawdown)],
+    ['Sharpe Ratio', '估算夏普比率', p => fmtNumber(p.metrics.sharpeRatio, 2)],
+    ['Risk Level', '风险等级', p => `${p.riskLevel} / 5`],
+    ['Suggested Horizon', '建议投资期', p => p.horizon]
+  ];
+
+  const cover = page(1, '', '', `
+    <div style="height:100%;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2.4px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:20px">Portfolio Comparison Report</div>
+        <h1 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:31px;line-height:1.26;font-weight:700;letter-spacing:0;margin:0 0 14px;color:#fff">分隔基金投资组合<br>对比建议报告</h1>
+        <div style="width:82px;height:2px;background:${GOLD};margin:24px 0"></div>
+        <div style="font-size:13px;line-height:1.65;color:${TEXT}">在同一风险、回报与配置框架下比较所选组合<br><span style="font-family:Arial,sans-serif;color:${MUTED}">Growth · Risk · Allocation · Suitability</span></div>
+      </div>
+      <div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div style="border:1px solid ${LINE};background:${CARD};padding:16px">
+            <div style="font-family:Arial,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Prepared For</div>
+            <div style="font-size:17px;font-weight:700;color:#fff;overflow-wrap:anywhere">${getPreparedForName()}</div>
+          </div>
+          <div style="border:1px solid ${LINE};background:${CARD};padding:16px">
+            <div style="font-family:Arial,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Data Through</div>
+            <div style="font-family:Arial,sans-serif;font-size:17px;font-weight:700;color:#fff">${APP_DATA.asOfLabel}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(${portfolios.length},1fr);gap:10px">
+          ${portfolios.map(p => `<div style="border-top:3px solid ${p.color};border-left:1px solid ${LINE};border-right:1px solid ${LINE};border-bottom:1px solid ${LINE};background:${CARD2};padding:13px 14px"><div style="font-size:13px;font-weight:700;color:${TEXT}">${p.name}</div><div style="font-family:Arial,sans-serif;font-size:8px;color:${MUTED};margin-top:4px">${p.nameEN}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>`, true);
+
+  const metrics = page(2, 'Core Metrics', '核心指标对比', `
+    <table style="width:100%;border-collapse:collapse;border:1px solid ${LINE};background:${CARD}">
+      <thead><tr style="background:${CARD2}"><th style="padding:10px 12px;text-align:left;color:${GOLD};font-family:Arial,sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase">Metric</th>${portfolioHead}</tr></thead>
+      <tbody>${metricRows.map((row,index) => `
+        <tr style="background:${index % 2 ? CARD : CARD2};border-top:1px solid ${LINE}">
+          <td style="padding:11px 12px"><div style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:${TEXT}">${row[0]}</div><div style="font-size:8px;color:${MUTED};margin-top:2px">${row[1]}</div></td>
+          ${portfolios.map(p => `<td style="padding:11px 8px;border-left:1px solid ${LINE};text-align:right;font-family:Arial,'Noto Sans SC',sans-serif;font-size:12px;font-weight:700;color:${row[0].includes('Return') ? valueColor(row[0] === 'YTD Return' ? p.metrics.ytdReturn : row[0] === '1Y Return' ? p.metrics.annualReturn1Y : p.metrics.annualReturn5Y) : TEXT}">${row[2](p)}</td>`).join('')}
+        </tr>`).join('')}</tbody>
+    </table>
+    <div style="margin-top:14px;border-left:3px solid ${GOLD};padding:11px 13px;background:${CARD2};font-size:9px;line-height:1.55;color:${MUTED}">回报为截至数据日期的历史公开数据；波动率、最大回撤与夏普比率为基于组合构成的估算值。Past performance does not guarantee future results.</div>`);
+
+  const suitability = page(3, 'Suitability & Objectives', '适合客户与投资目标', `
+    <div style="display:grid;grid-template-columns:repeat(${portfolios.length},minmax(0,1fr));gap:12px;height:100%">
+      ${portfolios.map(p => `
+        <div style="border:1px solid ${LINE};border-top:4px solid ${p.color};background:${CARD};padding:16px;display:flex;flex-direction:column">
+          <div style="font-size:16px;font-weight:700;color:${TEXT}">${p.name}</div>
+          <div style="font-family:Arial,sans-serif;font-size:8px;color:${MUTED};margin-top:3px">${p.nameEN}</div>
+          <div style="margin:16px 0 12px;padding:10px;background:${CARD2};border:1px solid ${LINE}">
+            <div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:1.2px;text-transform:uppercase;color:${GOLD};font-weight:800">Risk / Horizon</div>
+            <div style="font-family:Arial,sans-serif;font-size:12px;color:${TEXT};font-weight:700;margin-top:5px">${p.riskLevel} / 5 · ${p.horizon}</div>
+          </div>
+          <div style="font-size:9px;font-weight:700;color:${GOLD};margin-bottom:6px">投资目标</div>
+          <div style="font-size:10px;line-height:1.62;color:${TEXT}">${p.objective}</div>
+          <div style="height:1px;background:${LINE};margin:16px 0"></div>
+          <div style="font-size:9px;font-weight:700;color:${GOLD};margin-bottom:6px">适合客户</div>
+          <div style="font-size:10px;line-height:1.62;color:${TEXT}">${p.suitableClient}</div>
+        </div>`).join('')}
+    </div>`);
+
+  const holdingsRows = portfolios.map(p => `
+    <tr style="background:${CARD2};border-top:2px solid ${p.color}">
+      <td colspan="6" style="padding:7px 9px;font-size:9px;font-weight:800;color:${p.color}">${p.name} · <span style="font-family:Arial,sans-serif;color:${MUTED};font-weight:500">${p.nameEN}</span></td>
+    </tr>
+    ${p.funds.map((fund,index) => `
+      <tr style="background:${index % 2 ? CARD : CARD2};border-top:1px solid ${LINE}">
+        <td style="padding:6px 8px;width:10px"><span style="display:block;width:7px;height:7px;border-radius:50%;background:${FUND_PALETTE[index % FUND_PALETTE.length]}"></span></td>
+        <td style="padding:6px 5px;font-family:Arial,sans-serif;font-size:7.6px;font-weight:700;color:${TEXT};line-height:1.2">${fund.name}</td>
+        <td style="padding:6px 5px;text-align:right;font-family:Arial,sans-serif;font-size:8px;font-weight:700;color:${p.color}">${fund.alloc}%</td>
+        <td style="padding:6px 5px;text-align:right;font-family:Arial,sans-serif;font-size:8px;font-weight:700;color:${valueColor(fund.y1)}">${fmtPct(fund.y1)}</td>
+        <td style="padding:6px 5px;text-align:right;font-family:Arial,sans-serif;font-size:8px;font-weight:700;color:${valueColor(fund.y5)}">${fmtPct(fund.y5)}</td>
+        <td style="padding:6px 8px;font-size:7.5px;color:${MUTED};line-height:1.2">${fund.role}</td>
+      </tr>`).join('')}`).join('');
+
+  const holdings = page(4, 'Fund Allocation', '基金配置对比', `
+    <table style="width:100%;border-collapse:collapse;border:1px solid ${LINE};background:${CARD}">
+      <thead><tr style="background:${BG}">
+        <th style="width:12px"></th>
+        <th style="padding:8px 5px;text-align:left;font-family:Arial,sans-serif;font-size:7px;letter-spacing:1px;color:${GOLD}">FUND</th>
+        <th style="padding:8px 5px;text-align:right;font-family:Arial,sans-serif;font-size:7px;letter-spacing:1px;color:${GOLD}">ALLOC.</th>
+        <th style="padding:8px 5px;text-align:right;font-family:Arial,sans-serif;font-size:7px;letter-spacing:1px;color:${GOLD}">1Y</th>
+        <th style="padding:8px 5px;text-align:right;font-family:Arial,sans-serif;font-size:7px;letter-spacing:1px;color:${GOLD}">5Y</th>
+        <th style="padding:8px;text-align:left;font-family:Arial,sans-serif;font-size:7px;letter-spacing:1px;color:${GOLD}">ROLE</th>
+      </tr></thead>
+      <tbody>${holdingsRows}</tbody>
+    </table>
+    <div style="margin-top:8px;font-size:7.5px;line-height:1.45;color:${MUTED}">Historical returns net of MER. Source: Equitable Life Fund Performance Database / equitablelife.fundata.com.</div>`);
+
+  const scenarioSeries = [
+    { name:'GIC Reference', color:MUTED, rate:gicRate },
+    ...portfolios.map(p => ({ name:p.name, color:p.color, rate:p.metrics.annualReturn5Y }))
+  ];
+  const maxTenYearValue = Math.max(...scenarioSeries.map(series => futureValue(series.rate, 10)));
+  const growth = page(5, 'Growth Scenario', '$100,000 增长情景对比', `
+    <table style="width:100%;border-collapse:collapse;border:1px solid ${LINE};background:${CARD};margin-bottom:15px">
+      <thead><tr style="background:${CARD2}">
+        <th style="padding:10px;text-align:left;font-family:Arial,sans-serif;font-size:8px;color:${GOLD}">HOLDING PERIOD</th>
+        ${scenarioSeries.map(series => `<th style="padding:10px 7px;text-align:right;font-family:Arial,sans-serif;font-size:8px;color:${series.color}">${series.name}</th>`).join('')}
+      </tr></thead>
+      <tbody>${years.map((year,index) => `
+        <tr style="background:${index % 2 ? CARD : CARD2};border-top:1px solid ${LINE}">
+          <td style="padding:12px 10px;font-size:10px;font-weight:700;color:${TEXT}">${year} 年后</td>
+          ${scenarioSeries.map(series => `<td style="padding:12px 7px;text-align:right;font-family:Arial,sans-serif;font-size:10px;font-weight:700;color:${series.color}">${fmtMoney(futureValue(series.rate, year))}</td>`).join('')}
+        </tr>`).join('')}</tbody>
+    </table>
+    <div style="border:1px solid ${LINE};background:${CARD};padding:15px 16px">
+      <div style="font-size:11px;font-weight:700;color:${TEXT};margin-bottom:12px">10 年期账户价值视觉比较</div>
+      ${scenarioSeries.map(series => {
+        const endingValue = futureValue(series.rate, 10);
+        const barWidth = Math.max(10, endingValue / maxTenYearValue * 100);
+        return `<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:5px"><span style="font-size:9px;color:${TEXT}">${series.name}</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:${series.color}">${fmtMoney(endingValue)}</span></div><div style="height:8px;background:rgba(255,255,255,.07);overflow:hidden"><div style="height:100%;width:${barWidth}%;background:${series.color}"></div></div></div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:12px;border-left:3px solid ${GOLD};padding:10px 12px;background:${CARD2};font-size:8.5px;line-height:1.5;color:${MUTED}">以上以各组合 5 年历史年化回报延伸为情景展示，不是预测或承诺。GIC 使用当前报告中的 5 年参考利率。</div>`);
+
+  const contact = page(6, 'Advisor & Disclosures', '顾问联系方式与重要声明', `
+    <div style="display:grid;grid-template-columns:.85fr 1.15fr;gap:14px">
+      <div style="border:1px solid ${LINE};border-top:4px solid ${GOLD};background:${CARD};padding:20px">
+        <div style="font-family:Arial,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:10px">Your Dedicated Advisor</div>
+        <div style="font-family:Arial,sans-serif;font-size:24px;font-weight:800;color:${TEXT};margin-bottom:6px">Jeffrey Yuan</div>
+        <div style="font-size:10px;color:${MUTED};line-height:1.5;margin-bottom:20px">Independent Broker<br>Private Wealth Advisor</div>
+        <div style="font-family:Arial,sans-serif;font-size:9px;line-height:2;color:${TEXT}"><span style="color:${GOLD};font-weight:800">PHONE</span><br>778-837-6688<br><span style="color:${GOLD};font-weight:800">EMAIL</span><br>Jeffrey.Yuan@TritonWealth.ca<br><span style="color:${GOLD};font-weight:800">WEBSITE</span><br>www.tritonwealth.ca</div>
+      </div>
+      <div style="display:grid;gap:10px">
+        ${[
+          ['法律声明 · Legal Disclaimer','本材料仅供参考，不构成投资建议、招揽或要约。投资涉及风险，本金可能蒙受损失。'],
+          ['税务提示 · Tax Considerations','税务处理因个人情况、账户类型和投资结构而异。请结合客户实际情况咨询专业税务顾问。'],
+          ['风险披露 · Risk Disclosure','分隔基金价值会随市场变化而波动；合同保证、费用、赎回和受益人条款以正式合同及基金文件为准。'],
+          ['数据与回报 · Data & Performance','基金回报来自公开数据源并沿用当前组合数据。历史回报不代表未来表现，情景测算不构成回报承诺。']
+        ].map(item => `<div style="border:1px solid ${LINE};background:${CARD};padding:13px 14px"><div style="font-size:10px;font-weight:700;color:${GOLD};margin-bottom:5px">${item[0]}</div><div style="font-size:9px;line-height:1.58;color:${TEXT}">${item[1]}</div></div>`).join('')}
+      </div>
+    </div>
+    <div style="margin-top:15px;border-left:3px solid ${GOLD};padding:11px 13px;background:${CARD2};font-size:9px;line-height:1.55;color:${MUTED}">Prepared for ${getPreparedForName()} · Selected portfolios: ${portfolios.map(p => p.name).join(' / ')}</div>`);
+
+  return cover + metrics + suitability + holdings + growth + contact;
+}
+
 // ════════════════════════════════════════════════════════════════════
 // PDF EXPORT — build layout then print
 // ════════════════════════════════════════════════════════════════════
-function exportPDF() {
-  if (!APP_DATA) { alert('数据未加载，请稍候再试'); return; }
+function setExportButtonsBusy(mode, busy) {
+  document.querySelectorAll(`[data-pdf-export="${mode}"]`).forEach(btn => {
+    if (busy) {
+      btn.dataset.originalText = btn.textContent;
+      btn.textContent = '准备中...';
+      btn.disabled = true;
+    } else {
+      btn.textContent = btn.dataset.originalText || (mode === 'compare' ? '导出组合对比 PDF' : '导出当前组合 PDF');
+      btn.disabled = false;
+    }
+  });
+  if (!busy) syncComparisonPanel();
+}
 
-  const btn = document.querySelector('nav.no-print [onclick="exportPDF()"]');
-  const originalText = btn ? btn.textContent : '';
-  if (btn) { btn.textContent = '准备中...'; btn.disabled = true; }
+function exportPDF(mode='single') {
+  if (!APP_DATA) { alert('数据未加载，请稍候再试'); return; }
+  const selectedIds = ['a','b','c'].filter(id => compareSelection.has(id));
+  if (mode === 'compare' && (selectedIds.length < 2 || selectedIds.length > 3)) {
+    syncComparisonPanel();
+    alert('请至少选择 2 个组合后生成对比报告。');
+    return;
+  }
+
+  activePrintMode = mode;
+  setExportButtonsBusy(mode, true);
 
   // Allow charts to finish any pending animation, then build and print
   setTimeout(() => {
     try {
-      document.getElementById('pdf-body').innerHTML = buildPDFLayout();
+      document.getElementById('pdf-body').innerHTML = mode === 'compare'
+        ? buildComparisonPDFLayout(selectedIds)
+        : buildPDFLayout();
       setTimeout(() => {
         try {
-          if (btn) { btn.textContent = originalText || '导出PDF'; btn.disabled = false; }
           window.print();
         } finally {
-          if (btn) { btn.textContent = originalText || '导出PDF'; btn.disabled = false; }
+          activePrintMode = null;
+          setExportButtonsBusy(mode, false);
           if (APP_DATA) setTimeout(() => initCharts(APP_DATA.portfolios[currentTab], TAB_COLORS[currentTab]), 300);
         }
       }, 150);
     } catch (err) {
       console.error('PDF export failed', err);
-      if (btn) { btn.textContent = originalText || '导出PDF'; btn.disabled = false; }
+      activePrintMode = null;
+      setExportButtonsBusy(mode, false);
       alert('PDF 生成失败，请刷新页面后再试。');
     }
   }, 300);
 }
 
 window.addEventListener('message', event => {
-  if (event.data && event.data.type === 'TRITON_EXPORT_PDF') exportPDF();
+  if (event.data && event.data.type === 'TRITON_EXPORT_PDF') exportPDF(event.data.mode === 'compare' ? 'compare' : 'single');
 });
 
 // Ctrl+P fallback: build layout before native print dialog
 window.addEventListener('beforeprint', () => {
-  if (APP_DATA && !document.getElementById('pdf-body').innerHTML.trim()) {
+  if (APP_DATA && activePrintMode !== 'compare') {
     document.getElementById('pdf-body').innerHTML = buildPDFLayout();
   }
 });
 window.addEventListener('afterprint', () => {
-  // Keep layout cached for fast re-print; clear on tab switch instead
+  activePrintMode = null;
+  document.getElementById('pdf-body').innerHTML = '';
+  syncComparisonPanel();
 });
 
 // ════════════════════════════════════════════════════════════════════
@@ -2717,6 +3155,7 @@ window.addEventListener('afterprint', () => {
 async function boot() {
   await loadData();
   switchTab('a');
+  syncComparisonPanel();
   // Hide loading screen after data loads
   setTimeout(()=>{
     document.getElementById('loading-screen').classList.add('hidden-fade');
@@ -2748,12 +3187,12 @@ window.addEventListener('load', () => {
       color:#9aa3b0!important;
     }
     .en,.num,.data-cell,.big-metric,.metric-72,.metric-48,.t-num-lg,.t-num-sm,
-    td:last-child,[id*="return"],[id*="tax"],[id*="value"],[id*="amount"] {
+    main td:last-child,[id*="return"],[id*="tax"],[id*="value"],[id*="amount"] {
       font-family:Arial,Helvetica,'Noto Sans SC',sans-serif!important;
       font-variant-numeric:tabular-nums;
       letter-spacing:0!important;
     }
-    .data-cell,td:last-child{font-size:16px!important;color:#e3c074!important;font-weight:700!important;}
+    .data-cell,main td:last-child{font-size:16px!important;color:#e3c074!important;font-weight:700!important;}
     .big-metric,.metric-72{font-size:clamp(44px,6vw,70px)!important;}
     .metric-48,.t-num-lg{font-size:clamp(34px,4.8vw,54px)!important;}
     .t-num-sm,[style*="background:#F"] .t-num-sm,[style*="background: #F"] .t-num-sm{
@@ -2833,7 +3272,7 @@ window.addEventListener('load', () => {
       .t-num-sm,[style*="background:#F"] .t-num-sm,[style*="background: #F"] .t-num-sm{
         font-size:18px!important;
       }
-      .data-cell,td:last-child{font-size:13.5px!important;}
+      .data-cell,main td:last-child{font-size:13.5px!important;}
       .fund-name{font-size:13.5px!important;line-height:1.4!important;}
       .fund-table td{padding:8px 6px!important;}
       .badge{font-size:9px!important;padding:3px 7px!important;}
@@ -2844,6 +3283,16 @@ window.addEventListener('load', () => {
       [class*="text-white/"],[class*="text-blue-200/"]{color:rgba(232,230,224,.72)!important;}
       section.hero-bg p{white-space:normal!important;text-overflow:clip!important;overflow:visible!important;}
       .mobile-advisor-hide{display:none!important;}
+    }
+    @media print{
+      html,body{
+        width:8.5in!important;
+        max-width:8.5in!important;
+        margin:0!important;
+        padding:0!important;
+        overflow:visible!important;
+      }
+      .mobile-switch,.triton-account-button{display:none!important;}
     }
   `;
   document.head.appendChild(style);
