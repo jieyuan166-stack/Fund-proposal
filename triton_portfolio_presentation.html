@@ -2537,12 +2537,14 @@ function buildLegacyPDFLayout() {
 
 function buildPDFLayout() {
   const d = APP_DATA.portfolios[currentTab];
-  const col = TAB_COLORS[currentTab];
+  const col = { a:'#2563EB', b:'#0F8B64', c:'#A77B1E' }[currentTab];
   const m = d.metrics;
+  const preparedOn = reportDateLabel('zh-CN');
+  const performanceAsOf = APP_DATA.asOfLabel;
   Object.values(CH).forEach(chart => {
     if (!chart) return;
     if (chart.options?.plugins?.legend?.labels) {
-      chart.options.plugins.legend.labels.color = '#aab3bf';
+      chart.options.plugins.legend.labels.color = '#667085';
       chart.options.plugins.legend.labels.font = { size: 10, family: 'Inter', weight: '500' };
       chart.options.plugins.legend.labels.pointStyleWidth = 8;
       chart.options.plugins.legend.labels.boxWidth = 8;
@@ -2551,7 +2553,7 @@ function buildPDFLayout() {
     chart.data?.datasets?.forEach((ds, i) => {
       if (chart.config.type === 'doughnut') {
         ds.borderWidth = 1;
-        ds.borderColor = '#0a0e14';
+        ds.borderColor = '#F7F5EF';
         ds.hoverOffset = 1;
       }
       if (chart.config.type === 'line') {
@@ -2559,17 +2561,17 @@ function buildPDFLayout() {
         ds.pointRadius = i === 0 ? 2.4 : 1;
         ds.pointHoverRadius = i === 0 ? 4 : 2.8;
         ds.backgroundColor = i === 0 ? `${col}22` : 'transparent';
-        if (i === 1) ds.borderColor = '#aab3bf';
-        if (i === 2) ds.borderColor = 'rgba(227,192,116,.45)';
+        if (i === 1) ds.borderColor = '#667085';
+        if (i === 2) ds.borderColor = 'rgba(167,123,30,.58)';
       }
     });
     if (chart.options?.scales) {
       Object.values(chart.options.scales).forEach(scale => {
         if (scale?.ticks) {
-          scale.ticks.color = '#aab3bf';
+          scale.ticks.color = '#667085';
           scale.ticks.font = { size: 12, family: 'Inter', weight: '500' };
         }
-        if (scale?.grid) scale.grid.color = 'rgba(170,179,191,.18)';
+        if (scale?.grid) scale.grid.color = 'rgba(23,32,51,.12)';
       });
     }
     chart.update('none');
@@ -2579,18 +2581,18 @@ function buildPDFLayout() {
     try { charts[c.id] = c.toDataURL('image/png', 1.0); } catch(e) { charts[c.id] = ''; }
   });
 
-  const NAVY = '#0a0e14';
-  const NAVY2 = '#11161f';
-  const GOLD = '#c9a24a';
-  const BG = '#0a0e14';
-  const LINE = 'rgba(201,162,74,.28)';
-  const TEXT = '#e8e6e0';
-  const MUTED = '#aab3bf';
-  const CARD = '#11161f';
-  const CARD2 = '#0f141d';
-  const SOFT = 'rgba(201,162,74,.08)';
-  const POS = '#7fc7a3';
-  const NEG = '#ee8f82';
+  const NAVY = '#EEE6D3';
+  const NAVY2 = '#F1EFE8';
+  const GOLD = '#A77B1E';
+  const BG = '#F7F5EF';
+  const LINE = '#D8D1C2';
+  const TEXT = '#172033';
+  const MUTED = '#667085';
+  const CARD = '#FFFFFF';
+  const CARD2 = '#F1EFE8';
+  const SOFT = '#EEE6D3';
+  const POS = '#147A55';
+  const NEG = '#B84335';
   const FUND_PAL = FUND_PALETTE;
   const TOTAL = 9;
 
@@ -2604,7 +2606,7 @@ function buildPDFLayout() {
 
   const page = (num, eyebrow, title, body, opts={}) => `
     <section class="pdf-page" style="display:flex;flex-direction:column;background:${BG};color:${TEXT};padding:0">
-      <header style="height:58px;padding:18px 42px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0">
+      <header style="height:66px;padding:16px 42px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;background:${CARD}">
         <div style="display:flex;align-items:center;gap:12px">
           <img src="triton-logo.png" style="height:34px;width:auto;object-fit:contain" onerror="this.style.display='none'">
           <div style="height:24px;width:1px;background:${LINE}"></div>
@@ -2613,9 +2615,10 @@ function buildPDFLayout() {
             <div style="font-size:7.5px;color:${MUTED};margin-top:2px">Private Wealth Advisory</div>
           </div>
         </div>
-        <div style="text-align:right;font-family:Inter,sans-serif;font-size:8px;color:${MUTED}">
+        <div style="text-align:right;font-family:Inter,sans-serif;font-size:7.5px;line-height:1.45;color:${MUTED}">
           <div style="font-weight:800;color:${GOLD}">CONFIDENTIAL</div>
-          <div style="margin-top:2px">Data as of ${APP_DATA.asOfLabel}</div>
+          <div style="margin-top:2px"><span style="color:${GOLD};font-weight:700">Performance data as of</span> ${performanceAsOf}</div>
+          <div><span style="color:${GOLD};font-weight:700">Prepared on</span> ${preparedOn}</div>
         </div>
       </header>
       <div class="pdf-main" style="flex:1;padding:${opts.cover ? '42px 54px 34px' : '24px 42px 20px'};overflow:hidden">
@@ -2678,7 +2681,7 @@ function buildPDFLayout() {
         </div>
         <span style="font-family:Inter,sans-serif;font-size:10px;font-weight:800;color:${TEXT}">${item.value}%</span>
       </div>
-      <div style="height:6px;background:rgba(255,255,255,.09);border-radius:99px;overflow:hidden">
+      <div style="height:6px;background:#E4E7EC;border-radius:99px;overflow:hidden">
         <div style="height:100%;width:${item.value}%;background:${colors[i % colors.length]};border-radius:99px"></div>
       </div>
     </div>`).join('');
@@ -2702,7 +2705,7 @@ function buildPDFLayout() {
     <div style="height:100%;display:flex;flex-direction:column;justify-content:space-between">
       <div>
         <div style="font-family:Inter,sans-serif;font-size:9px;letter-spacing:2.4px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:20px">Segregated Fund Advisory Report</div>
-        <h1 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:30px;line-height:1.26;font-weight:800;letter-spacing:0;margin:0 0 14px;color:#fff">
+        <h1 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:30px;line-height:1.26;font-weight:800;letter-spacing:0;margin:0 0 14px;color:${TEXT}">
           分隔基金投资组合<br>客户建议报告
         </h1>
         <div style="width:82px;height:2px;background:${GOLD};margin:24px 0"></div>
@@ -2711,19 +2714,28 @@ function buildPDFLayout() {
           <span style="font-family:Inter,sans-serif;color:${MUTED}">Growth · Tax · Estate · Risk · Guarantees</span>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        <div style="border:1px solid rgba(201,168,76,.38);background:rgba(255,255,255,.035);border-radius:7px;padding:16px">
+      <div>
+        <div style="border:1px solid ${LINE};border-top:3px solid ${col};background:${CARD};padding:15px 16px;margin-bottom:12px">
           <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Portfolio</div>
-          <div style="font-size:17px;font-weight:800;color:#fff">${d.name}</div>
+          <div style="font-size:17px;font-weight:800;color:${TEXT}">${d.name}</div>
           <div style="font-family:Inter,sans-serif;font-size:10px;color:${MUTED};margin-top:4px">${d.nameEN}</div>
         </div>
-        <div style="border:1px solid rgba(201,168,76,.38);background:rgba(255,255,255,.035);border-radius:7px;padding:16px">
-          <div style="font-family:Inter,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Prepared For</div>
-          <div style="font-size:17px;font-weight:800;color:#fff;overflow-wrap:anywhere">${getPreparedForName()}</div>
-          <div style="font-family:Inter,sans-serif;font-size:10px;color:${MUTED};margin-top:4px">Data as of ${APP_DATA.asOfLabel}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div style="border:1px solid ${LINE};background:${CARD};padding:14px">
+            <div style="font-family:Inter,sans-serif;font-size:7.5px;letter-spacing:1.4px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Prepared For / 客户姓名</div>
+            <div style="font-size:14px;font-weight:800;color:${TEXT};overflow-wrap:anywhere">${getPreparedForName()}</div>
+          </div>
+          <div style="border:1px solid ${LINE};background:${CARD};padding:14px">
+            <div style="font-family:Inter,sans-serif;font-size:7.5px;letter-spacing:1.1px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Proposal Prepared On / 方案准备日期</div>
+            <div style="font-family:Inter,sans-serif;font-size:13px;font-weight:800;color:${TEXT}">${preparedOn}</div>
+          </div>
+          <div style="border:1px solid ${LINE};background:${CARD};padding:14px">
+            <div style="font-family:Inter,sans-serif;font-size:7.5px;letter-spacing:1.1px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Performance Data As Of / 回报率数据截至</div>
+            <div style="font-family:Inter,sans-serif;font-size:13px;font-weight:800;color:${TEXT}">${performanceAsOf}</div>
+          </div>
         </div>
       </div>
-    </div>`, { dark:true, cover:true });
+    </div>`, { cover:true });
 
   const exec = page(2, 'Executive Summary', 'GIC 与分隔基金的适用场景比较', `
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
@@ -2741,10 +2753,10 @@ function buildPDFLayout() {
 
   const compare = page(3, 'GIC vs Segregated Fund', '银行 GIC 与分隔基金对比', `
     <div style="border:1px solid ${LINE};border-radius:7px;overflow:hidden;background:${CARD}">
-      <div style="display:grid;grid-template-columns:1fr 1.25fr 1.25fr;background:${NAVY};color:#fff;font-size:10px;font-weight:800">
+      <div style="display:grid;grid-template-columns:1fr 1.25fr 1.25fr;background:${NAVY};color:${TEXT};font-size:10px;font-weight:800">
         <div style="padding:12px 14px">客户关心的问题</div>
-        <div style="padding:12px 14px;border-left:1px solid rgba(255,255,255,.15)">银行 GIC</div>
-        <div style="padding:12px 14px;border-left:1px solid rgba(255,255,255,.15);color:${GOLD}">分隔基金</div>
+        <div style="padding:12px 14px;border-left:1px solid ${LINE}">银行 GIC</div>
+        <div style="padding:12px 14px;border-left:1px solid ${LINE};color:${GOLD}">分隔基金</div>
       </div>
       ${comparisonRows.map((r,i)=>`
         <div style="display:grid;grid-template-columns:1fr 1.25fr 1.25fr;background:${i % 2 ? CARD : CARD2};border-top:1px solid ${LINE}">
@@ -2780,8 +2792,8 @@ function buildPDFLayout() {
     </div>
     <table style="width:100%;border-collapse:collapse;border:1px solid ${LINE};border-radius:7px;overflow:hidden">
       <thead>
-        <tr style="background:${NAVY};color:#fff">
-          ${['Fund','Alloc.','1Y','5Y','Role'].map((h,i)=>`<th style="padding:10px 8px;text-align:${i===0||i===4?'left':'right'};font-family:Inter,sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:${i===0?GOLD:'#DDE7F3'}">${h}</th>`).join('')}
+        <tr style="background:${NAVY};color:${TEXT}">
+          ${['Fund','Alloc.','1Y','5Y','Role'].map((h,i)=>`<th style="padding:10px 8px;text-align:${i===0||i===4?'left':'right'};font-family:Inter,sans-serif;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:${i===0?GOLD:TEXT}">${h}</th>`).join('')}
         </tr>
       </thead>
       <tbody>${fundRows}</tbody>
@@ -2803,7 +2815,7 @@ function buildPDFLayout() {
         </div>
         <table style="width:100%;border-collapse:collapse">
           <thead>
-            <tr style="background:${NAVY};color:#fff">
+            <tr style="background:${NAVY};color:${TEXT}">
               <th style="padding:10px 14px;text-align:left;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:${GOLD};font-family:Inter">Holding Period</th>
               <th style="padding:10px 14px;text-align:right;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:Inter">GIC Reference</th>
               <th style="padding:10px 14px;text-align:right;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:Inter">Portfolio 5Y</th>
@@ -2882,16 +2894,19 @@ function buildComparisonPDFLayout(selectedIds) {
   const ids = ['a','b','c'].filter(id => selectedIds.includes(id));
   if (ids.length < 2 || ids.length > 3) throw new Error('Select two or three portfolios for comparison.');
 
-  const portfolios = ids.map(id => ({ id, color:TAB_COLORS[id], ...APP_DATA.portfolios[id] }));
-  const BG = '#0a0e14';
-  const CARD = '#11161f';
-  const CARD2 = '#0f141d';
-  const GOLD = '#c9a24a';
-  const TEXT = '#e8e6e0';
-  const MUTED = '#aab3bf';
-  const POS = '#7fc7a3';
-  const NEG = '#ee8f82';
-  const LINE = 'rgba(201,162,74,.28)';
+  const printColors = { a:'#2563EB', b:'#0F8B64', c:'#A77B1E' };
+  const portfolios = ids.map(id => ({ id, color:printColors[id], ...APP_DATA.portfolios[id] }));
+  const preparedOn = reportDateLabel('zh-CN');
+  const performanceAsOf = APP_DATA.asOfLabel;
+  const BG = '#F7F5EF';
+  const CARD = '#FFFFFF';
+  const CARD2 = '#F1EFE8';
+  const GOLD = '#A77B1E';
+  const TEXT = '#172033';
+  const MUTED = '#667085';
+  const POS = '#147A55';
+  const NEG = '#B84335';
+  const LINE = '#D8D1C2';
   const TOTAL = 6;
   const principal = 100000;
   const years = [1,3,5,10];
@@ -2905,7 +2920,7 @@ function buildComparisonPDFLayout(selectedIds) {
 
   const page = (num, eyebrow, title, body, cover=false) => `
     <section class="pdf-page" style="display:flex;flex-direction:column;background:${BG};color:${TEXT};padding:0">
-      <header style="height:58px;padding:18px 42px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0">
+      <header style="height:66px;padding:16px 42px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;background:${CARD}">
         <div style="display:flex;align-items:center;gap:12px">
           <img src="triton-logo.png" style="height:34px;width:auto;object-fit:contain" onerror="this.style.display='none'">
           <div style="height:24px;width:1px;background:${LINE}"></div>
@@ -2914,9 +2929,10 @@ function buildComparisonPDFLayout(selectedIds) {
             <div style="font-size:7.5px;color:${MUTED};margin-top:2px">Portfolio Comparison · Private Wealth Advisory</div>
           </div>
         </div>
-        <div style="text-align:right;font-family:Arial,sans-serif;font-size:8px;color:${MUTED}">
+        <div style="text-align:right;font-family:Arial,sans-serif;font-size:7.5px;line-height:1.45;color:${MUTED}">
           <div style="font-weight:800;color:${GOLD}">CONFIDENTIAL</div>
-          <div style="margin-top:2px">Data as of ${APP_DATA.asOfLabel}</div>
+          <div style="margin-top:2px"><span style="color:${GOLD};font-weight:700">Performance data as of</span> ${performanceAsOf}</div>
+          <div><span style="color:${GOLD};font-weight:700">Prepared on</span> ${preparedOn}</div>
         </div>
       </header>
       <div style="flex:1;padding:${cover ? '42px 54px 34px' : '24px 42px 20px'};overflow:hidden">
@@ -2953,19 +2969,23 @@ function buildComparisonPDFLayout(selectedIds) {
     <div style="height:100%;display:flex;flex-direction:column;justify-content:space-between">
       <div>
         <div style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2.4px;text-transform:uppercase;font-weight:800;color:${GOLD};margin-bottom:20px">Portfolio Comparison Report</div>
-        <h1 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:31px;line-height:1.26;font-weight:700;letter-spacing:0;margin:0 0 14px;color:#fff">分隔基金投资组合<br>对比建议报告</h1>
+        <h1 style="font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:31px;line-height:1.26;font-weight:700;letter-spacing:0;margin:0 0 14px;color:${TEXT}">分隔基金投资组合<br>对比建议报告</h1>
         <div style="width:82px;height:2px;background:${GOLD};margin:24px 0"></div>
         <div style="font-size:13px;line-height:1.65;color:${TEXT}">在同一风险、回报与配置框架下比较所选组合<br><span style="font-family:Arial,sans-serif;color:${MUTED}">Growth · Risk · Allocation · Suitability</span></div>
       </div>
       <div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
           <div style="border:1px solid ${LINE};background:${CARD};padding:16px">
-            <div style="font-family:Arial,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Prepared For</div>
-            <div style="font-size:17px;font-weight:700;color:#fff;overflow-wrap:anywhere">${getPreparedForName()}</div>
+            <div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:1.4px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Prepared For / 客户姓名</div>
+            <div style="font-size:14px;font-weight:700;color:${TEXT};overflow-wrap:anywhere">${getPreparedForName()}</div>
           </div>
           <div style="border:1px solid ${LINE};background:${CARD};padding:16px">
-            <div style="font-family:Arial,sans-serif;font-size:8px;letter-spacing:1.8px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Data Through</div>
-            <div style="font-family:Arial,sans-serif;font-size:17px;font-weight:700;color:#fff">${APP_DATA.asOfLabel}</div>
+            <div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:1.1px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Proposal Prepared On / 方案准备日期</div>
+            <div style="font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:${TEXT}">${preparedOn}</div>
+          </div>
+          <div style="border:1px solid ${LINE};background:${CARD};padding:16px">
+            <div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:1.1px;text-transform:uppercase;color:${GOLD};font-weight:800;margin-bottom:8px">Performance Data As Of / 回报率数据截至</div>
+            <div style="font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:${TEXT}">${performanceAsOf}</div>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(${portfolios.length},1fr);gap:10px">
@@ -2985,23 +3005,27 @@ function buildComparisonPDFLayout(selectedIds) {
     </table>
     <div style="margin-top:14px;border-left:3px solid ${GOLD};padding:11px 13px;background:${CARD2};font-size:9px;line-height:1.55;color:${MUTED}">回报为截至数据日期的历史公开数据；波动率、最大回撤与夏普比率为基于组合构成的估算值。Past performance does not guarantee future results.</div>`);
 
+  const suitabilityRows = [
+    { label:'组合定位', labelEN:'Positioning', render:p => p.tagline },
+    { label:'风险与期限', labelEN:'Risk / Horizon', render:p => `<strong style="font-family:Arial,sans-serif;color:${p.color};font-size:12px">${p.riskLevel} / 5</strong><br><span style="font-family:Arial,sans-serif;color:${TEXT};font-size:10px">${p.horizon}</span>` },
+    { label:'投资目标', labelEN:'Investment Objective', render:p => p.objective },
+    { label:'适合客户', labelEN:'Suitable Client', render:p => p.suitableClient }
+  ];
   const suitability = page(3, 'Suitability & Objectives', '适合客户与投资目标', `
-    <div style="display:grid;grid-template-columns:repeat(${portfolios.length},minmax(0,1fr));gap:12px;height:100%">
-      ${portfolios.map(p => `
-        <div style="border:1px solid ${LINE};border-top:4px solid ${p.color};background:${CARD};padding:16px;display:flex;flex-direction:column">
-          <div style="font-size:16px;font-weight:700;color:${TEXT}">${p.name}</div>
-          <div style="font-family:Arial,sans-serif;font-size:8px;color:${MUTED};margin-top:3px">${p.nameEN}</div>
-          <div style="margin:16px 0 12px;padding:10px;background:${CARD2};border:1px solid ${LINE}">
-            <div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:1.2px;text-transform:uppercase;color:${GOLD};font-weight:800">Risk / Horizon</div>
-            <div style="font-family:Arial,sans-serif;font-size:12px;color:${TEXT};font-weight:700;margin-top:5px">${p.riskLevel} / 5 · ${p.horizon}</div>
-          </div>
-          <div style="font-size:9px;font-weight:700;color:${GOLD};margin-bottom:6px">投资目标</div>
-          <div style="font-size:10px;line-height:1.62;color:${TEXT}">${p.objective}</div>
-          <div style="height:1px;background:${LINE};margin:16px 0"></div>
-          <div style="font-size:9px;font-weight:700;color:${GOLD};margin-bottom:6px">适合客户</div>
-          <div style="font-size:10px;line-height:1.62;color:${TEXT}">${p.suitableClient}</div>
-        </div>`).join('')}
-    </div>`);
+    <div style="display:grid;grid-template-columns:132px repeat(${portfolios.length},minmax(0,1fr));grid-template-rows:64px 96px 96px 170px 170px;border:1px solid ${LINE};background:${CARD}">
+      <div style="padding:14px 12px;background:${CARD2};display:flex;align-items:flex-end">
+        <div><div style="font-family:Arial,sans-serif;font-size:7.5px;letter-spacing:1.3px;text-transform:uppercase;color:${GOLD};font-weight:800">Comparison</div><div style="font-size:9px;color:${MUTED};margin-top:4px">横向选择框架</div></div>
+      </div>
+      ${portfolios.map(p => `<div style="border-left:1px solid ${LINE};border-top:4px solid ${p.color};padding:12px 13px;background:${CARD}"><div style="font-size:13px;font-weight:800;color:${TEXT}">${p.name}</div><div style="font-family:Arial,sans-serif;font-size:7.5px;color:${MUTED};margin-top:3px">${p.nameEN}</div></div>`).join('')}
+      ${suitabilityRows.map((row,rowIndex) => `
+        <div style="border-top:1px solid ${LINE};padding:13px 12px;background:${rowIndex % 2 ? CARD2 : '#EEE6D3'};display:flex;flex-direction:column;justify-content:center">
+          <div style="font-size:10px;font-weight:800;color:${TEXT}">${row.label}</div>
+          <div style="font-family:Arial,sans-serif;font-size:7px;letter-spacing:.7px;text-transform:uppercase;color:${GOLD};margin-top:4px">${row.labelEN}</div>
+        </div>
+        ${portfolios.map(p => `<div style="border-top:1px solid ${LINE};border-left:1px solid ${LINE};padding:13px 14px;background:${rowIndex % 2 ? CARD2 : CARD};display:flex;align-items:center;font-size:${rowIndex < 2 ? '10.5px' : '10px'};line-height:1.62;color:${TEXT}">${row.render(p)}</div>`).join('')}
+      `).join('')}
+    </div>
+    <div style="margin-top:12px;border-left:3px solid ${GOLD};padding:10px 12px;background:${CARD2};font-size:8.5px;line-height:1.5;color:${MUTED}">组合选择应同时考虑风险承受能力、资金用途与持有期限；历史回报仅用于理解既往表现，不构成未来回报承诺。</div>`);
 
   const holdingsRows = portfolios.map(p => `
     <tr style="background:${CARD2};border-top:2px solid ${p.color}">
@@ -3053,7 +3077,7 @@ function buildComparisonPDFLayout(selectedIds) {
       ${scenarioSeries.map(series => {
         const endingValue = futureValue(series.rate, 10);
         const barWidth = Math.max(10, endingValue / maxTenYearValue * 100);
-        return `<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:5px"><span style="font-size:9px;color:${TEXT}">${series.name}</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:${series.color}">${fmtMoney(endingValue)}</span></div><div style="height:8px;background:rgba(255,255,255,.07);overflow:hidden"><div style="height:100%;width:${barWidth}%;background:${series.color}"></div></div></div>`;
+        return `<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:5px"><span style="font-size:9px;color:${TEXT}">${series.name}</span><span style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:${series.color}">${fmtMoney(endingValue)}</span></div><div style="height:8px;background:#E4E7EC;overflow:hidden"><div style="height:100%;width:${barWidth}%;background:${series.color}"></div></div></div>`;
       }).join('')}
     </div>
     <div style="margin-top:12px;border-left:3px solid ${GOLD};padding:10px 12px;background:${CARD2};font-size:8.5px;line-height:1.5;color:${MUTED}">以上以各组合 5 年历史年化回报延伸为情景展示，不是预测或承诺。GIC 使用当前报告中的 5 年参考利率。</div>`);
@@ -3295,6 +3319,13 @@ window.addEventListener('load', () => {
         overflow:visible!important;
       }
       .mobile-switch,.triton-account-button{display:none!important;}
+      #pdf-body .pdf-page{background:#F7F5EF!important;color:#172033!important;}
+      #pdf-body .pdf-page [style*="background:#FFFFFF"]{background:#FFFFFF!important;}
+      #pdf-body .pdf-page [style*="background:#F7F5EF"]{background:#F7F5EF!important;}
+      #pdf-body .pdf-page [style*="background:#F1EFE8"]{background:#F1EFE8!important;}
+      #pdf-body .pdf-page [style*="background:#EEE6D3"]{background:#EEE6D3!important;}
+      #pdf-body .pdf-page [style*="color:#172033"]{color:#172033!important;}
+      #pdf-body .pdf-page [style*="color:#667085"]{color:#667085!important;}
     }
   `;
   document.head.appendChild(style);
