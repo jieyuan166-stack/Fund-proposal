@@ -1213,6 +1213,7 @@ let currentTab = 'a';
 let clientName = '';
 let compareSelection = new Set(['a','b']);
 let activePrintMode = null;
+let printDocumentTitle = null;
 let CH = { fund:null, asset:null, sector:null, geo:null, growth:null };
 const FUND_PALETTE   = ['#3B82F6','#C9A84C','#10B981','#8B5CF6','#EF4444','#14B8A6'];
 const ASSET_PALETTE  = ['#3B82F6','#C9A84C','#10B981','#8B5CF6'];
@@ -1221,6 +1222,40 @@ const GEO_PALETTE    = ['#EF4444','#3B82F6','#10B981','#F59E0B','#8B5CF6'];
 const TAB_COLORS = { a:'#3B82F6', b:'#10B981', c:'#C9A84C' };
 function reportDateLabel(locale='zh-CN') {
   return new Date().toLocaleDateString(locale, { year:'numeric', month:'long', day:'numeric' });
+}
+
+function reportDateFileStamp(date=new Date()) {
+  const pad = value => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function sanitizePDFFilePart(value) {
+  return String(value || '')
+    .replace(/[\u0000-\u001F\u007F\/\\:*?"<>|]+/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^[-.]+/, '')
+    .replace(/[-.\s]+$/g, '')
+    .slice(0, 80)
+    .replace(/[-.\s]+$/g, '');
+}
+
+function getPDFDocumentTitle(mode='single') {
+  const preparedFor = sanitizePDFFilePart(clientName) || 'Triton Wealth';
+  const portfolioName = sanitizePDFFilePart(APP_DATA?.portfolios?.[currentTab]?.name) || '投资组合';
+  const reportType = mode === 'compare' ? '投资组合对比方案' : `${portfolioName}投资方案`;
+  return `${preparedFor}_${reportType}_${reportDateFileStamp()}`;
+}
+
+function applyPDFDocumentTitle(mode='single') {
+  if (printDocumentTitle === null) printDocumentTitle = document.title;
+  document.title = getPDFDocumentTitle(mode);
+}
+
+function restoreDocumentTitle() {
+  if (printDocumentTitle === null) return;
+  document.title = printDocumentTitle;
+  printDocumentTitle = null;
 }
 
 function escapeHTML(value) {
@@ -3136,6 +3171,7 @@ function exportPDF(mode='single') {
   // Allow charts to finish any pending animation, then build and print
   setTimeout(() => {
     try {
+      applyPDFDocumentTitle(mode);
       document.getElementById('pdf-body').innerHTML = mode === 'compare'
         ? buildComparisonPDFLayout(selectedIds)
         : buildPDFLayout();
@@ -3143,6 +3179,7 @@ function exportPDF(mode='single') {
         try {
           window.print();
         } finally {
+          restoreDocumentTitle();
           activePrintMode = null;
           setExportButtonsBusy(mode, false);
           if (APP_DATA) setTimeout(() => initCharts(APP_DATA.portfolios[currentTab], TAB_COLORS[currentTab]), 300);
@@ -3150,6 +3187,7 @@ function exportPDF(mode='single') {
       }, 150);
     } catch (err) {
       console.error('PDF export failed', err);
+      restoreDocumentTitle();
       activePrintMode = null;
       setExportButtonsBusy(mode, false);
       alert('PDF 生成失败，请刷新页面后再试。');
@@ -3163,11 +3201,13 @@ window.addEventListener('message', event => {
 
 // Ctrl+P fallback: build layout before native print dialog
 window.addEventListener('beforeprint', () => {
-  if (APP_DATA && activePrintMode !== 'compare') {
-    document.getElementById('pdf-body').innerHTML = buildPDFLayout();
-  }
+  if (!APP_DATA) return;
+  const printMode = activePrintMode === 'compare' ? 'compare' : 'single';
+  applyPDFDocumentTitle(printMode);
+  if (printMode === 'single') document.getElementById('pdf-body').innerHTML = buildPDFLayout();
 });
 window.addEventListener('afterprint', () => {
+  restoreDocumentTitle();
   activePrintMode = null;
   setTimeout(() => {
     if (!activePrintMode) document.getElementById('pdf-body').innerHTML = '';
