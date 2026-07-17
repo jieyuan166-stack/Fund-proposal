@@ -1213,7 +1213,7 @@ let currentTab = 'a';
 let clientName = '';
 let compareSelection = new Set(['a','b']);
 let activePrintMode = null;
-let printDocumentTitle = null;
+let printDocumentTitles = [];
 let CH = { fund:null, asset:null, sector:null, geo:null, growth:null };
 const FUND_PALETTE   = ['#3B82F6','#C9A84C','#10B981','#8B5CF6','#EF4444','#14B8A6'];
 const ASSET_PALETTE  = ['#3B82F6','#C9A84C','#10B981','#8B5CF6'];
@@ -1248,14 +1248,24 @@ function getPDFDocumentTitle(mode='single') {
 }
 
 function applyPDFDocumentTitle(mode='single') {
-  if (printDocumentTitle === null) printDocumentTitle = document.title;
-  document.title = getPDFDocumentTitle(mode);
+  const title = getPDFDocumentTitle(mode);
+  if (!printDocumentTitles.length) {
+    const documents = [document];
+    try {
+      if (window.top?.document && window.top.document !== document) documents.push(window.top.document);
+    } catch {}
+    printDocumentTitles = documents.map(target => ({ target, title:target.title }));
+  }
+  printDocumentTitles.forEach(entry => {
+    entry.target.title = title;
+  });
 }
 
 function restoreDocumentTitle() {
-  if (printDocumentTitle === null) return;
-  document.title = printDocumentTitle;
-  printDocumentTitle = null;
+  printDocumentTitles.forEach(entry => {
+    try { entry.target.title = entry.title; } catch {}
+  });
+  printDocumentTitles = [];
 }
 
 function escapeHTML(value) {

@@ -9,6 +9,9 @@ const ROOT = path.resolve(__dirname, '..');
 const DATA_FILE = path.join(ROOT, 'portfolio_data.json');
 const BACKUP_DIR = path.join(ROOT, 'backups', 'portfolio-data');
 const TMP_DIR = path.join(os.tmpdir(), `triton-portfolio-update-${Date.now()}`);
+const DOWNLOAD_ATTEMPTS = 4;
+const DOWNLOAD_TIMEOUT_MS = 45000;
+const RETRY_DELAYS_MS = [5000, 15000, 30000];
 
 const FUND_SOURCES = {
   'Fidelity® Tactical High Income': {
@@ -80,12 +83,21 @@ const MONTHS = {
   december: 12
 };
 
-function download(url, dest) {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function downloadOnce(url, dest, redirectsLeft = 5) {
   return new Promise((resolve, reject) => {
     const request = https.get(url, { headers: { 'user-agent': 'Triton portfolio updater/1.0' } }, response => {
       if ([301, 302, 303, 307, 308].includes(response.statusCode)) {
         response.resume();
-        download(response.headers.location, dest).then(resolve, reject);
+        if (!response.headers.location || redirectsLeft <= 0) {
+          reject(new Error(`Too many redirects for ${url}`));
+          return;
+        }
+        const redirectUrl = new URL(response.headers.location, url).toString();
+        downloadOnce(redirectUrl, dest, redirectsLeft - 1).then(resolve, reject);
         return;
       }
       if (response.statusCode !== 200) {
@@ -97,12 +109,31 @@ function download(url, dest) {
       response.pipe(out);
       out.on('finish', () => out.close(resolve));
       out.on('error', reject);
+      response.on('error', reject);
     });
     request.on('error', reject);
-    request.setTimeout(30000, () => {
+    request.setTimeout(DOWNLOAD_TIMEOUT_MS, () => {
       request.destroy(new Error(`Timeout downloading ${url}`));
     });
   });
+}
+
+async function download(url, dest) {
+  let lastError;
+  for (let attempt = 1; attempt <= DOWNLOAD_ATTEMPTS; attempt += 1) {
+    try {
+      await downloadOnce(url, dest);
+      return;
+    } catch (error) {
+      lastError = error;
+      fs.rmSync(dest, { force: true });
+      if (attempt === DOWNLOAD_ATTEMPTS) break;
+      const delay = RETRY_DELAYS_MS[attempt - 1];
+      console.warn(`Download attempt ${attempt}/${DOWNLOAD_ATTEMPTS} failed: ${error.message}; retrying in ${delay / 1000}s`);
+      await sleep(delay);
+    }
+  }
+  throw new Error(`Failed after ${DOWNLOAD_ATTEMPTS} attempts: ${lastError.message}`);
 }
 
 function pdfToText(pdfPath) {
@@ -236,7 +267,9 @@ async function main() {
   execFileSync('pdftotext', ['-v'], { stdio: 'ignore' });
   fs.mkdirSync(TMP_DIR, { recursive: true });
 
-  const current = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+  const currentText = fs.readFileSync(DATA_FILE, 'utf8');
+  const original = JSON.parse(currentText);
+  const current = JSON.parse(currentText);
   const sourceEntries = Object.entries(FUND_SOURCES);
   const fetched = new Map();
 
@@ -246,9 +279,9 @@ async function main() {
     console.log(`${name}: 1Y=${result.y1} 3Y=${result.y3} 5Y=${result.y5} MER=${result.mer ?? 'n/a'} asOf=${result.asOf.sourceLabel}`);
   }
 
-  const dates = [...fetched.values()].map(item => item.asOf.sortKey).sort();
-  const newestDate = dates[dates.length - 1];
-  const newest = [...fetched.values()].find(item => item.asOf.sortKey === newestDate);
+  const dates = [...new Set([...fetched.values()].map(item => item.asOf.sortKey))].sort();
+  if (dates.length !== 1) throw new Error(`Source dates do not match: ${dates.join(', ')}`);
+  const newest = [...fetched.values()][0];
 
   for (const portfolio of Object.values(current.portfolios)) {
     for (const fund of portfolio.funds) {
@@ -279,6 +312,22 @@ async function main() {
     updateMode: 'NAS monthly cron; official PDFs parsed with pdftotext',
     note: 'Fund returns are parsed from Equitable/Fundata FundSummary PDFs. Returns are net of MER when stated by source; guarantee fees are not included. Portfolio returns are allocation-weighted from fund-level returns.'
   };
+
+  const originalSignature = JSON.stringify({
+    lastUpdated: original.lastUpdated,
+    asOfLabel: original.asOfLabel,
+    portfolios: original.portfolios
+  });
+  const currentSignature = JSON.stringify({
+    lastUpdated: current.lastUpdated,
+    asOfLabel: current.asOfLabel,
+    portfolios: current.portfolios
+  });
+  if (originalSignature === currentSignature) {
+    fs.rmSync(TMP_DIR, { recursive: true, force: true });
+    console.log(`No portfolio data changes; source remains ${current.asOfLabel}`);
+    return;
+  }
 
   const backup = backupExistingData();
   fs.writeFileSync(DATA_FILE, `${JSON.stringify(current, null, 2)}\n`);
