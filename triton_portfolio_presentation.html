@@ -3145,7 +3145,9 @@ window.addEventListener('beforeprint', () => {
 });
 window.addEventListener('afterprint', () => {
   activePrintMode = null;
-  document.getElementById('pdf-body').innerHTML = '';
+  setTimeout(() => {
+    if (!activePrintMode) document.getElementById('pdf-body').innerHTML = '';
+  }, 1000);
   syncComparisonPanel();
 });
 
