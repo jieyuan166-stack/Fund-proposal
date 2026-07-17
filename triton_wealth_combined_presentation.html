@@ -492,7 +492,7 @@
       window.open(views[activeView].file, '_blank', 'noopener');
     });
 
-    document.getElementById('exportBtn').addEventListener('click', () => {
+    function exportActiveView() {
       const frame = views[activeView].frame;
       const btn = document.getElementById('exportBtn');
       btn.textContent = '准备中...';
@@ -512,6 +512,14 @@
         btn.textContent = '导出PDF';
         btn.disabled = false;
       }, 1800);
+    }
+
+    document.getElementById('exportBtn').addEventListener('click', exportActiveView);
+    document.addEventListener('keydown', event => {
+      if ((event.metaKey || event.ctrlKey) && String(event.key).toLowerCase() === 'p') {
+        event.preventDefault();
+        exportActiveView();
+      }
     });
 
     window.addEventListener('hashchange', () => {
