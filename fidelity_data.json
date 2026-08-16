@@ -4,7 +4,7 @@
   "dataSource": {
     "primary": "Fidelity Investments Canada fund pages",
     "url": "https://www.fidelity.ca",
-    "lastAutomatedUpdate": "2026-08-08T14:17:48.707Z",
+    "lastAutomatedUpdate": "2026-08-16T14:15:16.053Z",
     "updateMode": "NAS monthly cron; official Fidelity pages parsed from Standard period returns",
     "note": "Fund returns are historical standard period returns from Fidelity Canada fund pages. T5/T8 distribution rates are product distribution targets and are not investment return forecasts."
   },
@@ -22,7 +22,7 @@
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/ucg/",
         "asOf": "31-Jul-2026",
-        "merAsOf": "30-Nov-2025"
+        "merAsOf": "31-May-2026"
       }
     },
     "ucl": {
@@ -38,7 +38,7 @@
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/ugg/",
         "asOf": "31-Jul-2026",
-        "merAsOf": "30-Nov-2025"
+        "merAsOf": "31-May-2026"
       }
     },
     "ugq": {
@@ -54,7 +54,7 @@
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/ugq/",
         "asOf": "31-Jul-2026",
-        "merAsOf": "30-Nov-2025"
+        "merAsOf": "31-May-2026"
       }
     },
     "ugb": {
@@ -70,7 +70,7 @@
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/ugbp/",
         "asOf": "31-Jul-2026",
-        "merAsOf": "30-Nov-2025"
+        "merAsOf": "31-May-2026"
       }
     },
     "ufs": {
@@ -86,7 +86,7 @@
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/uga/",
         "asOf": "31-Jul-2026",
-        "merAsOf": "30-Nov-2025"
+        "merAsOf": "31-May-2026"
       }
     },
     "ugi": {
@@ -102,7 +102,7 @@
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/uet/",
         "asOf": "31-Jul-2026",
-        "merAsOf": "30-Nov-2025"
+        "merAsOf": "31-May-2026"
       }
     }
   }
