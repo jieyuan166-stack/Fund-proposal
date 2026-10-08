@@ -1,10 +1,10 @@
 {
-  "lastUpdated": "2026-08-31T16:00:00-04:00",
-  "asOfLabel": "2026年8月31日",
+  "lastUpdated": "2026-09-30T16:00:00-04:00",
+  "asOfLabel": "2026年9月30日",
   "dataSource": {
     "primary": "Fidelity Investments Canada fund pages",
     "url": "https://www.fidelity.ca",
-    "lastAutomatedUpdate": "2026-09-08T14:15:27.771Z",
+    "lastAutomatedUpdate": "2026-10-08T14:15:43.116Z",
     "updateMode": "NAS monthly cron; official Fidelity pages parsed from Standard period returns",
     "note": "Fund returns are historical standard period returns from Fidelity Canada fund pages. T5/T8 distribution rates are product distribution targets and are not investment return forecasts."
   },
@@ -15,13 +15,13 @@
       "mer": 2.23,
       "role": "加股成长",
       "color": "#EA580C",
-      "y1": 45.76,
-      "y3": 33.83,
-      "y5": 19.71,
+      "y1": 37.26,
+      "y3": 37,
+      "y5": 20.38,
       "source": {
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/ucg/",
-        "asOf": "31-Aug-2026",
+        "asOf": "30-Sep-2026",
         "merAsOf": "31-May-2026"
       }
     },
@@ -31,13 +31,13 @@
       "mer": 2.22,
       "role": "全球精选",
       "color": "#3B82F6",
-      "y1": 14.48,
-      "y3": 23.43,
-      "y5": 13.09,
+      "y1": 13.65,
+      "y3": 26.27,
+      "y5": 15.2,
       "source": {
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/ugg/",
-        "asOf": "31-Aug-2026",
+        "asOf": "30-Sep-2026",
         "merAsOf": "31-May-2026"
       }
     },
@@ -47,13 +47,13 @@
       "mer": 2.24,
       "role": "价值+成长",
       "color": "#C9A84C",
-      "y1": 15.39,
-      "y3": 19.14,
-      "y5": 11.67,
+      "y1": 12.94,
+      "y3": 20.42,
+      "y5": 12.71,
       "source": {
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/ugq/",
-        "asOf": "31-Aug-2026",
+        "asOf": "30-Sep-2026",
         "merAsOf": "31-May-2026"
       }
     },
@@ -63,13 +63,13 @@
       "mer": 2.19,
       "role": "稳定器",
       "color": "#10B981",
-      "y1": 16.44,
-      "y3": 15.17,
-      "y5": 7.84,
+      "y1": 11.67,
+      "y3": 16.05,
+      "y5": 8.25,
       "source": {
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/ugbp/",
-        "asOf": "31-Aug-2026",
+        "asOf": "30-Sep-2026",
         "merAsOf": "31-May-2026"
       }
     },
@@ -79,13 +79,13 @@
       "mer": 2.24,
       "role": "美股精选",
       "color": "#8B5CF6",
-      "y1": 24,
-      "y3": 22.57,
-      "y5": 12.65,
+      "y1": 22.16,
+      "y3": 26.91,
+      "y5": 14.82,
       "source": {
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/uga/",
-        "asOf": "31-Aug-2026",
+        "asOf": "30-Sep-2026",
         "merAsOf": "31-May-2026"
       }
     },
@@ -95,13 +95,13 @@
       "mer": 2.23,
       "role": "创新主题",
       "color": "#EF4444",
-      "y1": 52.89,
-      "y3": 42.66,
-      "y5": 22.18,
+      "y1": 48.26,
+      "y3": 48.81,
+      "y5": 24.35,
       "source": {
         "primary": "Fidelity Investments Canada",
         "url": "https://www.fidelity.ca/en/products/funds/uet/",
-        "asOf": "31-Aug-2026",
+        "asOf": "30-Sep-2026",
         "merAsOf": "31-May-2026"
       }
     }
